@@ -1,18 +1,20 @@
 {title: Bricioline (Ninna Nanna per i Saluti)}
 {artist: Queen of Saba}
 {album: Bricioline}
-{key: Do}
+{key: LA-7}
+
+{comment_box: Arpeggio: 6 note, in ordine 1,2,3,4,3,4}
 
 {start_of_verse}
-[DO]con le dita sfioro la tua [SOL7]mano
-[SOL7]e ti soffio bricioline tra i [DO]capelli
-se ci pensi non sei poi così lontanǝ
-fidati di me, fai sogni belli
+[LA-7]con le dita [SOL7sus2]sfioro la tua mano
+[SOL7sus2]e ti soffio [LA-7]bricioline tra i capelli
+[LA-7]se ci pensi non sei [SOL7sus2]poi così lontanǝ
+[SOL7sus2]fidati di me, [LA-7]fai sogni belli
 {end_of_verse}
 
 {start_of_verse}
-servirà del tempo quindi prendi fiato
-un passetto dopo l'altro non farà più male tanto
-se ti va io resto, no non me ne vado
-al ritorno la mia mano stringerà la tua
+[LA-7]servirà del tempo [SOL7sus2]quindi prendi fiato
+[SOL7sus2]un passetto dopo l'altro non farà più male tanto
+[LA-7]se ti va io resto, [SOL7sus2]no non me ne vado
+[SOL7sus2]al ritorno la mia [LA-7]mano stringerà la tua
 {end_of_verse}

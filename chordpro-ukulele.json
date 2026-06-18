@@ -16,6 +16,7 @@
     { "name": "FA-",   "base": 1, "frets": [ 1, 0, 1, 3 ], "easy": false },
     { "name": "SOL",   "base": 1, "frets": [ 0, 2, 3, 2 ], "easy": true },
     { "name": "SOL7",     "base": 1, "frets": [ 0, 2, 1, 2 ], "easy": true },
+    { "name": "SOL7sus2", "base": 1, "frets": [ 0, 2, 1, 0 ], "easy": true },
     { "name": "DO/SOL7",  "base": 1, "frets": [ 0, 2, 1, 2 ], "easy": true },
     { "name": "SOL-7", "base": 1, "frets": [ 0, 2, 1, 1 ], "easy": true },
     { "name": "LA-",   "base": 1, "frets": [ 2, 0, 0, 0 ], "easy": true },
@@ -34,7 +35,12 @@
       "title":   { "file": "/usr/share/fonts/truetype/msttcorefonts/courbd.ttf", "size": 12 },
       "comment": { "file": "/usr/share/fonts/truetype/msttcorefonts/couri.ttf",  "size": 9 }
     },
-    "columnspace": 15
+    "columnspace": 15,
+    "headspace": 30,
+    "margintop": 40,
+    "spacing": {
+      "title": 0.8
+    }
   },
 
   "diagrams": {
