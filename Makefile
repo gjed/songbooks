@@ -1,17 +1,21 @@
 CHORDPRO     := chordpro
 PROJECT_CFG  := chordpro-ukulele.json
 SONGBOOKS    := $(notdir $(wildcard songbooks/*))
-PDFS         := $(foreach sb,$(SONGBOOKS),songbooks/$(sb)/$(sb).pdf)
+PDF_DIR      := pdf
+PDFS         := $(foreach sb,$(SONGBOOKS),$(PDF_DIR)/$(sb).pdf)
 
 .PHONY: all clean $(SONGBOOKS)
 
 all: $(SONGBOOKS)
 
+$(PDF_DIR):
+	mkdir -p $(PDF_DIR)
+
 # Target per songbook slug: make bricioline, make bricioline-en, etc.
 define SONGBOOK_RULE
-$(1): songbooks/$(1)/$(1).pdf
+$(1): $(PDF_DIR)/$(1).pdf
 
-songbooks/$(1)/$(1).pdf: songbooks/$(1)/*.cho
+$(PDF_DIR)/$(1).pdf: songbooks/$(1)/*.cho | $(PDF_DIR)
 	$(CHORDPRO) --config $(PROJECT_CFG) $$^ -o $$@
 endef
 
