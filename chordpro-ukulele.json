@@ -17,6 +17,8 @@
     { "name": "SOL",   "base": 1, "frets": [ 0, 2, 3, 2 ], "easy": true },
     { "name": "SOL7",     "base": 1, "frets": [ 0, 2, 1, 2 ], "easy": true },
     { "name": "SOL7sus2", "base": 1, "frets": [ 0, 2, 1, 0 ], "easy": true },
+    { "name": "G7sus2",   "base": 1, "frets": [ 0, 2, 1, 0 ], "easy": true },
+    { "name": "C/G",      "base": 1, "frets": [ 0, 0, 0, 3 ], "easy": true },
     { "name": "DO/SOL7",  "base": 1, "frets": [ 0, 2, 1, 2 ], "easy": true },
     { "name": "SOL-7", "base": 1, "frets": [ 0, 2, 1, 1 ], "easy": true },
     { "name": "LA-",   "base": 1, "frets": [ 2, 0, 0, 0 ], "easy": true },
@@ -46,6 +48,6 @@
   "diagrams": {
     "show": "all",
     "sorted": true,
-    "suppress": [ "DO/SOL7" ]
+    "suppress": [ "DO/SOL7", "C/G" ]
   }
 }
