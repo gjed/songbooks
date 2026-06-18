@@ -6,12 +6,21 @@
   "include": [ "ukulele" ],
 
   "chords": [
-    {
-      "name"  : "C/G",
-      "base"  : 1,
-      "frets" : [ 0, 0, 0, 3 ],
-      "easy"  : true
-    }
+    { "name": "C/G",   "base": 1, "frets": [ 0, 0, 0, 3 ], "easy": true },
+
+    // Italian chord aliases (same fingerings as English equivalents)
+    { "name": "DO",    "base": 1, "frets": [ 0, 0, 0, 3 ], "easy": true },
+    { "name": "DO7",   "base": 1, "frets": [ 0, 0, 0, 1 ], "easy": true },
+    { "name": "RE-",   "base": 1, "frets": [ 2, 2, 1, 0 ], "easy": true },
+    { "name": "MI-",   "base": 1, "frets": [ 0, 4, 0, 2 ], "easy": false },
+    { "name": "MI7",   "base": 1, "frets": [ 1, 2, 0, 2 ], "easy": true },
+    { "name": "FA",    "base": 1, "frets": [ 2, 0, 1, 0 ], "easy": true },
+    { "name": "FA-",   "base": 1, "frets": [ 1, 0, 1, 3 ], "easy": false },
+    { "name": "SOL",   "base": 1, "frets": [ 0, 2, 3, 2 ], "easy": true },
+    { "name": "SOL7",  "base": 1, "frets": [ 0, 2, 1, 2 ], "easy": true },
+    { "name": "SOL-7", "base": 1, "frets": [ 0, 2, 1, 1 ], "easy": true },
+    { "name": "LA-",   "base": 1, "frets": [ 2, 0, 0, 0 ], "easy": true },
+    { "name": "LA-7",  "base": 1, "frets": [ 0, 0, 0, 0 ], "easy": true }
   ],
 
   "settings": {
@@ -26,9 +35,11 @@
       "title":   { "file": "/usr/share/fonts/truetype/msttcorefonts/courbd.ttf", "size": 11 },
       "comment": { "file": "/usr/share/fonts/truetype/msttcorefonts/couri.ttf",  "size": 7 }
     },
-    "columnspace": 15,
-    "diagrams": {
-      "show": "all"
-    }
+    "columnspace": 15
+  },
+
+  "diagrams": {
+    "show": "all",
+    "sorted": true
   }
 }
