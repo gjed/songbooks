@@ -16,16 +16,16 @@ Dominant sevenths: `SOL7`, `DO7`, etc.
 
 ```
 songbooks/
-  <band-slug>/
-    <album-slug>/
-      NN-song-slug.cho
+  <songbook-slug>/
+    NN-song-slug.cho
 ```
 
 Songs are numbered with a two-digit prefix (`01`, `02`, …) to preserve track order.
+Band and album metadata live in each song's ChordPro headers (`{artist:}`, `{album:}`).
 
-## Bands
+## Songbooks
 
-- [Queen of Saba](songbooks/queen-of-saba/) — Italian children's music
+- [Bricioline](songbooks/bricioline/) — Queen of Saba, Italian children's music
 
 ## Rendering
 
