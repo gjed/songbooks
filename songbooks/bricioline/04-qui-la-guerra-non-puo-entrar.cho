@@ -3,7 +3,7 @@
 {album: Bricioline}
 {key: Do}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 [F]*Kazoo*[C]
 [Dm]*Wh[F]is[G]tle[C]
 {end_of_verse}
@@ -16,7 +16,7 @@
 [FA]Poi arrivi tu [FA-]gridando:
 [DO]"vi ho sparato, [LA-]bum bum bum!"
 [RE-]come un cowboy allo [SOL7]sbando
-[DO] / [SOL7]e non gioca più [DO]nessun
+[DO/SOL7]e non gioca più [DO]nessun
 {end_of_verse}
 
 {start_of_chorus}
@@ -28,7 +28,7 @@
 [FA]Non mi piaccion le [FA-]divise
 [DO]da sergente o [LA-]militar
 [RE-]Preferisco il mio [SOL7]costume
-[DO] / [SOL7]da fatino o da [DO]giullar
+[DO/SOL7]da fatino o da [DO]giullar
 {end_of_chorus}
 
 {start_of_verse}
