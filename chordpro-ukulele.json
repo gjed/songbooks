@@ -1,0 +1,34 @@
+// ChordPro config for Queen of Saba songbook
+// Ukulele, standard tuning G4-C4-E4-A4
+// Courier New, 2 columns, one song per page
+
+{
+  "include": [ "ukulele" ],
+
+  "chords": [
+    {
+      "name"  : "C/G",
+      "base"  : 1,
+      "frets" : [ 0, 0, 0, 3 ],
+      "easy"  : true
+    }
+  ],
+
+  "settings": {
+    "columns": 2
+  },
+
+  "pdf": {
+    "pagealign-songs": 0,
+    "fonts": {
+      "text":    { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf",   "size": 8 },
+      "chord":   { "file": "/usr/share/fonts/truetype/msttcorefonts/courbd.ttf", "size": 9, "color": "blue" },
+      "title":   { "file": "/usr/share/fonts/truetype/msttcorefonts/courbd.ttf", "size": 11 },
+      "comment": { "file": "/usr/share/fonts/truetype/msttcorefonts/couri.ttf",  "size": 7 }
+    },
+    "columnspace": 15,
+    "diagrams": {
+      "show": "all"
+    }
+  }
+}
