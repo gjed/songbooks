@@ -1,0 +1,40 @@
+name: PR Check
+
+on:
+  pull_request:
+    paths:
+      - "songbooks/**/*.cho"
+      - "chordpro-ukulele.json"
+
+jobs:
+  compile:
+    name: Compile changed songbooks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ChordPro
+        run: |
+          curl -fsSL -o chordpro.AppImage \
+            https://github.com/ChordPro/chordpro/releases/download/R6.101.0/ChordPro-6.101.0-wk4.0.AppImage
+          chmod +x chordpro.AppImage
+          ./chordpro.AppImage --appimage-extract-and-run --version
+          sudo mv chordpro.AppImage /usr/local/bin/chordpro
+
+      - name: Detect changed songbooks
+        id: changed
+        run: |
+          SLUGS=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^songbooks/' \
+            | cut -d/ -f2 \
+            | sort -u \
+            | tr '\n' ' ')
+          echo "slugs=$SLUGS" >> "$GITHUB_OUTPUT"
+
+      - name: Compile songbooks
+        run: |
+          for slug in ${{ steps.changed.outputs.slugs }}; do
+            echo "Compiling $slug..."
+            make $slug
+          done

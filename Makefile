@@ -1,6 +1,6 @@
 CHORDPRO     := chordpro
 PROJECT_CFG  := chordpro-ukulele.json
-SONGBOOKS    := $(notdir $(wildcard songbooks/*))
+SONGBOOKS    := $(sort $(notdir $(patsubst %/,%,$(dir $(wildcard songbooks/*/*.cho)))))
 PDF_DIR      := pdf
 PDFS         := $(foreach sb,$(SONGBOOKS),$(PDF_DIR)/$(sb).pdf)
 

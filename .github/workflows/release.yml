@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and release songbooks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # needed for tag comparison and PR history
+
+      - name: Install ChordPro and fonts
+        run: |
+          curl -fsSL -o chordpro.AppImage \
+            https://github.com/ChordPro/chordpro/releases/download/R6.101.0/ChordPro-6.101.0-wk4.0.AppImage
+          chmod +x chordpro.AppImage
+          sudo mv chordpro.AppImage /usr/local/bin/chordpro
+          echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" \
+            | sudo debconf-set-selections
+          sudo apt-get install -y ttf-mscorefonts-installer
+          sudo fc-cache -f
+
+      - name: Compile all songbooks
+        run: make all
+
+      - name: Build release notes
+        id: notes
+        run: |
+          TAG="${{ github.ref_name }}"
+
+          # --- Songbook descriptions ---
+          DESCRIPTIONS=""
+          for dir in songbooks/*/; do
+            slug=$(basename "$dir")
+            readme="$dir/README.md"
+            if [ -f "$readme" ]; then
+              DESCRIPTIONS="${DESCRIPTIONS}$(cat "$readme")\n\n---\n\n"
+            fi
+          done
+
+          # --- PRs merged since previous tag ---
+          PREV_TAG=$(git tag --sort=-version:refname | grep -v "^${TAG}$" | head -1)
+          if [ -n "$PREV_TAG" ]; then
+            PR_SECTION="## Changes since ${PREV_TAG}\n\n"
+            PRS=$(git log "${PREV_TAG}..HEAD" --merges --oneline \
+              | grep -oP '#\d+' \
+              | sort -u)
+            if [ -n "$PRS" ]; then
+              for pr in $PRS; do
+                num="${pr#\#}"
+                PR_SECTION="${PR_SECTION}- ${pr}: https://github.com/${{ github.repository }}/pull/${num}\n"
+              done
+            else
+              PR_SECTION="${PR_SECTION}_No merged PRs found._\n"
+            fi
+          else
+            PR_SECTION="## Initial release\n"
+          fi
+
+          # --- Compose full body ---
+          BODY="${DESCRIPTIONS}${PR_SECTION}"
+          printf "%b" "$BODY" > release-notes.md
+          echo "notes_file=release-notes.md" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: ${{ steps.notes.outputs.notes_file }}
+          files: pdf/*.pdf
