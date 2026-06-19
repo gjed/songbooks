@@ -20,10 +20,13 @@ jobs:
 
       - name: Install ChordPro and fonts
         run: |
-          sudo apt-get update
+          curl -fsSL -o chordpro.AppImage \
+            https://github.com/ChordPro/chordpro/releases/download/R6.101.0/ChordPro-6.101.0-wk4.0.AppImage
+          chmod +x chordpro.AppImage
+          sudo mv chordpro.AppImage /usr/local/bin/chordpro
           echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" \
             | sudo debconf-set-selections
-          sudo apt-get install -y chordpro ttf-mscorefonts-installer
+          sudo apt-get install -y ttf-mscorefonts-installer
           sudo fc-cache -f
 
       - name: Compile all songbooks
@@ -48,7 +51,6 @@ jobs:
           PREV_TAG=$(git tag --sort=-version:refname | grep -v "^${TAG}$" | head -1)
           if [ -n "$PREV_TAG" ]; then
             PR_SECTION="## Changes since ${PREV_TAG}\n\n"
-            # Extract PR numbers from merge commits
             PRS=$(git log "${PREV_TAG}..HEAD" --merges --oneline \
               | grep -oP '#\d+' \
               | sort -u)
@@ -66,8 +68,6 @@ jobs:
 
           # --- Compose full body ---
           BODY="${DESCRIPTIONS}${PR_SECTION}"
-
-          # Write to file to avoid quoting issues
           printf "%b" "$BODY" > release-notes.md
           echo "notes_file=release-notes.md" >> "$GITHUB_OUTPUT"
 

@@ -15,12 +15,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install ChordPro
-        run: sudo apt-get update && sudo apt-get install -y chordpro
+        run: |
+          curl -fsSL -o chordpro.AppImage \
+            https://github.com/ChordPro/chordpro/releases/download/R6.101.0/ChordPro-6.101.0-wk4.0.AppImage
+          chmod +x chordpro.AppImage
+          ./chordpro.AppImage --appimage-extract-and-run --version
+          sudo mv chordpro.AppImage /usr/local/bin/chordpro
 
       - name: Detect changed songbooks
         id: changed
         run: |
-          # Get unique songbook slugs from changed .cho files
           SLUGS=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
             | grep '^songbooks/' \
             | cut -d/ -f2 \
@@ -30,8 +34,7 @@ jobs:
 
       - name: Compile songbooks
         run: |
-          mkdir -p pdf
           for slug in ${{ steps.changed.outputs.slugs }}; do
             echo "Compiling $slug..."
-            chordpro --config chordpro-ukulele.json songbooks/$slug/*.cho -o pdf/$slug.pdf
+            make $slug
           done
