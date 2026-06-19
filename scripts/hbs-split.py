@@ -116,6 +116,9 @@ SONGS = [
     ("Wish You Were Here",               "wish-you-were-here",           "Pink Floyd"),
     ("Yo Ho Ho and a Bottle of Rum",     "yo-ho-ho",                     "Young Ewing Allison"),
     ("You are my Sunshine",              "you-are-my-sunshine",          "Kevin Devine"),
+    ("City of Stars",                    "city-of-stars",                "La La Land"),
+    ("5 Years Time",                     "5-years-time",                 "Noah and the Whale"),
+    ("Mr. Sandman",                      "mr-sandman",                   "The Chordettes"),
 ]
 
 def normalize(s):
