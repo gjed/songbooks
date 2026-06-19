@@ -21,8 +21,8 @@ jobs:
           chmod +x chordpro.AppImage
           ./chordpro.AppImage --appimage-extract
           EXTRACT_DIR="$PWD/squashfs-root"
-          printf '#!/bin/sh\nexec "%s/usr/bin/perl" "%s/usr/bin/chordpro" "$@"\n' \
-            "$EXTRACT_DIR" "$EXTRACT_DIR" | sudo tee /usr/local/bin/chordpro > /dev/null
+          printf '#!/bin/sh\nexec "%s/AppRun" chordpro "$@"\n' "$EXTRACT_DIR" \
+            | sudo tee /usr/local/bin/chordpro > /dev/null
           sudo chmod +x /usr/local/bin/chordpro
           chordpro --version
 
