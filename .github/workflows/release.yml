@@ -18,8 +18,13 @@ jobs:
         with:
           fetch-depth: 0  # needed for tag comparison and PR history
 
-      - name: Install ChordPro
-        run: sudo apt-get update && sudo apt-get install -y chordpro
+      - name: Install ChordPro and fonts
+        run: |
+          sudo apt-get update
+          echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" \
+            | sudo debconf-set-selections
+          sudo apt-get install -y chordpro ttf-mscorefonts-installer
+          sudo fc-cache -f
 
       - name: Compile all songbooks
         run: make all
