@@ -19,8 +19,9 @@ jobs:
           curl -fsSL -o chordpro.AppImage \
             https://github.com/ChordPro/chordpro/releases/download/R6.101.0/ChordPro-6.101.0-wk4.0.AppImage
           chmod +x chordpro.AppImage
-          ./chordpro.AppImage --appimage-extract-and-run --version
-          sudo mv chordpro.AppImage /usr/local/bin/chordpro
+          ./chordpro.AppImage --appimage-extract
+          sudo ln -sf "$PWD/squashfs-root/AppRun" /usr/local/bin/chordpro
+          chordpro --version
 
       - name: Detect changed songbooks
         id: changed
