@@ -4,7 +4,7 @@ A collection of songbooks in [ChordPro](https://www.chordpro.org/) format.
 
 ## Default instrument
 
-Ukulele. Each song file declares `{instrument: ukulele}` in its header.
+Ukulele. Instrument is set via `chordpro-ukulele.json` (`"include": ["ukulele"]`), not in individual song files.
 
 ## Chord notation
 
@@ -14,7 +14,7 @@ Dominant sevenths: `SOL7`, `DO7`, etc.
 
 ## Structure
 
-```
+```text
 songbooks/
   <songbook-slug>/
     NN-song-slug.cho
