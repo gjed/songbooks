@@ -1,0 +1,37 @@
+name: PR Check
+
+on:
+  pull_request:
+    paths:
+      - "songbooks/**/*.cho"
+      - "chordpro-ukulele.json"
+
+jobs:
+  compile:
+    name: Compile changed songbooks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ChordPro
+        run: sudo apt-get update && sudo apt-get install -y chordpro
+
+      - name: Detect changed songbooks
+        id: changed
+        run: |
+          # Get unique songbook slugs from changed .cho files
+          SLUGS=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep '^songbooks/' \
+            | cut -d/ -f2 \
+            | sort -u \
+            | tr '\n' ' ')
+          echo "slugs=$SLUGS" >> "$GITHUB_OUTPUT"
+
+      - name: Compile songbooks
+        run: |
+          mkdir -p pdf
+          for slug in ${{ steps.changed.outputs.slugs }}; do
+            echo "Compiling $slug..."
+            chordpro --config chordpro-ukulele.json songbooks/$slug/*.cho -o pdf/$slug.pdf
+          done
