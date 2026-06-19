@@ -3,25 +3,17 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: C}
-Here's a little song I wrote
-{comment: Dm}
-You might want to sing it note for note
-{comment: F              C}
-Don't worry, be happy.
-{comment: C}
-In every life we have some trouble
-{comment: Dm}
-But when you worry you make it double
-{comment: F               C}
-Don't worry, be happy.
-{comment: C                      C}
-Don't worry, be happy now.
+[C]Here's a little song I wrote
+[Dm]You might want to sing it note for note
+[F]Don't worry, be[C] happy.
+[C]In every life we have some trouble
+[Dm]But when you worry you make it double
+[F]Don't worry, be [C]happy.
+[C]Don't worry, be happy n[C]ow.
 {start_of_chorus}
 {comment: Chorus}
 {comment: C Dm}
-{comment: F                  C}
-Don't worry,   be happy.   Don't worry, be happy. (x2)
+[F]Don't worry,   be h[C]appy.   Don't worry, be happy. (x2)
 Ain't got no place to lay your head
 Somebody came and took your bed
 Don't worry, be happy.
@@ -41,15 +33,9 @@ Don't worry, be happy now.
 {end_of_verse}
 {comment: Outro:}
 {comment: C Dm}
-{comment: F}
-Don't worry, don't worry, don't do it.
-{comment: C}
-Be happy. Put a smile on your face.
-{comment: C                                                    Dm}
-Don't bring everybody down.
-{comment: F                                                       C}
-Don't worry. It will soon pass, whatever it is.
-{comment: C                        C}
-Don't worry, be happy.
-{comment: Dm                                    F                      C}
-I'm not worried, I'm happy...
+[F]Don't worry, don't worry, don't do it.
+[C]Be happy. Put a smile on your face.
+[C]Don't bring everybody down.[Dm]
+[F]Don't worry. It will soon pass, whatever it is.[C]
+[C]Don't worry, be happy.[C]
+[Dm]I'm not worried, I'm happy...[F][C]

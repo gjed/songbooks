@@ -4,22 +4,14 @@
 {key: C}
 
 {comment: Intro: Am - Am - Dm - G}
-{comment: Am}
-Mama was queen of the mambo
-{comment: Am}
-Papa was king of the Congo
-{comment: Dm}
-deep down in a jungle
-{comment: G}
-I started banging my first bongo
-{comment: Am}
-Every monkey like to be
-{comment: Am}
-in my place instead of me
-{comment: Dm}
-cause I'm the king of Bongo
-{comment: G}
-baby, I'm the king of Bongo Bong
+[Am]Mama was queen of the mambo
+[Am]Papa was king of the Congo
+[Dm]deep down in a jungle
+[G]I started banging my first bongo
+[Am]Every monkey like to be
+[Am]in my place instead of me
+[Dm]cause I'm the king of Bongo
+[G]baby, I'm the king of Bongo Bong
 I went to the big town
 where there is a lot of sound
 from the jungle to the city
@@ -31,12 +23,9 @@ when I'm banging all my boogie, I'm the
 {comment: Am}
 {start_of_chorus}
 {comment: Chorus}
-{comment: Am                                       Dm}
-King of the Bongo bong
-{comment: G}
-Hear me when I come, baby
-{comment: Am}
-King of the Bongo
+[Am]King of the Bongo bong[Dm]
+[G]Hear me when I come, baby
+[Am]King of the Bongo
 Am                                      Dm - G
 King of the Bongo Bong
 Nobody likes to be
@@ -75,8 +64,6 @@ in my place instead of me
 cause I'm the king of Bongo
 baby I'm the king of Bongo Bong
 Chorus. X2
-{comment: Am}
-Je ne t'aime plus, mon amour,
-{comment: Dm                          G}
-Je ne t'aime plus, tous les jours,    X2
+[Am]Je ne t'aime plus, mon amour,
+[Dm]Je ne t'aime plus, tous les [G]jours,    X2
 {end_of_verse}

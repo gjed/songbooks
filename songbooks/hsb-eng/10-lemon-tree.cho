@@ -4,16 +4,11 @@
 {key: C}
 
 {comment: Intro: Em Bm Em Bm Am Bm Em [Bm] (Em)}
-{comment: Em                               Bm}
-I'm Sitting Here in a Boring Room
-{comment: Em                                                Bm}
-It's Just another Rainy Sunday Afternoon
-{comment: Em                                           Bm}
-I'm Wasting My Time I Got Nothing to Do
-{comment: Em                                     Bm}
-I'm hanging around I’m Waiting for You
-{comment: Am                      Bm                     Em}
-But Nothing Ever Happens - And I Wonder
+[Em]I'm Sitting Here in a Boring Room[Bm]
+[Em]It's Just another Rainy Sunday Afternoon[Bm]
+[Em]I'm Wasting My Time I Got Nothing to Do[Bm]
+[Em]I'm hanging around I’m Waiting for You[Bm]
+[Am]But Nothing Ever Happens[Bm] - And I Wonder[Em]
 
 
 I'm driving around in My Car
@@ -25,18 +20,12 @@ But Nothing Ever Happens - And I Wonder
 
 {start_of_chorus}
 {comment: Chorus}
-{comment: G                          D}
-I Wonder How I Wonder Why
-{comment: Em                                                      Bm}
-Yesterday You Told Me 'bout the Blue Blue Sky
-{comment: C                               D                                G           D}
-And All That I Can See Is Just a Yellow Lemon-tree
-{comment: G                                    D}
-I'm Turning My Head Up And Down
-{comment: Em                                                            Bm}
-I'm Turning Turning Turning Turning Turning Around
-{comment: C                               A                                D}
-And All That I Can See Is Just a Yellow Lemon-tree
+[G]I Wonder How I Wonder Why[D]
+[Em]Yesterday You Told Me 'bout the Blue Blue Sky[Bm]
+[C]And All That I Can See Is Just a[D] Yellow Lemon-tree[G][D]
+[G]I'm Turning My Head Up And Down[D]
+[Em]I'm Turning Turning Turning Turning Turning Around[Bm]
+[C]And All That I Can See Is Just a[A] Yellow Lemon-tree[D]
 
 
 Bridge1 :Em Bm Em Bm Am Bm Em
@@ -50,10 +39,8 @@ Where Nothing Ever Happens - And I Wonder
 
 
 {comment: Bridge2:}
-{comment: B                Em}
-Isolation - Is Not Good For Me
-{comment: D                G                              B}
-Isolation - I don’t want to sit On a Lemon-tree
+[B]Isolation - Is No[Em]t Good For Me
+[D]Isolation - I don[G]’t want to sit On a Lemon-tree[B]
 
 
 
@@ -64,35 +51,24 @@ Isolation - I don’t want to sit On a Lemon-tree
 
 
 
-{comment: Em                                      Bm}
-I'm Steppin' around in a Desert of Joy
-{comment: Em                                 Bm}
-Baby Anyhow I'll Get another Toy
-{comment: Am                        Bm                        Em}
-And Everything Will Happen -And You'll Wonder
+[Em]I'm Steppin' around in a Desert of Joy[Bm]
+[Em]Baby Anyhow I'll Get another Toy[Bm]
+[Am]And Everything Will Happen[Bm] -And You'll Wonder[Em]
 
 
 {end_of_verse}
 {start_of_chorus}
 {comment: Chorus}
-{comment: C                              D                                G}
-And All That I Can See Is Just A Yellow Lemon-tree
+[C]And All That I Can See Is Just [D]A Yellow Lemon-tree[G]
 
 
-{comment: D}
-And I wonder I wonder
-{comment: G                        D}
-I Wonder How I Wonder Why
-{comment: Em                                                      Bm}
-Yesterday You Told Me 'bout the Blue Blue Sky
+[D]And I wonder I wonder
+[G]I Wonder How I Wonder Why[D]
+[Em]Yesterday You Told Me 'bout the Blue Blue Sky[Bm]
 
 
-{comment: C                            D}
-And All That I Can See
-{comment: C                             D}
-And All That I Can See
-{comment: C                              D}
-And All That I Can See
-{comment: G}
-Is Just a Yellow Lemon-tree.
+[C]And All That I Can See[D]
+[C]And All That I Can See[D]
+[C]And All That I Can See[D]
+[G]Is Just a Yellow Lemon-tree.
 {end_of_verse}
