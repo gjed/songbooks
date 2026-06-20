@@ -3,15 +3,16 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: Dm}
+{start_of_verse label="Intro"}
+[Dm]
+{end_of_verse}
 [Dm]We don’t need no education
 We don’t need no thoughts controlled
 No dark sarcasm in the class room
 [Dm]Teacher leave those kids alone…[G]
 [G]Hey…Teacher leave them kids alone…[Dm]
 {start_of_chorus}
-{comment: Chorus}
 [F]All in all it’s just another [C]brick in the wall[Dm]
 [F]All in all you’re just another bric[C]k in the wall[Dm]
 Repeat all
-{end_of_verse}
+{end_of_chorus}

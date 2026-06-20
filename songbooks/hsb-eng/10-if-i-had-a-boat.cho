@@ -14,7 +14,6 @@ Em7 - G - Em7...
 [Em7]Most days, most days stay the sole same[G]
 [Em7]Please stay, for this fear it will not die[G]
 {start_of_chorus}
-{comment: Chorus}
 [C]If I had a boat, I would [G]sail to you
 [D]Hold you in my arms, ask you t[Am]o be true
 [C]Once I had a dream, it died long be[G]fore
@@ -23,9 +22,9 @@ Em7 - G - Em7...
 [Em7]Weeds grow, through the lilies and the vine[G]
 [Em7]Birds play, try to find their own way[G]
 [Em7]Soft clay, on your feet and under mine[G]
-Chorus. (Finish with D – Am – Em -Em7)
+{comment: Chorus. (Finish with D – Am – Em -Em7)}
 
-{end_of_verse}
+{end_of_chorus}
 {start_of_verse}
 {comment: Bridge}
 [C]Splitting at the seams
@@ -47,5 +46,4 @@ Chorus. (Finish with D – Am – Em -Em7)
 [Am7]Such an honest girl
 {end_of_verse}
 {start_of_chorus}
-{comment: Chorus}
-{end_of_verse}
+{end_of_chorus}

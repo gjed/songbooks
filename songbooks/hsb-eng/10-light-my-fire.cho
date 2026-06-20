@@ -3,13 +3,14 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: G D   F Bb   Eb Ab   A   A}
+{start_of_verse label="Intro"}
+[G] [D] [F] [Bb] [Eb] [Ab] [A] [A]
+{end_of_verse}
 [Am]You know that it would be untrue[F#m]
 [Am]You know that I would be a liar[F#m]
 [Am]If I was to say to you[F#m]
 [Am]Girl, we couldn't get much higher[F#m]
 {start_of_chorus}
-{comment: Chorus}
 [G]Come on baby, light my fir[A]e[D][Dsus4][D]
 [G]Come on baby, light my fir[A]e[D][B]
 [G]Try to set the night on[D] fire[E][E7]
@@ -17,13 +18,11 @@ The time to hesitate is through
 No time to wallow in the mire
 Try now we can only lose
 And our love become a funeral pyre
-{comment: Chorus.}
 Break: Am  Bm   Am  Bm   jam 'til Cue
 [G]Th[D]e ti[F]me[Bb] to h[Eb]esi[Ab]tate [A]is t[A]hrough
 No time to wallow in the mire
 Try now we can only lose
 And our love become a funeral pyre
-{comment: Chorus.}
 You know that it would be untrue
 You know that I would be a liar
 If I was to say to you
@@ -34,5 +33,5 @@ Girl, we couldn't get much higher
 [F]Try to set the night on f[C]ire[D]
 [F]Try to set the night on f[C]ire[D]
 [F]Try to set the night on [C]fi-re[D]
-{end_of_verse}
+{end_of_chorus}
 {comment: Outro: G D   F Bb   Eb Ab   A   A}

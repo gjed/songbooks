@@ -5,7 +5,7 @@
 
 (A, B, Chorus, A, B, Chorus, A)
 Into1: (F   C   G) x4
-Intro2: Strum A (every 4th beat is A7)
+{comment: Intro2: Strum A (every 4th beat is A7)}
 {comment: A)}
 [Dsus4]Whatever you want[D]
 [Dsus4]Whatever you like[D]
@@ -27,8 +27,7 @@ Give me a shout
 [D]And now today
 [Dsus]You could'nt even sa[D]y goodby[Dsus]e[D]
 {start_of_chorus}
-{comment: Chorus}
 [F]I could take you home[C]
 [G]On the midnight train again
 [F]I could make an offer you can[C]'t refuse[E]
-{end_of_verse}
+{end_of_chorus}

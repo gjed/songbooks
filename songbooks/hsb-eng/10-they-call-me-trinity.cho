@@ -3,7 +3,10 @@
 {album: HBS Songbook}
 {key: C}
 
-(Thistle): Dm-C-Dm-C-Dm-G-Bb-Dm-F-G-Bb-Dm
+{start_of_verse label="Intro"}
+[Dm] [C] [Dm] [C] [Dm] [G] [Bb] [Dm] [F] [G] [Bb] [Dm]
+{end_of_verse}
+{start_of_verse}
 [Dm]He`s the guy who`s the talk of the to[C]wn
 [Dm]with the restless gun[C]
 [Dm]don`t shoot broad out to fool him around[G]
@@ -14,20 +17,22 @@ always takes his time
 sure I know you`ll be changing your mind
 when you`ve seen him use a gun, boy
 when you`ve seen him use a gun
+{end_of_verse}
 {start_of_chorus}
-{comment: Chorus}
 [C]He`s the top of t[Gm]he west
 [Bb]always cool, he`s the [F]best
 [Dm]he [Am]keeps alive[Bb] with[F] his colt[G] fo[A]urtyfive
-[Dm](Th[C]is[Dm]tle[C])
+{end_of_chorus}
+{start_of_verse}
 [Dm]You weren`t glad at your fooling him aro[G]und
 [Bb]when you`ve seen him use a gun, boy[Dm][F]
-[G]when you`ve seen him use a [Bb]gun[Dm][Dm][Bb][F]
-{comment: Chorus.}
+[G]when you`ve seen him use a [Bb]gun[Dm]
 Who`s the guy who`s riding into town
 in the prairie sun
 You weren`t glad at your fooling him around
 when you`ve seen him use a gun, boy
 when you`ve seen him use his gun
 {end_of_verse}
+{start_of_chorus}
+{end_of_chorus}
 {comment: Outro: Dm C Dm C Dm G Bb Dm}

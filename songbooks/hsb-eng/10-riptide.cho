@@ -3,19 +3,19 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: Am G C (x2)}
+{start_of_verse label="Intro"}
+[Am] [G] [C] (x2)
+{end_of_verse}
 [Am]I was scared of dentis[G]ts and the dark,[C]
 [Am]I was scared of pretty[G] girls and starting conversa[C]tions,
 [Am]Oh all my friends are [G]turning green,[C]
 [Am]You're the magicians assistant in t[G]heir dreams.[C]
 {start_of_chorus}
-{comment: Chorus}
 [Am]Ooh, oo[G]h ooh[C]
 Am G                 C                          (hold)
 Ooh, and they come unstuck
-{end_of_verse}
+{end_of_chorus}
 {start_of_chorus}
-{comment: Chorus}
 [Am]Lady, r[G]unning down [C]to the riptide,
 [C]taken away to th[Am]e dark side,
 [G]I wanna be your left hand ma[C]n.
@@ -26,9 +26,8 @@ There's this movie that I think you'll like,
 this guy decides to quit his job and heads to-New York City,
 this cowboy's running from himself.
 And she's been living on the highest shelf
-{end_of_verse}
+{end_of_chorus}
 {start_of_chorus}
-{comment: Chorus}
 {comment: Fingerpicking}
 [Am]I just wanna, I just wan[G]na know,
 [C]If you're gonna, if you're gonna stay,[F]
@@ -38,7 +37,6 @@ I can't have it, I can't have it any other way
 (Strum once and hold):
 [Am]I swear she's destin[G]ed for the screen,[C]
 [Am]Closest thing to Michelle[G] Pfeiffer that you've ever se[C]en, oh
-{end_of_verse}
+{end_of_chorus}
 {start_of_chorus}
-{comment: Chorus}
-{end_of_verse}
+{end_of_chorus}

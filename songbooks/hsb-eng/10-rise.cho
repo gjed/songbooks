@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: G}
+{start_of_verse label="Intro"}
+[G]
+{end_of_verse}
 [G]Such is the way of the world
 [C]Can’t ever know
 [G]Just where to put all your faith

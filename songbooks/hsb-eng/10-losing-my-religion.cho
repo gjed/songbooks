@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: F  Dm G     Am       G}
+{start_of_verse label="Intro"}
+[F] [Dm] [G] [Am] [G]
+{end_of_verse}
 [Am]Oh, life is bigger[Em]
 It's bigger than you
 [Am]And you are not me.
@@ -12,7 +14,6 @@ It's bigger than you
 [Dm]Oh no, I've said too much,
 [G]I set it up.
 {start_of_chorus}
-{comment: Chorus}
 [Am]That's me in the corner,
 [Em]That's me in the spotlight
 [Am]Losing my religion.
@@ -20,7 +21,7 @@ It's bigger than you
 [Am]And I don't know if I can do it.[Em]
 [Dm]Oh no, I've said too much,
 [G]I haven't said enough.
-{end_of_verse}
+{end_of_chorus}
 {start_of_verse}
 {comment: Bridge}
 [G]I thought that I heard you laughing,[F]
@@ -42,7 +43,7 @@ Come    flailing around?
 {comment: Bridge.}
 [C]But that was just a dream,[Dm]
 [C]That was just a dream.[Dm]
-Chorus. + Bridge.                               (cont. next page)
+{comment: Chorus. + Bridge.                               (cont. next page)}
 [F]But that was just a dream,[Dm][G]
 [Am]Try, [Am/B]  cry, [Am/C]     wh[Am/D]y,     [Am]try.
 [F]That was just a dream,       just a drea[Dm]m, [G]just a dr[Am]eam, dream.[G]

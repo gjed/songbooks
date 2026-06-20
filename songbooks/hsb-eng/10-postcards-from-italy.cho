@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: F |F | A |A}
+{start_of_verse label="Intro"}
+[F] |F | [A] |A
+{end_of_verse}
 [F]The times we had
 [A]Oh, when the wind would blow with rain and snow
 [F]Were not all bad

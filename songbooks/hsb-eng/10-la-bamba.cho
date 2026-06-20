@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: C F G7 (x2)}
+{start_of_verse label="Intro"}
+[C] [F] [G7] (x2)
+{end_of_verse}
 [C]Para bail[F]ar La Bam[G7]ba
 [C]Para bailar La Ba[F]mba, Se n[G7]ecessita
 [C]una po[F]ca d[G7]e gracia
@@ -14,7 +16,6 @@ Yo no soy marinero
 Yo no soy marinero, soy capitan
 Soy capitan, soy capitan
 {start_of_chorus}
-{comment: Chorus}
 [C]Bam-ba[F], bam[G7]ba
 [C]Bam-ba[F], bam[G7]ba
 [C]Bam-ba,[F] bamb[G7]a
@@ -23,4 +24,4 @@ Para bailar La Bamba, Se necessita,
 una poca de gracia
 Una poca de gracia, Para mi, para ti,
 ay arriba, ay arriba
-{end_of_verse}
+{end_of_chorus}

@@ -37,8 +37,8 @@ but uh-oh those summer nights
 [Db]M: Tell me [Gb]more, tell me more, bu[Eb]t you don't gotta brag[Ab][Db]
 Gb                    Eb                         Ab  (Db-Gb)
 W: Tell me more, tell me more, cause he sounds like a drag
-[shoo-ba-pa--shoo-ba-pa--shoo-ba-pa--shoo-ba-pa]
-[shoo-ba-pa--shoo-ba-pa--shoo-ba-pa--shoo-ba-pa]
+{comment: (shoo-ba-pa...)
+{comment: (shoo-ba-pa...)
 Db          Gb              A       b         Gb
 S: He got friendly, holdin' my hand
 [Db]D: Well she got friendl[Gb]y, down in th[Ab]e sand[Gb]
@@ -92,13 +92,14 @@ Yes, all we're looking for is love from someone else
 [Gm7]City of stars
 [A7]You've never shined so brightly[Dm]
 5 Years Time
-{comment: Intro: C  F  G  F}
+{start_of_verse label="Intro"}
+[C] [F] [G] [F]
+{end_of_verse}
 [C]Oh well in five [F]years time we could be walking [G]round a zoo[F]
 [C]With the sun shinin[F]g down over me and [G]you[F]
 [C]& there'll be love[F] in the bodies of the el[G]ephants too[F]
 [C]And I'll put my hand[F]s over your eyes, but you'[G]ll peep through[F]
 {start_of_chorus}
-{comment: Chorus}
 And there'll be sun sun sun, All over our bodies
 And sun sun sun, All down our necks
 And sun sun sun, All over our faces
@@ -130,4 +131,4 @@ In five years time You might just prove me wrong
 Strum.
 Oh there'll be love love love Wherever you go (x6)
 There'll be love love love wherever you go there'll be love
-{end_of_verse}
+{end_of_chorus}

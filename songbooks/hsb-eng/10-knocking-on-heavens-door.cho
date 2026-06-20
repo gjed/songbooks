@@ -3,13 +3,14 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: G D Am     G D C}
+{start_of_verse label="Intro"}
+[G] [D] [Am] [G] [D] [C]
+{end_of_verse}
 [G]Mama take this badge off of[D] me[Am]
 [G]I can't us[D]e it any-more[C]
 [G]It's getting dark, [D]too dark to see[Am]
 [G]I feel I'm knoc[D]kin on heaven's door[C]
 {start_of_chorus}
-{comment: Chorus}
 [G]Knock, knock, knockin' o[D]n heaven's door[Am]
 [G]Knock, knock, knockin' o[D]n heaven's door (Tot. x2)[C]
 
@@ -18,6 +19,5 @@ Mama put my guns in the ground
 I can't shoot them any-more
 That long black cloud is comin' down
 I feel I'm knockin' on heaven's door
-{comment: Chorus.}
 [G]Oo - [D]oo - [Am]oo – oo[G]
-{end_of_verse}
+{end_of_chorus}

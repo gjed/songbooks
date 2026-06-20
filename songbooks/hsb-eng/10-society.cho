@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: Bm}
+{start_of_verse label="Intro"}
+[Bm]
+{end_of_verse}
 [D]Oh, it's a myst[A]ery to me[D]
 [D]We have a greed wi[G]th which we have agreed[A]
 [G]And you think you have to want [A]more than you need[Bm]

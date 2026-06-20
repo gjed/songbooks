@@ -4,20 +4,17 @@
 {key: C}
 
 {start_of_chorus}
-{comment: Chorus}
 [G]Hey, Mr. Tambo[A]urine Man, play a song for me,[D][G]
 [D]I'm not sleepy and there is n[G]o place I'm going to.[A][Asus4][A]
 [G]Hey, Mr. Tambou[A]rine Man, play a song for me,[D][G]
 [D]In the jingle jangle m[G]orning I'll come following you[A].[D]
-{comment: Dsus4 D Dsus2 D}
-[G]Though I know that evenings empire [A]has returned[D]
+[Dsus4] [D] [Dsus2] [D] [G]Though I know that evenings empire [A]has returned[D]
 [G]into sand,
 [D]Vanished from my hand,[G]
 [D]Left me blindly here to st[G]and but still not sleeping.[A]
 [G]My weariness amaz[A]es me, I'm branded on my fe[D]et,[G]
 [D]I have no one to meet,[G]
 [D]And the ancient empty str[G]eet's too dead for dreamin’[A]
-{comment: Chorus.}
 Take me on a trip upon your magic swirling ship.
 My senses have been stripped,
 May hands can't feel to grip,
@@ -26,7 +23,6 @@ Wait only for my boot heels to be wandering.
 I'm ready to go anywhere, I'm ready for to fade,
 Into my own parade.
 Cast your dancing spell my way, I promise to go under it.
-{comment: Chorus.}
 Though you might hear laughing, spinning, swinging madly across the sun,
 It's not aimed at anyone,
 It's just escaping on the run,
@@ -36,7 +32,6 @@ To your tambourine in time.
 It's just a ragged clown behind,
 I wouldn't pay it any mind,
 It's just a shadow you're seeing that he's chasing.
-{comment: Chorus.}
 Take me disappearing through the smoke rings of my mind.
 Down the foggy ruins of time,
 far past the frozen leaves,
@@ -50,5 +45,4 @@ Circled by the circus sands
 With all memory of fate
 Driven deep beneath the waves
 Let me forget about today until tomorrow
-{comment: Chorus.}
-{end_of_verse}
+{end_of_chorus}

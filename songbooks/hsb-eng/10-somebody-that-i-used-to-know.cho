@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: Am G Am G}
+{start_of_verse label="Intro"}
+[Am] [G] [Am] [G]
+{end_of_verse}
 {comment: Am           G                        Am           G         Am(G-Am-G)}
 Now and then I think of when we were together
 {comment: Am                     G                         Am      G                Am()}
@@ -19,7 +21,6 @@ So when we found that we could not make sense
 Well you said that we would still be friends
 But I'll admit that I was glad that it was over
 {start_of_chorus}
-{comment: Chorus}
 [Am]But you didn'[G]t have to cut me off[F][G]
 [Am]Make out like [G]it never happened[F]
 [G]And that we were not[Am]hing
@@ -39,5 +40,4 @@ But had me believing it was always something that I'd done
 [F]Reading into eve[Am]ry word you sa[G]y
 [F]You sai[Am]d that you could let it go[G]
 [F]And I wouldn't catch you hung up o[Am]n somebody that you used to [G]know...
-{comment: Chorus.}
-{end_of_verse}
+{end_of_chorus}

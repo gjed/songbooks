@@ -15,7 +15,6 @@ Pre-Chorus:
 [D/F#]I don't care, I don't care, so cal[Em]l me cra[D]zy[C]
 [D/F#]We can live in a world that we[Em] design[D][C]
 {start_of_chorus}
-{comment: Chorus}
 [G]'Cause every night I lie in bed
 [D/F#]The brightest colors fill my head
 [Am]A million dreams are keeping [G/B]me awake[C]
@@ -37,8 +36,7 @@ They can say, they can say it all sounds crazy
 They can say, they can say we've lost our minds
 I don't care, I don't care if they call us crazy
 Runaway to a world that we design
-{comment: Chorus.}
-{end_of_verse}
+{end_of_chorus}
 {start_of_verse}
 {comment: Bridge}
 [Em]However big, ho[B]wever small[G]
@@ -49,5 +47,4 @@ Runaway to a world that we design
 [C]To the world you see[G]
 [G]To the world I close my eyes to see[Am]
 [D]I close my eyes to see
-{comment: Chorus.}
 {end_of_verse}

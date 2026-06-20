@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: G  Gmaj7 C (3x)}
+{start_of_verse label="Intro"}
+[G] [Gmaj7] [C] (3x)
+{end_of_verse}
 [G]Imagine there's[Gmaj7] no heaven[C]
 [G]It's easy if yo[Gmaj7]u try[C]
 [G]No hell   be[Gmaj7]low us[C]

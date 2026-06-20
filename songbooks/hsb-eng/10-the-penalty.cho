@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: F C Em F C Em F}
+{start_of_verse label="Intro"}
+[F] [C] [Em] [F] [C] [Em] [F]
+{end_of_verse}
 [C]Like an ancien[Em]t day an[F]d I'm on trial
 [C]Let them seize [Em]the way, this once [F]was an island
 [G]And I could not stay[C] for I believ[F]ed them[C]

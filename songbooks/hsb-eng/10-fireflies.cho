@@ -3,13 +3,14 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: G C F x4}
+{start_of_verse label="Intro"}
+[G] [C] [F] x4
+{end_of_verse}
 [G]You would not believe your eye[C]s if ten million fireflie[F]s
 [G]Lit up the world [C]as I fell asleep[F]
 [G]'Cause they'd fill the open air and [C]leave teardrops everyw[F]here
 [G]You'd think me rude but I woul[C]d just stand and stare[F]
 {start_of_chorus}
-{comment: Chorus}
 [F]I'd like to make [Am]myself believe that pla[G]net earth turns[F][C]
 [Em]slowl[F]y
 [F]It's hard to say that I'd rather st[C]ay awake when I'm asl[F]eep[G][Am]
@@ -20,7 +21,6 @@
 As they tried to teach me how to dance
 A foxtrot above my head, a sock hop beneath my bed
 A disco ball is just hanging by a thread
-{comment: Chorus.}
 Leave my door open just a crack (Please take me away from here)
 'Cause I feel like such an insomniac (Please take me away from here)
 Why do I tire of counting sheep? (Please take me away from here)
@@ -29,9 +29,9 @@ To ten million fireflies I'm weird 'cause I hate goodbyes
 I got misty eyes as they said farewell
 But I'll know where several are if my dreams get real bizarre
 'Cause I saved a few and I keep them in a jar
-Chorus. x2
+{comment: Chorus. x2}
 [F]I'd like to make [Am]myself believe that pla[G]net earth turns[F][C]
 [Em]slowl[F]y
 [F]It's hard to say that I'd rather st[C]ay awake when I'm asl[F]eep[G][Am]
 [F]Because my dreams are bursting at th[C]e seams[G]
-{end_of_verse}
+{end_of_chorus}

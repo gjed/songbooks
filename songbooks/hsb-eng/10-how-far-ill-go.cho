@@ -13,7 +13,6 @@ Pre-Chorus:
 [E]To the place I know, where I cannot go
 [Am]Where I long to be
 {start_of_chorus}
-{comment: Chorus}
 [E]See the line where the sky meets the sea? It calls me[B]
 [C#m]And no one knows, how far i[A]t goes
 [E]If the wind in my sail on the sea stays behind me[B]
@@ -27,9 +26,8 @@ I can lead with pride; I can make us strong
 I'll be satisfied if I play along
 But the voice inside sings a different song
 What is wrong with me?
-{end_of_verse}
+{end_of_chorus}
 {start_of_chorus}
-{comment: Chorus}
 See the light as it shines on the sea? It's blinding
 But no one knows, how deep it goes
 And it seems like it's calling out to me, so come find me
@@ -38,4 +36,4 @@ And let me know, what's beyond that line, will I cross that line?
 [Dm]And no one knows, how far i[Bb]t goes
 [F]If the wind in my sail on the sea stays behind me[C]
 [Dm]One day I'll know, how far I[Bb]'ll [Am]go[Fm][Bb][C]
-{end_of_verse}
+{end_of_chorus}

@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: F}
+{start_of_verse label="Intro"}
+[F]
+{end_of_verse}
 [F]Do you hear the people sing,
 [Bb/F]Singing the song of mig[F]hty men,
 [Dm]It is the musi[G]c of a people who will not be[C] slaves again,
@@ -16,7 +18,6 @@
 [Am]World you long to see,
 [F]Then join in the fight that will give you t[Dm7]he right to be free,[G]
 {start_of_chorus}
-{comment: Chorus}
 [C]Do you hear the people sing,
 [F]Singing the song of ang[C]ry men,
 [Am]It is the musi[D]c of a people who will not [G]be slaves again,
@@ -28,5 +29,4 @@
 [Dm]Some will fall and some will live,
 [Am]Will you stand up and take the chance
 [F]The blood of the martyrs will water the mea[Dm7]dows of France![G]
-{comment: Chorus.}
-{end_of_verse}
+{end_of_chorus}

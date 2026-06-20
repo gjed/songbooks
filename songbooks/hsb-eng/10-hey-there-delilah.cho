@@ -19,7 +19,6 @@ close your eyes
 listen to my voice it’s my disguise
 I’m by your side
 {start_of_chorus}
-{comment: Chorus}
 [G]Ohhh, it’s what you do to me[Em]
 [G]Oh, it’s what you do to me (x2)[Em]
 [G]What you do to me
@@ -37,7 +36,7 @@ would take your breath away
 I'd write it all.
 Even more in love with me you'd fall
 We'd have it all
-Chorus. (no last verse)
+{comment: Chorus. (no last verse)}
 [C]A thousand miles seems pretty far
 [D]but they've got planes and trains and cars
 [Em]I'd walk to you if I had no other way.
@@ -57,6 +56,6 @@ like I do
 [C]We can do whatever we want to[D][Em]
 [C]Hey there Delilah here[D]’s to you,[Em]
 [D]this one's for you
-Chorus. (x2)
+{comment: Chorus. (x2)}
 [Em]What you do to me.        [G]       Oh oh oh oh e[G]tc.[Em]
-{end_of_verse}
+{end_of_chorus}

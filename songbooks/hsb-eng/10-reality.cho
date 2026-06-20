@@ -3,9 +3,10 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: C Em Am F (2x)}
+{start_of_verse label="Intro"}
+[C] [Em] [Am] [F] (2x)
+{end_of_verse}
 {start_of_chorus}
-{comment: Chorus}
 Decisions as I go, to anywhere I flow.
 [Am]Sometimes I believe, a time where we should know.[F]
 [C]I can't fly high, I can't [Em]go long.
@@ -19,21 +20,13 @@ Make me feel the warm, make me feel the cold.
 It's written in our story, it's written on the walls.
 This is our call, we rise and we fall.
 Dancin' in the moonlight, don't we have it all?
-Chorus. + Instrumental: C Em Am F  (x3) Make me
+{comment: Chorus. + Instrumental: C Em Am F  (x3) Make me}
 feel the warm, make me feel the cold.
 It's written in our story, it's written on the walls.
 This is our call, we rise and we fall.
 Dancin' in the moonlight, don't we have it all?
-{end_of_verse}
+{end_of_chorus}
 {comment: Outro: C Em Am F}
-
-
-
-
-
-
-
-
 
 
 Spirits
@@ -49,7 +42,6 @@ Instrumental: F C Am G (x2)
 [Am]But were all strange
 [G]and maybe we don't want to change
 {start_of_chorus}
-{comment: Chorus}
 [F]I got guns in my head and they won't go[C]
 [Am]Spirits in my head and they won't go[G]
 [F]I got guns in my head and they won't go[C]
@@ -63,12 +55,10 @@ I'm just waiting for my day to come
 and I think oh I don't want to let you down
 cause something inside has changed
 and maybe we don't want to stay the same
-{comment: Chorus.}
 [F]And I don't want a never [C]ending life
 [G]I just want to be alive while I'm here[Am]
 And I don't want a never ending life
 I just want to be alive while I'm here
 And I don't want to see another night
 lost inside a lonely life while I'm here
-{comment: Chorus.}
-{end_of_verse}
+{end_of_chorus}

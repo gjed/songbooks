@@ -10,7 +10,6 @@
 [C]Couldn't tempt us if i[F]t tried
 [Dm7]'Cause the afternoon'[A#]s already come and gone[F]
 {start_of_chorus}
-{comment: Chorus}
 Dm7  C  F  A# (x3)
 And I said hoo...                           Hoo…. Hoo….
 [Gm]To you
@@ -20,8 +19,7 @@ But I'm sure it's written all over my face
 Surprise, surprise
 Never something I could hide
 When I see we made it through another day
-{comment: Chorus.}
-{end_of_verse}
+{end_of_chorus}
 {start_of_verse}
 {comment: Bridge}
 [Gm]Now good night[A#]
@@ -30,5 +28,5 @@ When I see we made it through another day
 [Gm]Ooh and if I'm right[A#]
 [Gm]It's the only way
 [A#]To bring me back
-Chorus. (End in F)
+{comment: Chorus. (End in F)}
 {end_of_verse}

@@ -3,13 +3,14 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: C}
+{start_of_verse label="Intro"}
+[C]
+{end_of_verse}
 [C]Tatou o tagata folau vala’auina
 E le atua o le sami tele e o mai
 [F]Ia ava’e le lu’itau [G]e lelei
 [C]Tapenapena         (olo olo vaka)
 {start_of_chorus}
-{comment: Chorus}
 [F]Aue, aue
 [C]Nuku i mua
 [G]Te manulele e tataki iei[C]
@@ -23,9 +24,8 @@ On the ocean breeze
 At night we name every star
 We know where we are
 We know who we are, who we are
-{end_of_verse}
+{end_of_chorus}
 {start_of_chorus}
-{comment: Chorus}
 Aue, aue,
 We set a course to find
 A brand new island everywhere we roam,
@@ -41,4 +41,4 @@ Aue, aue
 [Am]te fen[C]ua, te malie,
 [G]Nae ko hakilia
 [C]We know the way
-{end_of_verse}
+{end_of_chorus}

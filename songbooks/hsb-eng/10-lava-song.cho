@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: C G7 F C G7 C}
+{start_of_verse label="Intro"}
+[C] [G7] [F] [C] [G7] [C]
+{end_of_verse}
 [C]A long long time ago, there was a volc[G7]ano.
 [F]Living all alone, in the middle of the se[C]a.[G7]
 [C]He sat high above his bay, watching all the co[G7]uples play,
@@ -12,7 +14,6 @@
 [F]sang out-loud everyday,
 [C]for years and years.[G7]
 {start_of_chorus}
-{comment: Chorus}
 [F]I have a dream, I hope will come[C] true,
 [G7]that you're here with me and I’m here wit[C]h you
 [F]I wish that the earth, sea, the sky up above-a[C]
@@ -25,14 +26,12 @@ Every day she heard his tune, her lava grew and grew
 because she believed his song was meant for her.
 Now she was so ready to meet him above the sea
 as he sang his song of hope for the last time.
-{comment: Chorus.}
 Rising from the sea below stood a lovely volcano
 looking all around but she could not see him.
 He tried to sing to let her know that she was not alone,
 but with no lava his song was all done.
 He filled the sea with his tears watching his dreams disappear
 as she remembered what his song meant to her.
-{comment: Chorus.}
 And oh they were so happy to finally meet above the sea
 and all together now their lava grew and grew.
 No longer were they alone with Halo-hai as their new home
@@ -46,4 +45,4 @@ Whistle Stop
 [G]La-la-la la la la-la laaa, la-la-la la la-la laaaa,[D]
 G                   C                  G   	  (D)      G
 la-la-la la la-la-la la-la laaaa, la-la la la la-laaaa
-{end_of_verse}
+{end_of_chorus}

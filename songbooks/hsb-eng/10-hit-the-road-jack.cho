@@ -4,7 +4,6 @@
 {key: C}
 
 {start_of_chorus}
-{comment: Chorus}
 [Am]Hit t[G]he road [F]Jack. Don't you come back[E7]
 [Am]no more, no mo[G]re, no more, no[F] more.[E7]
 [Am]Hit t[G]he road Jack an[F]d don't you come back no mo[E7]re. (Wh[Am]at d[G]o [F]yo[E7]u say?) (Tot. x2)
@@ -12,15 +11,14 @@
 [Am]You're the me[G]anest woman I've ever[F] seen.[E7]
 [Am]I guess if [G]you say so[F][E7]
 [Am]I'll have to pack my thin[G]gs and go. (That's[F] right)[E7]
-{comment: Chorus.}
 Now baby, listen baby, don't-a treat me this-a way
 For I'll be back on my feet some day.
 Don't care if you do 'cause it's understood
 you ain't got no money you just ain't no good.
 Well, I guess if you say so
 I'd have to pack my things and go. (That's right)
-{comment: F                          E7           Am    G}
+{end_of_chorus}
+{start_of_verse}
+[F] [E7] [Am] [G]
 {end_of_verse}
-{start_of_chorus}
-{comment: Chorus}
-{end_of_verse}
+{comment: Chorus (x2)}

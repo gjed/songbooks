@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: A#/D}
+{start_of_verse label="Intro"}
+[A#/D]
+{end_of_verse}
 [F]On bended knee is no wa[Am]y to be free
 [F7]Lifting u[A#/D]p an empty cup, I ask silently
 [A#]All my d[F]estinations will accept the one that's me

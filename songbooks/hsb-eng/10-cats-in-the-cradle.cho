@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: D  C D}
+{start_of_verse label="Intro"}
+[D] [C] [D]
+{end_of_verse}
 [D]My child arrived just the other day[F]
 [G]He came to the world in the usual way[D]
 [F]But there were planes to catch and bills to pay

@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: (Am  C  Em  Dsus2) x2 - Am}
+{start_of_verse label="Intro"}
+[Am] [C] [Em] [Dsus2] (x2) - [Am]
+{end_of_verse}
 [Am]Down by the river, by the boat[C]s
 [Em]Where everybody goes to be[Dsus2] alone
 [Am]Where you won't see any rising sun[C]
@@ -17,7 +19,6 @@ Somebody calls you, somebody says
 Swim with the current and float away
 Down by the river everyday
 {start_of_chorus}
-{comment: Chorus}
 [Am]Oh my God[Em], I see [G]how everything [Dsus2]is torn[Am]
 [Em]in th[G]e river deep
 [Fmaj7]And I don't know w[Am]hy I g[Em]o the way[G]
@@ -30,9 +31,8 @@ I walk to the borders on my own
 Fall in the water just like a stone
 Chilled to the marrow in them bones
 Why do I go here all alone?
-{comment: Chorus.}
 [Am]Oh, oh, [C]  I[Em][G]
 [Am]Oh, oh, [C]  I[Em][D]
 [Am]Oh, oh, [C]  I[Em][G]
 [Dsus2]Down by [F]  the rivers[Am]ide (x2)
-{end_of_verse}
+{end_of_chorus}

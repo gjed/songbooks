@@ -4,7 +4,6 @@
 {key: C}
 
 
-
 [A]How many roads must[D] a man walk down,[E][A]
 [D]Be[A]fore you call him a man.
 [A]How many Seas must [D]a white dove sail[E][A]
@@ -13,7 +12,6 @@
 [D]before they'r[A]e forever banned,
 
 {start_of_chorus}
-{comment: Chorus}
 [D]The answer my frie[E]nd is blowin i[A]n the wind[D]
 [E]The answer is blowin in [A]the wind
 Harmonica refrain: (D E A) x2
@@ -21,9 +19,8 @@ Yes and how many years can a mountain exist
 before it is washed to the sea,
 Yes and how many years can some people exist before they’re allowed to be free
 Yes and how many times can a man turn his head; and pretend that he just doesn’t see
-{end_of_verse}
+{end_of_chorus}
 {start_of_chorus}
-{comment: Chorus}
 Yes and how many times must a man look up
 before he can see the sky,
 Yes and how many ears must one man have
@@ -31,5 +28,4 @@ before he can hear people cry,
 yes and how many deaths will it take-
 till he knows
 that too many people have died
-{comment: Chorus.}
-{end_of_verse}
+{end_of_chorus}

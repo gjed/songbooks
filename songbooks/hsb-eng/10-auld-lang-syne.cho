@@ -9,7 +9,6 @@
 [C]Should auld acquaintance be forg[G]ot,
 [F]And auld[G] lang [C]syne!
 {start_of_chorus}
-{comment: Chorus}
 For auld lang syne, my dear,
 For auld lang syne.
 We'll tak a cup o' kindness yet,
@@ -30,4 +29,4 @@ And there's a hand, my trusty fere
 And gie's a hand o' thine
 And we'll tak a right gude-willie waught,
 For auld lang syne
-{end_of_verse}
+{end_of_chorus}

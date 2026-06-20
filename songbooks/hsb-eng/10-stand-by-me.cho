@@ -3,14 +3,15 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: G  Em  C  D   G}
+{start_of_verse label="Intro"}
+[G] [Em] [C] [D] [G]
+{end_of_verse}
 [G]When the night has come
 [Em]And the land is dark
 [C]And the moon is the on[D]ly light we'll see[G]
 [G]No I won't be afraid, no I won't be afraid[Em]
 [C]Just as long as you s[D]tand, stand by me[G]
 {start_of_chorus}
-{comment: Chorus}
 And darlin', darlin', stand by me,
 oh now now stand by me
 Stand by me, stand by me
@@ -19,4 +20,4 @@ Should tumble and fall
 And the mountains should crumble to the sea
 I won't cry, I won't cry, no I won't shed a tear
 Just as long as you stand, stand by me
-{end_of_verse}
+{end_of_chorus}

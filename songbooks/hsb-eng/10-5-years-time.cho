@@ -3,13 +3,14 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: C  F  G  F}
+{start_of_verse label="Intro"}
+[C] [F] [G] [F]
+{end_of_verse}
 [C]Oh well in five [F]years time we could be walking [G]round a zoo[F]
 [C]With the sun shinin[F]g down over me and [G]you[F]
 [C]& there'll be love[F] in the bodies of the el[G]ephants too[F]
 [C]And I'll put my hand[F]s over your eyes, but you'[G]ll peep through[F]
 {start_of_chorus}
-{comment: Chorus}
 And there'll be sun sun sun, All over our bodies
 And sun sun sun, All down our necks
 And sun sun sun, All over our faces
@@ -41,4 +42,4 @@ In five years time You might just prove me wrong
 Strum.
 Oh there'll be love love love Wherever you go (x6)
 There'll be love love love wherever you go there'll be love
-{end_of_verse}
+{end_of_chorus}

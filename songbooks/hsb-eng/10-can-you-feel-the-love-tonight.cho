@@ -14,9 +14,10 @@ P: (Oh.)
 [F]There's magic everywh[C]ere
 [F]And with all this rom[G]antic atmosphe[Am]re
 [F]Disaster's in the air[G]
-{comment: C           G            Am       F}
+{start_of_verse}
+[C] [G] [Am] [F]
+{end_of_verse}
 {start_of_chorus}
-{comment: Chorus}
 [C]The peace the evening brin[F]gs[G]
 [F]The world, for [C]once, in perf[G]ect harmony[Am]
 [F]With all[G] its living things
@@ -28,7 +29,6 @@ P: (Oh.)
 [F]But what, I can't decid[C]e
 [F]Why won't he be the king I[G] know he is[Am]
 [F]The king I see insi[G]de?
-{comment: Chorus.}
 [G]Ch. 2: Can you[D] feel the love[Em] tonight[C]?
 [G]You needn't look too [C]far[D]
 [C]Stealing through[G] the night's uncer[Em]tainties[C]
@@ -38,4 +38,4 @@ P: (Oh.)
 [C]It can be a[F]ssumed[G]
 [F]P: His carefree[C] days with us ar[G]e history[Am]
 [F]T/P: In short, ou[G]r pal is[C] dooooooooomed.
-{end_of_verse}
+{end_of_chorus}

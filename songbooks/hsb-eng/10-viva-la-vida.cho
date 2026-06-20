@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: D E A F#m  (x2)}
+{start_of_verse label="Intro"}
+[D] [E] [A] [F#m] (x2)
+{end_of_verse}
 [D]I used to ru[E]le the world
 [A]Seas would rise when I gave the wo[F#m]rd
 [D]Now in the mo[E]rning I sleep alone
@@ -49,7 +51,9 @@ Instrumental: (D - F#m) x3,  E - E
 
 {comment: Chorus2.}
 Just My Imagination
-{comment: Intro: G D Am Em D}
+{start_of_verse label="Intro"}
+[G] [D] [Am] [Em] [D]
+{end_of_verse}
 [G]There was a game we used to play[D]
 [Am]We would hit the town on friday night
 [Em]And stay in bed until Sun[D]day
@@ -58,7 +62,6 @@ Just My Imagination
 [Em]and Living not for re[D]ality
 
 {start_of_chorus}
-{comment: Chorus}
 [G]It was just my imagination
 [D]It was just my imagination
 [Am]It was just my imagination
@@ -69,7 +72,6 @@ It's the greatest thing from the man above
 The game I used to play
 I've always put my cards upon the table
 Let it never be said that I'd be unstable
-{comment: Chorus.}
 There is a game I like to play
 I like to hit the town on friday night
 And stay in bed until Sunday
@@ -82,4 +84,4 @@ It's not my imagination
 It's not my imagination
 
 [G]No[D]t [Am]my [Em](x18)
-{end_of_verse}
+{end_of_chorus}

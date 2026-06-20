@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: A A A A}
+{start_of_verse label="Intro"}
+[A] [A] [A] [A]
+{end_of_verse}
 [A]Almost heaven,[F#m] West Virginia,
 [E]Blue Ridge Mountains, Shenandoah River.[D][A]
 [A]Life is old there, older than[F#m] the trees,
@@ -11,7 +13,6 @@
 
 
 {start_of_chorus}
-{comment: Chorus}
 [A]Country Roads, take me hom[E]e
 [F#m]To the pla[D]ce I belong:
 [A]West Virginia, mountain mom[E]ma,
@@ -21,7 +22,6 @@ All my mem'ries gather 'round her,
 Miner's lady, stranger to blue water.
 Dark and dusty, painted on the sky,
 Misty taste of moonshine, teardrop in my eye.
-{comment: Chorus.}
 [F#m]I hear her voic[E]e, in the mornin' hou[A]rs she calls me,
 [D]The radio rem[A]inds me of my home far awa[E]y,
 [F#m]And drivin' down the road[G]
@@ -29,6 +29,6 @@ Misty taste of moonshine, teardrop in my eye.
 [E]yesterday, yesterday.[E7]
 
 
-Chorus. (x2)
+{comment: Chorus. (x2)}
 [E]Take me home, Country Road[A]s. (x2)
-{end_of_verse}
+{end_of_chorus}

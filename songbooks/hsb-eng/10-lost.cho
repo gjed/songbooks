@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: Em C G D x2}
+{start_of_verse label="Intro"}
+[Em] [C] [G] [D] x2
+{end_of_verse}
 [Em]Just because I[C]'m losing[G]
 [D]Doesn't mean I'[Em]m lost[C][G]
 [D]Doesn't mean [Em]I'll st[C]op[G]

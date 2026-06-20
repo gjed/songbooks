@@ -3,7 +3,9 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Intro: (Am-F-C-G)x3    Am-F-C-G}
+{start_of_verse label="Intro"}
+(Am-F-C-G)x3 Am-F-C-G
+{end_of_verse}
 Hey!
 [Am]I don't like walki[F]ng around this old and empty ho[C]use
 [Am]So hold my hand, I'll walk w[F]ith you my dear[C]
@@ -32,7 +34,6 @@ This ship will carry our bodies safe to shore Hey!
 
 {end_of_verse}
 {start_of_chorus}
-{comment: Chorus}
 [Am]Don't listen t[F]o a word I say[C]. H[G]ey!
 [Am]The screams all s[F]ound the same. Hey![C][G]
 [Am]Though the trut[F]h may vary
@@ -45,9 +46,8 @@ Now we're torn, torn, torn apart, there's nothing we can do;
 Just let me go, we'll meet again soon;
 Now wait, wait, wait for me. Please hang around;
 I'll see you when I fall asleep. Hey!
-{end_of_verse}
+{end_of_chorus}
 {start_of_chorus}
-{comment: Chorus}
 Though the truth may vary
 This ship will carry our bodies safe to shore (x2)
-{end_of_verse}
+{end_of_chorus}

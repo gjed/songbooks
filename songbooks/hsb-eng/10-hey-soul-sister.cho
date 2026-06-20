@@ -14,7 +14,6 @@
 [D]you're the one I have decided who'[Em]s o[C]ne[D] of my kind
 
 {start_of_chorus}
-{comment: Chorus}
 [C]Hey soul sister ain't that[D] Mister Mister on the radio [G]stereo[D][C]
 [D]The way you move aint fair you kn[G]ow[D]
 [C]Hey soul sister I don't w[D]ant to miss a single thing [G]you do[D][C][D]
@@ -29,7 +28,6 @@
 [C]chest           G                                             D
 I believe in you like a virgin you're Ma-donna
 [Em]and I'm always gonna wanna bl[C]ow your m[D]ind
-{comment: Chorus.}
 [G]The way you can't cut a rug
 [D]Watching you's the only drug I need[Em]
 You're so gangster I'm so thug
@@ -38,8 +36,8 @@ You're so gangster I'm so thug
 [Em]In fact there's nothing I can't be
 [C]I want the w[D]orld to see you be with   me
 
-Chorus. +
+{comment: Chorus. +}
 Hey soul sister I don't want to miss a single thing you do-oooo
 [G]To-night Hey-ay, [D]Hey-ay-AY-ay-ay, Hey-ay-AY-[Em]ay-ay (x2)[C][D]
 [G]Ton-ight
-{end_of_verse}
+{end_of_chorus}

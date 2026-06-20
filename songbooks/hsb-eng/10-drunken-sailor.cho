@@ -3,23 +3,24 @@
 {album: HBS Songbook}
 {key: C}
 
+{start_of_verse label="Intro"}
 (Am-G) or (Em-D)
+{end_of_verse}
+{start_of_verse}
 [Am]What shall we do with a drunken sailor?
 [G]What shall we do with a drunken sailor?
 [Am]What shall we do with a drunken sailor?
-{comment: Am-G                 Am}
-Earl-aye in the morning?
+[Am]Earl-aye [G]in the [Am]morning?
 
-
+{end_of_verse}
 {start_of_chorus}
-{comment: Chorus}
 [Am]Way, hey and up she rises
 [G]Way, hey and up she rises
 [Am]Way, hey and up she rises
-{comment: Am-G                 Am}
-Earl-aye in the morning
+[Am]Earl-aye [G]in the [Am]morning
+{end_of_chorus}
 
-
+{start_of_verse}
 1. Shave his belly with a rusty razor.
 2. Put him in the longboat until he's sober.
 3. Stick him in a barrel with a hosepipe on him.

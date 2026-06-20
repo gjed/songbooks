@@ -3,14 +3,10 @@
 {album: HBS Songbook}
 {key: C}
 
-{comment: Em                      D6/9}
-On the first part of the journey
-{comment: Em                      D6/9}
-I was lookin at all the life
-{comment: Em                              D6/9}
-There were plants and birds and rocks and things
-{comment: Em                           D6/9}
-There were sand and hills and rings
+[Em] [D6/9] On the first part of the journey
+[Em] [D6/9] I was lookin at all the life
+[Em] [D6/9] There were plants and birds and rocks and things
+[Em] [D6/9] There were sand and hills and rings
 
 The first thing I met was a fly with a buzz
 and the sky with no clouds
@@ -18,7 +14,6 @@ the heat was hot and the ground was dry
 but the air was full of sound
 
 {start_of_chorus}
-{comment: Chorus}
 [Em9]I've been through the desert on a horse with no n[Dmaj9]ame
 [Em9]it felt good to be out of the rain[Dmaj9]
 [Em9]in the desert you ca[Dmaj9]n remember your name
@@ -31,7 +26,6 @@ I was looking at a river bed
 And the story it told of a river that flowed
 made me sad to think it was dead
 
-{comment: Chorus.}
 
 After nine days I let the horse run free
 'cause the desert had turned to sea
@@ -42,37 +36,4 @@ The ocean is a desert with its life underground
 and the perfect disguise above
 Under the cities lies a heart made of ground
 but the humans will give no love
-
-
-
-
-Mr. Sandman
-{comment: Intro: F Gm C x2}
-[F]Mister Sandman, b[E7]ring me a dream
-[A7]Make him the cutest that I've ever seen[D7]
-[G7]Give him two lips like roses in clov[C]er
-[F]Then tell him that his lonesome nights are over[C#][C]
-{end_of_verse}
-{start_of_chorus}
-{comment: Chorus}
-[F]Mister Sandman, I[E7]'m so alone
-[A7]Don't have nobody to call my own[D7]
-[Gm]Please turn on your magic beam[A#m]
-[F]Mister Sandman, br[G7]ing  me  a   dre[C7]am[F]
-Mister Sandman, bring me a dream
-Make him the cutest that I've ever seen
-Give him the word that I'm not a rover
-Then tell him that his lonesome nights are over
-{comment: Chorus.}
-Mister Sandman, (yeesss?) bring us a dream
-Give him a pair of eyes with a congeal of gleam
-Give him a lonely heart like Pagliacci
-And lots of  wavy hair like Liberace
-{comment: Chorus2:}
-[F]Mister Sandman, s[E7]omeone to hold
-[A7]Would be so peachy before we're too old[D7]
-[Gm7]So please turn on your magic beam[A#m]
-[F]Mister Sandman, b[G7]ring us
-[F]Please, please, bring us[G7]
-[F]Mister Sandman, b[G7]ring  us  a   [C7]dre[F]am
-{end_of_verse}
+{end_of_chorus}
