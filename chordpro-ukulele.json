@@ -27,6 +27,7 @@
     { "name": "C#",     "base": 1, "frets": [ 1, 1, 1, 4 ], "easy": true },
     { "name": "C#m",    "base": 1, "frets": [ 1, 1, 0, 4 ], "easy": false },
     { "name": "A#",     "base": 1, "frets": [ 3, 2, 1, 1 ], "easy": true },
+    { "name": "F#",     "base": 1, "frets": [ 3, 1, 2, 1 ], "easy": false },
     { "name": "F#m",    "base": 1, "frets": [ 2, 1, 2, 0 ], "easy": false },
     { "name": "Ab",     "base": 1, "frets": [ 5, 3, 4, 3 ], "easy": false },
     { "name": "Dsus4",  "base": 1, "frets": [ 0, 2, 3, 0 ], "easy": false },
