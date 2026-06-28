@@ -1,0 +1,24 @@
+{title: Three Little Birds}
+{artist: Bob Marley}
+{album: HBS Songbook}
+{key: C}
+
+{start_of_verse label="Intro"}
+[A]
+{end_of_verse}
+{start_of_chorus}
+[A]Don't worry, about a thing
+[D]Cause' every little thing, gonna be alright[A]
+[A]Singin' don't worry, about a thing
+[D]Cause' every little thing, gonna be alright[A]
+{end_of_chorus}
+{start_of_verse}
+[A]Rise up this mornin'
+[E]Smile with the rising sun
+[A]Three little birds perch by my d[D]oorstep
+[A]Singin' sweet songs
+[E]of melodys pure and true
+[D]sayin', this my message to you-oo-[A]oo
+{end_of_verse}
+{start_of_chorus}
+{end_of_chorus}

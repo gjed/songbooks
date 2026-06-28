@@ -1,0 +1,34 @@
+{title: Imagine}
+{artist: John Lennon}
+{album: HBS Songbook}
+{key: C}
+
+{start_of_verse label="Intro"}
+[G] [Gmaj7] [C] (3x)
+{end_of_verse}
+[G]Imagine there's[Gmaj7] no heaven[C]
+[G]It's easy if yo[Gmaj7]u try[C]
+[G]No hell   be[Gmaj7]low us[C]
+[G]Abo[Gmaj7]ve us only sky[C]
+[C]Imagine all the p[Em]eople[Am]
+[D]Living for today,  ah-ha[D7]
+Imagine there's no countries
+It isn't hard to do
+Nothing to kill or die for
+And no religion too
+Imagine all the people
+Living life in peace
+{start_of_verse}
+{comment: Bridge}
+[C]You, may say that[D] I'm a dreamer[G][B7]
+[C]But I'm not t[D]he only one[G][B7]
+[C]I hope someday you'll[D] join us[G][B7]
+[C]And the world [D]will live as one[G]
+Imagine no possessions
+I wonder if you can
+No need for greed or hunger
+A brotherhood of man
+Imagine all the people
+Sharing all the world
+{comment: Bridge.}
+{end_of_verse}
