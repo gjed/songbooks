@@ -1,0 +1,21 @@
+// ChordPro config for cover/chord-chart/back-cover pages
+// Single column, full-page images
+{
+  "include": [ "ukulele" ],
+
+  "settings": {
+    "columns": 1
+  },
+
+  "pdf": {
+    "pagealign-songs": 0,
+    "fonts": {
+      "text":    { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf",   "size": 11 },
+      "chord":   { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf", "size": 11, "color": "blue" },
+      "title":   { "file": "/usr/share/fonts/truetype/msttcorefonts/courbd.ttf", "size": 12 },
+      "comment": { "file": "/usr/share/fonts/truetype/msttcorefonts/couri.ttf",  "size": 9 }
+    },
+    "headspace": 20,
+    "margintop": 30
+  }
+}
