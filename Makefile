@@ -31,26 +31,28 @@ else
 SONG_SRCS_$(1)  := $$(wildcard songbooks/$(1)/*.cho)
 SONG_ONLY_$(1)  := $$(filter-out $$(addprefix songbooks/$(1)/,$(COVER_FILES)),$$(SONG_SRCS_$(1)))
 
-$(PDF_DIR)/$(1)-covers.pdf: scripts/make-cover.py $$(wildcard songbooks/$(1)/cover-*.png songbooks/$(1)/cover-*.jpeg songbooks/$(1)/chords.png songbooks/$(1)/strip-*.png) | $(PDF_DIR)
+# Generate cover/chart/back PDFs via Python (all three from one invocation)
+$(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf $(PDF_DIR)/$(1)-back.pdf &: scripts/make-cover.py $$(wildcard songbooks/$(1)/cover-*.png songbooks/$(1)/cover-*.jpeg songbooks/$(1)/chords.png songbooks/$(1)/strip-*.png) | $(PDF_DIR)
 	$(MAKE_COVER) songbooks/$(1) $(PDF_DIR)
-	$(GS) -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite \
-	  -sOutputFile=$$@ \
-	  $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf $(PDF_DIR)/$(1)-back.pdf
-	rm -f $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf $(PDF_DIR)/$(1)-back.pdf
 
+# Songs rendered via ChordPro (2-column)
 $(PDF_DIR)/$(1)-songs.pdf: $$(SONG_ONLY_$(1)) | $(PDF_DIR)
 	$(CHORDPRO) --config $(PROJECT_CFG) $$^ -o $$@
 
-$(PDF_DIR)/$(1).pdf: $(PDF_DIR)/$(1)-covers.pdf $(PDF_DIR)/$(1)-songs.pdf
+# Final merge: cover + chord-chart + songs + back cover
+$(PDF_DIR)/$(1).pdf: $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf $(PDF_DIR)/$(1)-songs.pdf $(PDF_DIR)/$(1)-back.pdf
 	$(GS) -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite \
 	  -sOutputFile=$$@ \
-	  $(PDF_DIR)/$(1)-covers.pdf $(PDF_DIR)/$(1)-songs.pdf
-	rm -f $(PDF_DIR)/$(1)-covers.pdf $(PDF_DIR)/$(1)-songs.pdf
+	  $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf \
+	  $(PDF_DIR)/$(1)-songs.pdf \
+	  $(PDF_DIR)/$(1)-back.pdf
+	rm -f $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf \
+	  $(PDF_DIR)/$(1)-songs.pdf $(PDF_DIR)/$(1)-back.pdf
 endif
 endef
 
 $(foreach sb,$(SONGBOOKS),$(eval $(call SONGBOOK_RULE,$(sb))))
 
 clean:
-	rm -f $(PDFS) $(PDF_DIR)/*-covers.pdf $(PDF_DIR)/*-songs.pdf \
-	  $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-chart.pdf $(PDF_DIR)/*-back.pdf
+	rm -f $(PDFS) $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-chart.pdf \
+	  $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf
