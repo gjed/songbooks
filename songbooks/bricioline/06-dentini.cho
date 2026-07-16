@@ -2,6 +2,8 @@
 {artist: Queen of Saba}
 {album: Bricioline}
 {key: Am}
+{textsize: 10}
+{chordsize: 10}
 
 {start_of_verse}
 {comment: Intro}
@@ -52,14 +54,14 @@ l'ho seppellita tra chili d'impegni
 {end_of_verse}
 
 {start_of_verse}
-Ho perso due denti in un giorno
-ti giuro non piango, mi mordo la lingua
-C'è un'arcata nuova fiammante che cresce
-Già ora mi sento più grande!
-Stanotte la fata mi visiterà
-Come premio avrò due monetine
-Se non ci credi non passa di qua,
-non saprai mai cosa voleva dire
+[RE-]Ho perso due denti in un [LA-]giorno
+[MI7]ti giuro non piango, mi mordo la [LA-]lingua
+[DO]C'è un'arcata nuova fiammante che[SOL] cresce
+[SOL7]Già ora mi sento più [DO/SOL7]grande!
+[DO]Stanotte la fata mi [SOL7]visiterà
+[MI-]Come premio avrò due [LA-]monetine
+[RE-]Se non ci credi non passa di[LA-] qua,
+[MI7]non saprai mai cosa voleva [LA-]dire
 {end_of_verse}
 
 {start_of_verse}
@@ -76,6 +78,12 @@ per bucare il suolo e poi farsi piantina
 {start_of_chorus}
 {comment: RIT}
 {end_of_chorus}
+
+{start_of_verse}
+{comment: strumentale}
+[DO][SOL7][MI7][LA-]
+[LA-][SOL7][MI7][LA-]
+{end_of_verse}
 
 {start_of_verse}
 [DO]Se fossi più grande saprei cosa [SOL7]voglio
