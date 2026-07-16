@@ -2,7 +2,7 @@
 {artist: Queen of Saba}
 {album: Bricioline}
 {key: Do}
-{textsize: 10}
+{textsize: 11}
 {chordsize: 10}
 
 {start_of_verse}
@@ -27,7 +27,6 @@ La lingua che tocca la punta del mio naso è tutta blu!
 {end_of_verse}
 
 {start_of_chorus}
-{comment: RIT}
 E se mi dici balla io muovo la spalla
 E se poi io ho voglia divento una foglia
 Mi muovo col vento, ho il cuore contento
@@ -54,7 +53,6 @@ Sta bene con la gonna mia frufru'! (eh eh eh)
 {end_of_verse}
 
 {start_of_chorus}
-{comment: RIT}
 E se mi dici balla io muovo la spalla
 E se poi io ho voglia divento una foglia
 Mi muovo col vento, ho il cuore contento
@@ -113,5 +111,7 @@ E se mi dici balla io muovo la spalla
 E se poi io ho voglia divento una foglia
 Mi muovo col vento, ho il cuore contento
 Sono come sento e va bene così!
-(va bene così)
 {end_of_chorus}
+{start_of_verse}
+(va bene così)
+{end_of_verse}
