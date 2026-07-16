@@ -2,6 +2,8 @@
 {artist: Queen of Saba}
 {album: Bricioline}
 {key: Do}
+{textsize: 10}
+{chordsize: 10}
 
 {start_of_verse}
 [DO]Questa matt[LA-]ina,
@@ -11,11 +13,11 @@ E faccio finta di esser blu! (proprio tutto blu)
 {end_of_verse}
 
 {start_of_verse}
-Blu le orecchie (orecchie blu)
+[DO]Blu le orecchie (orecchie blu)
 [DO]La bocca (la bocca)
 [DO]I denti (pure i denti)
 [DO]La lingua che toc[LA-]ca la punta [RE-]del mio naso è tutta [SOL7]blu! (la lingua blu)
-[DO]pro[LA-]prio [RE-]tutta [SOL7]blu!
+(proprio tutta blu!)
 {end_of_verse}
 
 {start_of_verse}
@@ -34,8 +36,8 @@ Sono come sento e va bene così!
 
 {start_of_verse}
 Davanti a scuola
-C'è un negozio robivecchi (la cravatta)
-Mi metto tutti i trucchi (i tacchi)
+C'è un negozio robivecchi
+Mi metto tutti i trucchi
 E se voglio anche il tutù (fallo pure tu)
 {end_of_verse}
 
@@ -64,15 +66,15 @@ Giù in cortile
 Fingiamo un po' di avere il becco
 Facciamo salti come insetti
 Corriamo come caribù
+(Dai fallo pure tu!)
 {end_of_verse}
 
 {start_of_verse}
-Provaci anche tu!
 Sei una ranocchia (cra-cra cra-cra)
 Oppure un picchio (come fa il picchio)
 Uno scoiattolo
 Una noce di cocco che rotola sul prato fino a giù
-Dai provaci anche tu!
+(Dai provaci anche tu!)
 Sei una ranocchia, un picchio
 Oppure uno scoiattolo
 Una noce di cocco
@@ -81,15 +83,11 @@ Che rotola sul prato fino a giù
 {end_of_verse}
 
 {start_of_chorus}
-{comment: RIT}
+{comment: RIT x2}
 E se mi dici balla io muovo la spalla
 E se poi io ho voglia divento una foglia
 Mi muovo col vento, ho il cuore contento
 Sono come sento e va bene così!
-E se mi dici balla io muovo la spalla
-E se poi io ho voglia divento una foglia
-Mi muovo col vento, ho il cuore contento
-Sono come sento e va bene così! (va bene così)
 {end_of_chorus}
 
 {start_of_verse}
@@ -105,15 +103,12 @@ Sta bene con la gonna mia frufrù!
 Sei una ranocchia, un picchio
 Oppure uno scoiattolo
 Una noce di cocco
-Che rotola sul prato fino a giù (balla pure tu)
+Che rotola sul prato fino a giù
+(balla pure tu)
 {end_of_verse}
 
 {start_of_chorus}
-{comment: RIT}
-E se mi dici balla io muovo la spalla
-E se poi io ho voglia divento una foglia
-Mi muovo col vento, ho il cuore contento
-Sono come sento e va bene così!
+{comment: RIT x2}
 E se mi dici balla io muovo la spalla
 E se poi io ho voglia divento una foglia
 Mi muovo col vento, ho il cuore contento
