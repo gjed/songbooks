@@ -26,6 +26,7 @@ Band and album metadata live in each song's ChordPro headers (`{artist:}`, `{alb
 ## Songbooks
 
 - [Bricioline](songbooks/bricioline/) — Queen of Saba, Italian children's music
+- [Canzoni Ribelli](songbooks/canzoni-ribelli/) — Italian rebel/protest songs
 
 ## Rendering
 
