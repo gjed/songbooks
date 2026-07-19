@@ -24,13 +24,13 @@ def is_chord_line(text):
 def fix_file(filepath):
     with open(filepath, 'r') as f:
         lines = f.readlines()
-    
+
     new_lines = []
     i = 0
     while i < len(lines):
         line = lines[i]
         stripped = line.strip()
-        
+
         # Check if this is a {comment: CHORDS} line
         m = CHORD_RE.match(stripped)
         if m:
@@ -65,7 +65,7 @@ def fix_file(filepath):
                     new_lines.append(line)
                     i += 1
                 continue
-        
+
         # Check for bare chord lines (not in {comment})
         if stripped and not stripped.startswith('{'):
             parts = stripped.split()
@@ -95,14 +95,14 @@ def fix_file(filepath):
                     new_lines.append(line)
                     i += 1
                 continue
-        
+
         new_lines.append(line)
         i += 1
-    
+
     # Write back
     with open(filepath, 'w') as f:
         f.writelines(new_lines)
-    
+
     return True
 
 files = sorted(glob.glob(os.path.join(DIR, '10-*.cho')))

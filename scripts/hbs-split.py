@@ -132,14 +132,14 @@ def find_song_blocks(raw_text, song_titles):
     """Find start line of each song in the raw text."""
     lines = raw_text.split('\n')
     title_to_line = {}
-    
+
     for i, line in enumerate(lines):
         stripped = line.strip()
         for title, slug, artist in song_titles:
             if normalize(stripped) == normalize(title):
                 if title not in title_to_line:
                     title_to_line[title] = i
-    
+
     return lines, title_to_line
 
 def extract_song(lines, start, end):
@@ -159,12 +159,12 @@ def lines_to_chordpro(title, artist, body_lines):
     out.append(f"{{album: HBS Songbook}}")
     out.append(f"{{key: C}}")
     out.append("")
-    
+
     in_section = False
-    
+
     for line in body_lines:
         stripped = line.strip()
-        
+
         # Detect section headers
         low = stripped.lower()
         if low in ('chorus:', 'chorus') or low.startswith('chorus:') or low.startswith('chorus '):
@@ -175,7 +175,7 @@ def lines_to_chordpro(title, artist, body_lines):
             out.append("{comment: Chorus}")
             in_section = True
             continue
-        
+
         if low in ('verse:', 'verse') or re.match(r'^verse\s*\d*:?$', low):
             if in_section:
                 out.append("{end_of_chorus}" if 'chorus' in low else "{end_of_verse}")
@@ -183,7 +183,7 @@ def lines_to_chordpro(title, artist, body_lines):
             out.append("{start_of_verse}")
             in_section = True
             continue
-        
+
         if low.startswith('bridge:') or low == 'bridge':
             if in_section:
                 out.append("{end_of_verse}")
@@ -192,18 +192,18 @@ def lines_to_chordpro(title, artist, body_lines):
             out.append("{comment: Bridge}")
             in_section = True
             continue
-        
+
         if low.startswith('intro:') or low.startswith('intro ') or low == 'intro':
             out.append(f"{{comment: {stripped}}}")
             continue
-        
+
         if low.startswith('outro:') or low == 'outro':
             if in_section:
                 out.append("{end_of_verse}")
                 in_section = False
             out.append(f"{{comment: {stripped}}}")
             continue
-        
+
         # Convert chord lines: lines where most content is chords
         # A chord line has chords above lyrics — in raw they're on separate lines
         # We keep them as-is (ChordPro inline format not possible without manual work)
@@ -212,56 +212,56 @@ def lines_to_chordpro(title, artist, body_lines):
             # Pure chord line — wrap in comment
             out.append(f"{{comment: {stripped}}}")
             continue
-        
+
         # Convert inline chords: "Am G Am G" style above lyrics
         # Detect lines that are mostly chord names
         tokens = stripped.split()
         if tokens and all(re.match(r'^[A-G][#b]?(m|maj|min|dim|aug|sus|add|7|9|11|13|6|5|4|2|\/[A-G])*[#b]?(\d)?$', t) for t in tokens if t):
             out.append(f"{{comment: {stripped}}}")
             continue
-        
+
         out.append(stripped if stripped else "")
-    
+
     if in_section:
         out.append("{end_of_verse}")
-    
+
     return '\n'.join(out)
 
 def main():
     with open(RAW, 'r', encoding='utf-8') as f:
         raw = f.read()
-    
+
     lines, title_to_line = find_song_blocks(raw, SONGS)
-    
+
     # Build ordered list of (title, line_number)
     found = [(title, title_to_line[title]) for title, slug, artist in SONGS if title in title_to_line]
     found.sort(key=lambda x: x[1])
-    
+
     not_found = [title for title, slug, artist in SONGS if title not in title_to_line]
     if not_found:
         print(f"WARNING: Could not find: {not_found}", file=sys.stderr)
-    
+
     # Extract each song block
     for i, (title, start_line) in enumerate(found):
         end_line = found[i+1][1] if i+1 < len(found) else len(lines)
         body = extract_song(lines, start_line, end_line)
-        
+
         # Find slug and artist
         slug = next(s for t, s, a in SONGS if t == title)
         artist = next(a for t, s, a in SONGS if t == title)
-        
+
         # Number: position in alphabetical SONGS list
         idx = next(i for i, (t, s, a) in enumerate(SONGS) if t == title)
         num = f"{idx+1:02d}"
-        
+
         filename = f"{num}-{slug}.cho"
         filepath = os.path.join(OUT, filename)
-        
+
         content = lines_to_chordpro(title, artist, body)
-        
+
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(content + '\n')
-        
+
         print(f"Written: {filename}")
 
 if __name__ == '__main__':
