@@ -25,6 +25,7 @@ jobs:
             | sudo tee /usr/local/bin/chordpro > /dev/null
           sudo chmod +x /usr/local/bin/chordpro
           chordpro --version
+          pip install Pillow reportlab
 
       - name: Detect changed songbooks
         id: changed

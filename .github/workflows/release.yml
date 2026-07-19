@@ -32,6 +32,7 @@ jobs:
             | sudo debconf-set-selections
           sudo apt-get install -y ttf-mscorefonts-installer
           sudo fc-cache -f
+          pip install Pillow reportlab
 
       - name: Compile all songbooks
         run: make all
