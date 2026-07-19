@@ -35,6 +35,16 @@ SONG_ONLY_$(1)  := $$(filter-out $$(addprefix songbooks/$(1)/,$(COVER_FILES)),$$
 $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf $(PDF_DIR)/$(1)-back.pdf &: scripts/make-cover.py $$(wildcard songbooks/$(1)/cover-*.png songbooks/$(1)/cover-*.jpeg songbooks/$(1)/chords.png songbooks/$(1)/strip-*.png) | $(PDF_DIR)
 	$(MAKE_COVER) songbooks/$(1) $(PDF_DIR)
 
+ifeq ($$(strip $$(SONG_ONLY_$(1))),)
+# No song files — merge cover + chart + back only
+$(PDF_DIR)/$(1).pdf: $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf $(PDF_DIR)/$(1)-back.pdf
+	$(GS) -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite \
+	  -sOutputFile=$$@ \
+	  $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf \
+	  $(PDF_DIR)/$(1)-back.pdf
+	rm -f $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf \
+	  $(PDF_DIR)/$(1)-back.pdf
+else
 # Songs rendered via ChordPro (2-column)
 $(PDF_DIR)/$(1)-songs.pdf: $$(SONG_ONLY_$(1)) | $(PDF_DIR)
 	$(CHORDPRO) --config $(PROJECT_CFG) $$^ -o $$@
@@ -48,6 +58,7 @@ $(PDF_DIR)/$(1).pdf: $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf $(PDF_D
 	  $(PDF_DIR)/$(1)-back.pdf
 	rm -f $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf \
 	  $(PDF_DIR)/$(1)-songs.pdf $(PDF_DIR)/$(1)-back.pdf
+endif
 endif
 endef
 
