@@ -51,7 +51,8 @@
     "headspace": 30,
     "margintop": 40,
     "spacing": {
-      "title": 0.8
+      "title": 0.8,
+      "chords": 1.0
     }
   },
 
