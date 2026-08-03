@@ -19,7 +19,7 @@
     { "name": "SOL7sus2", "base": 1, "frets": [ 0, 2, 1, 0 ], "easy": true },
     { "name": "G7sus2",   "base": 1, "frets": [ 0, 2, 1, 0 ], "easy": true },
     { "name": "C/G",      "base": 1, "frets": [ 0, 0, 0, 3 ], "easy": true },
-    { "name": "DO/SOL7",  "base": 1, "frets": [ 0, 2, 1, 2 ], "easy": true },
+    { "name": "C/G7",     "base": 1, "frets": [ 0, 2, 1, 2 ], "easy": true },
     { "name": "SOL-7", "base": 1, "frets": [ 0, 2, 1, 1 ], "easy": true },
     { "name": "LA-",   "base": 1, "frets": [ 2, 0, 0, 0 ], "easy": true },
     { "name": "LA-7",  "base": 1, "frets": [ 0, 0, 0, 0 ], "easy": true },
@@ -59,7 +59,7 @@
   "diagrams": {
     "show": "all",
     "sorted": true,
-    "suppress": [ "DO/SOL7", "C/G", "D/F#", "Bm/F#", "G/B", "F/E", "F/Eb",
+    "suppress": [ "C/G7", "C/G", "D/F#", "Bm/F#", "G/B", "F/E", "F/Eb",
       "Dm7/C", "Bb/F", "A#/D", "D6/9", "Em9", "Dmaj9",
       "Am/B", "Am/C", "Am/D", "C/E", "D/A", "G/F#", "Am/E",
       "Gsus", "Dsus", "Cm6", "F/C", "A#m" ]
