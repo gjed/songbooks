@@ -19,13 +19,18 @@ COVER_FILES = 00-cover.cho 01-chord-chart.cho 99-back-cover.cho
 COVER_EXISTS = $(wildcard $(1)/$(2))
 
 # Target per songbook slug: make bricioline, make bricioline-en, etc.
+# Optional per-songbook layout overlay: songbooks/<slug>/layout.json
+# (merged on top of the global config; later config wins)
 define SONGBOOK_RULE
 $(1): $(PDF_DIR)/$(1).pdf
 
+CFG_FLAGS_$(1) := --config $(PROJECT_CFG) \
+  $$(if $$(wildcard songbooks/$(1)/layout.json),--config songbooks/$(1)/layout.json)
+
 ifeq ($$(strip $$(call COVER_EXISTS,songbooks/$(1),00-cover.cho)),)
 # No cover — render everything normally
-$(PDF_DIR)/$(1).pdf: songbooks/$(1)/*.cho | $(PDF_DIR)
-	$(CHORDPRO) --config $(PROJECT_CFG) $$^ -o $$@
+$(PDF_DIR)/$(1).pdf: songbooks/$(1)/*.cho $(PROJECT_CFG) $$(wildcard songbooks/$(1)/layout.json) | $(PDF_DIR)
+	$(CHORDPRO) $$(CFG_FLAGS_$(1)) $$(filter %.cho,$$^) -o $$@
 else
 # Has cover pages — generate with Python (centered), songs with ChordPro
 SONG_SRCS_$(1)  := $$(wildcard songbooks/$(1)/*.cho)
@@ -46,8 +51,8 @@ $(PDF_DIR)/$(1).pdf: $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf $(PDF_D
 	  $(PDF_DIR)/$(1)-back.pdf
 else
 # Songs rendered via ChordPro (2-column)
-$(PDF_DIR)/$(1)-songs.pdf: $$(SONG_ONLY_$(1)) | $(PDF_DIR)
-	$(CHORDPRO) --config $(PROJECT_CFG) $$^ -o $$@
+$(PDF_DIR)/$(1)-songs.pdf: $$(SONG_ONLY_$(1)) $(PROJECT_CFG) $$(wildcard songbooks/$(1)/layout.json) | $(PDF_DIR)
+	$(CHORDPRO) $$(CFG_FLAGS_$(1)) $$(filter %.cho,$$^) -o $$@
 
 # Final merge: cover + chord-chart + songs + back cover
 $(PDF_DIR)/$(1).pdf: $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-chart.pdf $(PDF_DIR)/$(1)-songs.pdf $(PDF_DIR)/$(1)-back.pdf
