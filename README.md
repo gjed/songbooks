@@ -27,6 +27,7 @@ Band and album metadata live in each song's ChordPro headers (`{artist:}`, `{alb
 
 - [Bricioline](songbooks/bricioline/) — Queen of Saba, Italian children's music
 - [Canzoni Ribelli](songbooks/canzoni-ribelli/) — Italian rebel/protest songs
+- [Diplomatico e il Collettivo Ninco Nanco](songbooks/diplomatico-e-collettivo/) — È tutto un falso, Ho visto il mondo, Troppe Parole
 
 ## Rendering
 
