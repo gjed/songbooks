@@ -53,7 +53,15 @@
     { "name": "Ab",     "base": 1, "frets": [ 5, 3, 4, 3 ], "easy": false },
     { "name": "Dsus4",  "base": 1, "frets": [ 0, 2, 3, 0 ], "easy": false },
     { "name": "Dsus2",  "base": 1, "frets": [ 2, 2, 0, 0 ], "easy": false },
-    { "name": "Asus4",  "base": 1, "frets": [ 0, 0, 2, 3 ], "easy": false }
+    { "name": "Asus4",  "base": 1, "frets": [ 0, 0, 2, 3 ], "easy": false },
+    { "name": "F#7",    "base": 1, "frets": [ 3, 4, 2, 4 ], "easy": false },
+    { "name": "D#7",    "base": 1, "frets": [ 3, 3, 3, 4 ], "easy": false },
+    { "name": "Dm6",    "base": 1, "frets": [ 2, 2, 1, 2 ], "easy": true },
+    { "name": "Bm7b5",  "base": 1, "frets": [ 2, 2, 1, 2 ], "easy": true },
+    { "name": "Bdim",   "base": 1, "frets": [ 1, 2, 1, 2 ], "easy": true },
+    { "name": "G#dim",  "base": 1, "frets": [ 1, 2, 1, 2 ], "easy": true },
+    { "name": "A#dim",  "base": 1, "frets": [ 0, 1, 0, 1 ], "easy": true },
+    { "name": "A7/5b",  "base": 1, "frets": [ 2, 3, 3, 4 ], "easy": false }
   ],
 
   "settings": {
