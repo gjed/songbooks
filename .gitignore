@@ -3,3 +3,4 @@ pdf/
 raw*.txt
 *.docx
 .worktrees/
+*.zip
