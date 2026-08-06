@@ -1,36 +1,76 @@
-# Songbook
+# Songbooks
 
-A collection of songbooks in [ChordPro](https://www.chordpro.org/) format.
+A collection of songbooks for singing and playing together — with lyrics and
+ukulele chords. No technical knowledge needed to enjoy them.
 
-## Default instrument
+## Just want the songbooks?
 
-Ukulele. Instrument is set via `chordpro-ukulele.json` (`"include": ["ukulele"]`), not in individual song files.
+Ready-to-print PDFs are attached to every release:
 
-## Chord notation
+**[Download the latest PDFs from the Releases page](../../releases/latest)**
 
-Italian notation: `DO`, `RE`, `MI`, `FA`, `SOL`, `LA`, `SI`.
-Minor chords use `-` suffix: `LA-`, `RE-`, `SOL-`.
-Dominant sevenths: `SOL7`, `DO7`, etc.
+Each songbook is a single PDF, one song per page. Download it, print it,
+or open it on a tablet — that's it.
 
-## Structure
+## The songbooks
+
+| Songbook                                                                       | What's inside                                            |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| [Bricioline](songbooks/bricioline/)                                            | Queen of Saba — Italian children's music                 |
+| [Canzoni Ribelli](songbooks/canzoni-ribelli/)                                  | Italian rebel and protest songs                          |
+| [Diplomatico e il Collettivo Ninco Nanco](songbooks/diplomatico-e-collettivo/) | È tutto un falso, Ho visto il mondo, Troppe Parole       |
+| [Good Songs](songbooks/good-songs/)                                            | A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …) |
+| [HBS Songbook — Italiano](songbooks/hbs-ita/)                                  | Italian songs, with cover and chord chart                |
+| [HBS Songbook — English](songbooks/hsb-eng/)                                   | 100+ English songs, with cover and chord chart           |
+
+## How this repo is organized
+
+Every song lives in its own small text file. Files are grouped into folders,
+one folder per songbook:
 
 ```text
 songbooks/
-  <songbook-slug>/
-    NN-song-slug.cho
+  bricioline/                    ← one folder = one songbook
+    01-come-una-foglia.cho       ← one file = one song
+    02-cose-un-limone.cho
+  hsb-eng/
+    ...
+pdf/                             ← compiled PDFs land here
 ```
 
-Songs are numbered with a two-digit prefix (`01`, `02`, …) to preserve track order.
-Band and album metadata live in each song's ChordPro headers (`{artist:}`, `{album:}`).
+The number at the start of each filename (`01`, `02`, …) sets the song order
+in the printed book.
 
-## Songbooks
+## What's inside a song file?
 
-- [Bricioline](songbooks/bricioline/) — Queen of Saba, Italian children's music
-- [Canzoni Ribelli](songbooks/canzoni-ribelli/) — Italian rebel/protest songs
-- [Diplomatico e il Collettivo Ninco Nanco](songbooks/diplomatico-e-collettivo/) — È tutto un falso, Ho visto il mondo, Troppe Parole
+Song files use a simple text format called
+[ChordPro](https://www.chordpro.org/). You can open any `.cho` file right
+here on GitHub and read it — lyrics are plain text, and chords sit in square
+brackets exactly where you play them:
 
-## Rendering
+```text
+{title: Come una foglia}
+{artist: Queen of Saba}
 
-Any ChordPro-compatible app can render `.cho` files.
-Recommended: [ChordPro CLI](https://www.chordpro.org/chordpro/chordpro-installation/),
-[Songbook Pro](https://www.songbookpro.app/), or [Chordsmith](https://chordsmith.app/).
+[DO]Questa mattina, [LA-]al primo incontro
+```
+
+Chords use Italian names: `DO`, `RE`, `MI`, `FA`, `SOL`, `LA`, `SI`
+(instead of C, D, E, F, G, A, B). A minus sign means minor: `LA-` is
+A minor.
+
+## Other ways to use the songs
+
+Besides the PDFs, any ChordPro-compatible app can open the `.cho` files
+directly — handy for transposing to another key or changing instrument.
+Popular choices: [Songbook Pro](https://www.songbookpro.app/) and
+[Chordsmith](https://chordsmith.app/).
+
+## Want to add or fix a song?
+
+Spotted a wrong chord, or want to contribute a song? Wonderful!
+
+- **Easiest**: [open an issue](../../issues/new) describing the song or the
+  fix — no coding required.
+- **Hands-on**: see [CONTRIBUTING.md](CONTRIBUTING.md) for the file
+  conventions, how PDFs get built, and how to open a pull request.
