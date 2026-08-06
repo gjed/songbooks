@@ -2,21 +2,23 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   release:
-    name: Build and release songbooks
+    name: Semantic release
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0  # needed for tag comparison and PR history
+          fetch-depth: 0 # semantic-release needs full history for tags
 
       - name: Install ChordPro and fonts
         run: |
@@ -37,47 +39,17 @@ jobs:
       - name: Compile all songbooks
         run: make all
 
-      - name: Build release notes
-        id: notes
-        run: |
-          TAG="${{ github.ref_name }}"
-
-          # --- Songbook descriptions ---
-          DESCRIPTIONS=""
-          for dir in songbooks/*/; do
-            slug=$(basename "$dir")
-            readme="$dir/README.md"
-            if [ -f "$readme" ]; then
-              DESCRIPTIONS="${DESCRIPTIONS}$(cat "$readme")\n\n---\n\n"
-            fi
-          done
-
-          # --- PRs merged since previous tag ---
-          PREV_TAG=$(git tag --sort=-version:refname | grep -v "^${TAG}$" | head -1)
-          if [ -n "$PREV_TAG" ]; then
-            PR_SECTION="## Changes since ${PREV_TAG}\n\n"
-            PRS=$(git log "${PREV_TAG}..HEAD" --merges --oneline \
-              | grep -oP '#\d+' \
-              | sort -u)
-            if [ -n "$PRS" ]; then
-              for pr in $PRS; do
-                num="${pr#\#}"
-                PR_SECTION="${PR_SECTION}- ${pr}: https://github.com/${{ github.repository }}/pull/${num}\n"
-              done
-            else
-              PR_SECTION="${PR_SECTION}_No merged PRs found._\n"
-            fi
-          else
-            PR_SECTION="## Initial release\n"
-          fi
-
-          # --- Compose full body ---
-          BODY="${DESCRIPTIONS}${PR_SECTION}"
-          printf "%b" "$BODY" > release-notes.md
-          echo "notes_file=release-notes.md" >> "$GITHUB_OUTPUT"
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v3
+      - uses: actions/setup-node@v6
         with:
-          body_path: ${{ steps.notes.outputs.notes_file }}
-          files: pdf/*.pdf
+          node-version: 22
+
+      - name: Semantic release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm install --no-save \
+            semantic-release@24 \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator \
+            @semantic-release/github
+          npx semantic-release
