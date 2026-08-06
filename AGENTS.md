@@ -53,10 +53,30 @@ Band and album metadata live in each song's ChordPro headers, not in the folder 
 
 ## Commit conventions
 
-Follow Conventional Commits. Scope is the songbook slug.
+Follow the `skills/atomic-conventional-commits` skill for every commit.
+Non-negotiable rules:
+
+- **Atomic commits**: one logical change per commit. Independent changes
+  (new song, chord fix, config tweak) are separate commits. Stage files
+  explicitly by path — never `git add -A` or `git add .`.
+- **Conventional Commits**: `<type>(<scope>): <subject>`. Scope is the
+  songbook slug (`config` / `ci` for config and workflow changes).
+- Releases are cut automatically by **semantic-release** on push to
+  `main`: `feat` → minor, `fix` → patch, `BREAKING CHANGE` → major,
+  everything else → no release. Commit types directly control published
+  versions — pick them accurately.
 
 Examples:
 
 - `feat(bricioline): add come-una-foglia`
 - `fix(bricioline): correct chords in dentini`
 - `docs: update README with new songbook`
+
+## Agent skills
+
+Vendor-neutral skills (Agent Skills / SKILL.md standard) live in
+`skills/`. Consult them before working:
+
+- `skills/chordpro-song-authoring` — writing or fixing `.cho` files
+- `skills/chordpro-songbook-management` — songbook structure, builds, chord config
+- `skills/atomic-conventional-commits` — committing and PR hygiene
