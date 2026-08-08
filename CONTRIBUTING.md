@@ -10,6 +10,7 @@ songbooks/
   <songbook-slug>/      one folder per songbook, kebab-case
     NN-song-slug.cho    two-digit track prefix, kebab-case slug
     layout.json         optional per-songbook layout overlay
+    cover.json          optional cover / back-cover layout
 pdf/                    compiled PDFs (build output)
 scripts/                helper scripts (cover generation)
 chordpro-ukulele.json   global ChordPro config
@@ -21,6 +22,51 @@ Numbering conventions:
 - Content songbooks use sequential prefixes: `01-`, `02-`, …
 - Songbooks with special pages reserve `00-cover.cho`,
   `01-chord-chart.cho`, and `99-back-cover.cho`; songs start at `10-`.
+
+## Covers
+
+Covers are not rendered by ChordPro. `scripts/make-cover.py` draws them
+with `reportlab`, and the Makefile merges them around the ChordPro-rendered
+songs with Ghostscript.
+
+A songbook gets cover pages when it contains a `cover.json`. Every key is
+optional; omitted keys fall back to the built-in defaults:
+
+```json
+{
+  "cover": {
+    "title": "Songbook Title",
+    "title_font": "Courier-Bold",
+    "title_size": 28,
+    "title_color": "#000000",
+    "subtitle": "ukulele",
+    "logo": "cover-logo.png",
+    "logo_width": 470,
+    "logo_offset": 10,
+    "strip_top": "strip-top.png",
+    "strip_bottom": "strip-bottom.png",
+    "background": "#FFFFFF",
+    "rules": [{ "color": "#D7489A", "y": 764, "height": 9 }]
+  },
+  "back": {
+    "image": "back-logo.png",
+    "image_width": 260,
+    "caption": "Album  ·  Album  ·  Album",
+    "rules": []
+  }
+}
+```
+
+Notes:
+
+- `rules` draw full-width horizontal colour bars; `y` is measured in PDF
+  points from the bottom of an A4 page (0–842).
+- `logo_offset` shifts the logo vertically from the page centre.
+- Set a value to `null` to drop that element (for example `"title": null`
+  when the logo already contains the band name).
+- Images may carry alpha; transparency is preserved.
+- The chord-chart page is emitted only when the songbook ships a
+  `chords.png`.
 
 ## ChordPro conventions
 
