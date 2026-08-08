@@ -35,15 +35,7 @@ l'oroscopo che fa da padre alle anime perse
 [F]per ballare senza tregua e scrivere chi sono sui muri di città[E7]
 {end_of_verse}
 
-{start_of_chorus}
-{comment: RIT}
-[Am]Ma come ho fatto senza te tra le lenzuola[C]
-[D]e la mia testa pericolosamente vuota[E7]
-[Am]come ho fatto amore mio in questi anni chiusi in gabbia[C]
-[D]una gabbia senza sbarre un aeroplano che si spegne in volo[E7]
-[Am]e restano, non restano lo sai che son troppi ricordi[C]
-[D]e poi mi distruggono e non restano speriamo che non restino[E7]
-{end_of_chorus}
+{chorus}
 
 {start_of_verse}
 [Am]La speranza di un bimbo che guarda
@@ -62,12 +54,4 @@ l'oroscopo che fa da padre alle anime perse
 [E7]di coglioni trasformati in cantautori dal mercato e da YouTube
 {end_of_verse}
 
-{start_of_chorus}
-{comment: RIT}
-[Am]Ma come ho fatto senza te tra le lenzuola[C]
-[D]e la mia testa pericolosamente vuota[E7]
-[Am]come ho fatto amore mio in questi anni chiusi in gabbia[C]
-[D]una gabbia senza sbarre un aeroplano che si spegne in volo[E7]
-[Am]e restano, non restano lo sai che son troppi ricordi[C]
-[D]e poi mi distruggono e non restano speriamo che non restino[E7]
-{end_of_chorus}
+{chorus}
