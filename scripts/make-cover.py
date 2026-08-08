@@ -3,18 +3,54 @@
 Usage:
   python3 make-cover.py <songbook-dir> <output-dir>
 
-Requires images in the songbook directory:
-  cover-uke.png        — ukulele logo (cover)
-  strip-top.png        — top decorative strip
-  strip-bottom.png     — bottom decorative strip
-  cover-celtic.jpeg    — Celtic knot (back cover)
-  chords.png           — chord chart diagram
+Layout is driven by an optional `cover.json` in the songbook directory.
+When absent, the built-in defaults reproduce the original HBS layout:
+
+  cover-uke.png        - logo (cover)
+  strip-top.png        - top decorative strip
+  strip-bottom.png     - bottom decorative strip
+  cover-celtic.jpeg    - image (back cover)
+  chords.png           - chord chart diagram
+
+cover.json schema (all keys optional):
+
+  {
+    "cover": {
+      "background": "#FFFFFF",
+      "title": "HBS Songbook",
+      "title_font": "Courier-Bold",
+      "title_size": 28,
+      "title_color": "#000000",
+      "subtitle": "ukulele",
+      "subtitle_font": "Courier",
+      "subtitle_size": 13,
+      "subtitle_color": "#000000",
+      "strip_top": "strip-top.png",
+      "strip_bottom": "strip-bottom.png",
+      "logo": "cover-uke.png",
+      "logo_width": 480,
+      "logo_offset": -20,
+      "rules": [ { "color": "#D7489A", "y": 700, "height": 6 } ]
+    },
+    "back": {
+      "background": "#FFFFFF",
+      "image": "cover-celtic.jpeg",
+      "image_width": 240,
+      "caption": "",
+      "caption_font": "Courier",
+      "caption_size": 11,
+      "caption_color": "#000000",
+      "rules": []
+    }
+  }
 """
 
+import json
 import os
 import sys
-import tempfile
+
 from PIL import Image
+from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
@@ -22,7 +58,49 @@ from reportlab.pdfgen import canvas
 
 
 PAGE_W, PAGE_H = A4  # 595.27 x 841.89 pt
-MARGIN = 10 * mm       # 28.35 pt
+MARGIN = 10 * mm     # 28.35 pt
+
+DEFAULTS = {
+    "cover": {
+        "background": None,
+        "title": "HBS Songbook",
+        "title_font": "Courier-Bold",
+        "title_size": 28,
+        "title_color": "#000000",
+        "subtitle": None,
+        "subtitle_font": "Courier",
+        "subtitle_size": 13,
+        "subtitle_color": "#000000",
+        "strip_top": "strip-top.png",
+        "strip_bottom": "strip-bottom.png",
+        "logo": "cover-uke.png",
+        "logo_width": 480,
+        "logo_offset": -20,
+        "rules": [],
+    },
+    "back": {
+        "background": None,
+        "image": "cover-celtic.jpeg",
+        "image_width": 240,
+        "caption": None,
+        "caption_font": "Courier",
+        "caption_size": 11,
+        "caption_color": "#000000",
+        "rules": [],
+    },
+}
+
+
+def load_config(sb_dir):
+    """Merge cover.json (if present) on top of the built-in defaults."""
+    cfg = {section: dict(values) for section, values in DEFAULTS.items()}
+    path = os.path.join(sb_dir, "cover.json")
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            user = json.load(fh)
+        for section in cfg:
+            cfg[section].update(user.get(section, {}))
+    return cfg
 
 
 def _open_img(img_path):
@@ -33,39 +111,80 @@ def _open_img(img_path):
     return ImageReader(im)
 
 
-def make_cover(sb_dir, output):
-    """Cover: title + strips + centered ukulele logo."""
+def _resolve(sb_dir, name):
+    """Return an existing path for `name` inside sb_dir, else None."""
+    if not name:
+        return None
+    path = os.path.join(sb_dir, name)
+    return path if os.path.exists(path) else None
+
+
+def _paint_background(c, color):
+    if not color:
+        return
+    c.saveState()
+    c.setFillColor(HexColor(color))
+    c.rect(0, 0, PAGE_W, PAGE_H, stroke=0, fill=1)
+    c.restoreState()
+
+
+def _draw_rules(c, rules):
+    """Draw full-width horizontal colour bars: [{color, y, height}]."""
+    for rule in rules or []:
+        c.saveState()
+        c.setFillColor(HexColor(rule.get("color", "#000000")))
+        inset = rule.get("inset", MARGIN)
+        c.rect(inset, rule.get("y", 0), PAGE_W - 2 * inset,
+               rule.get("height", 4), stroke=0, fill=1)
+        c.restoreState()
+
+
+def _draw_centered_image(c, img_path, width, center_y):
+    """Draw an image centred horizontally at the given width."""
+    img = _open_img(img_path)
+    w, h = img.getSize()
+    disp_w = min(width, PAGE_W - 2 * MARGIN)
+    disp_h = disp_w * (h / w)
+    x = (PAGE_W - disp_w) / 2
+    y = center_y - disp_h / 2
+    c.drawImage(img, x, y, width=disp_w, height=disp_h,
+                preserveAspectRatio=True, mask="auto")
+    return disp_h
+
+
+def make_cover(sb_dir, output, cfg):
+    """Cover: optional title/subtitle, decorative strips or rules, logo."""
+    conf = cfg["cover"]
     c = canvas.Canvas(output, pagesize=A4)
-    strip_top = os.path.join(sb_dir, "strip-top.png")
-    strip_bot = os.path.join(sb_dir, "strip-bottom.png")
-    uke = os.path.join(sb_dir, "cover-uke.png")
+    _paint_background(c, conf.get("background"))
+    _draw_rules(c, conf.get("rules"))
 
-    c.setFont("Courier-Bold", 28)
-    c.drawCentredString(PAGE_W / 2, PAGE_H - MARGIN - 35, "HBS Songbook")
+    if conf.get("title"):
+        c.setFont(conf["title_font"], conf["title_size"])
+        c.setFillColor(HexColor(conf["title_color"]))
+        c.drawCentredString(PAGE_W / 2, PAGE_H - MARGIN - 35, conf["title"])
 
-    # Top strip
-    if os.path.exists(strip_top):
-        img = _open_img(strip_top)
-        c.drawImage(img, MARGIN, PAGE_H - MARGIN - 75,
-                    width=PAGE_W - 2 * MARGIN, preserveAspectRatio=True, anchor='n')
+    strip_top = _resolve(sb_dir, conf.get("strip_top"))
+    if strip_top:
+        c.drawImage(_open_img(strip_top), MARGIN, PAGE_H - MARGIN - 75,
+                    width=PAGE_W - 2 * MARGIN, preserveAspectRatio=True,
+                    anchor="n", mask="auto")
 
-    # Ukulele logo — centered horizontally, positioned slightly below true center
-    if os.path.exists(uke):
-        uke_img = _open_img(uke)
-        avail_w = PAGE_W - 2 * MARGIN
-        w, h = uke_img.getSize()
-        aspect = h / w
-        disp_w = min(avail_w, 480)
-        disp_h = disp_w * aspect
-        x = (PAGE_W - disp_w) / 2
-        y = (PAGE_H - disp_h) / 2 - 20  # slightly below true center to balance title
-        c.drawImage(uke_img, x, y, width=disp_w, height=disp_h, preserveAspectRatio=True)
+    logo = _resolve(sb_dir, conf.get("logo"))
+    if logo:
+        _draw_centered_image(c, logo, conf["logo_width"],
+                             PAGE_H / 2 + conf["logo_offset"])
 
-    # Bottom strip
-    if os.path.exists(strip_bot):
-        bot_img = _open_img(strip_bot)
-        c.drawImage(bot_img, MARGIN, MARGIN + 10,
-                    width=PAGE_W - 2 * MARGIN, preserveAspectRatio=True, anchor='s')
+    if conf.get("subtitle"):
+        c.setFont(conf["subtitle_font"], conf["subtitle_size"])
+        c.setFillColor(HexColor(conf["subtitle_color"]))
+        c.drawCentredString(PAGE_W / 2, MARGIN + 55, conf["subtitle"])
+
+    strip_bot = _resolve(sb_dir, conf.get("strip_bottom"))
+    if strip_bot:
+        c.drawImage(_open_img(strip_bot), MARGIN, MARGIN + 10,
+                    width=PAGE_W - 2 * MARGIN, preserveAspectRatio=True,
+                    anchor="s", mask="auto")
 
     c.showPage()
     c.save()
@@ -87,56 +206,61 @@ def make_chord_chart(sb_dir, output):
             disp_w = disp_h / aspect
         x = (PAGE_W - disp_w) / 2
         y = (PAGE_H - disp_h) / 2
-        c.drawImage(img, x, y, width=disp_w, height=disp_h, preserveAspectRatio=True)
+        c.drawImage(img, x, y, width=disp_w, height=disp_h,
+                    preserveAspectRatio=True)
     c.showPage()
     c.save()
 
 
-def make_back_cover(sb_dir, output):
-    """Back cover: Celtic knot centered at ~240pt wide."""
+def make_back_cover(sb_dir, output, cfg):
+    """Back cover: centred image with optional caption and rules."""
+    conf = cfg["back"]
     c = canvas.Canvas(output, pagesize=A4)
-    img_path = os.path.join(sb_dir, "cover-celtic.jpeg")
-    if os.path.exists(img_path):
-        img = _open_img(img_path)
-        w, h = img.getSize()
-        aspect = h / w
-        disp_w = 240  # matching previous ChordPro scale=0.9 column-width size
-        disp_h = disp_w * aspect
-        x = (PAGE_W - disp_w) / 2
-        y = (PAGE_H - disp_h) / 2
-        c.drawImage(img, x, y, width=disp_w, height=disp_h, preserveAspectRatio=True)
+    _paint_background(c, conf.get("background"))
+    _draw_rules(c, conf.get("rules"))
+
+    img_path = _resolve(sb_dir, conf.get("image"))
+    if img_path:
+        _draw_centered_image(c, img_path, conf["image_width"], PAGE_H / 2)
+
+    if conf.get("caption"):
+        c.setFont(conf["caption_font"], conf["caption_size"])
+        c.setFillColor(HexColor(conf["caption_color"]))
+        c.drawCentredString(PAGE_W / 2, MARGIN + 40, conf["caption"])
+
     c.showPage()
     c.save()
 
 
-def generate_cover_pdfs(sb_dir):
-    """Generate all three PDFs. Returns (cover, chart, back) paths."""
-    out_dir = os.path.join(sb_dir, "..", "..", "pdf")
+def generate_cover_pdfs(sb_dir, out_dir=None):
+    """Generate the cover, optional chart, and back PDFs.
+
+    The chord-chart page is produced only when the songbook ships a
+    chords.png; otherwise the returned chart path is None.
+    """
+    if out_dir is None:
+        out_dir = os.path.join(sb_dir, "..", "..", "pdf")
     os.makedirs(out_dir, exist_ok=True)
+    cfg = load_config(sb_dir)
     base = os.path.basename(os.path.normpath(sb_dir))
     cover_pdf = os.path.join(out_dir, f"{base}-cover.pdf")
-    chart_pdf = os.path.join(out_dir, f"{base}-chart.pdf")
     back_pdf = os.path.join(out_dir, f"{base}-back.pdf")
-    make_cover(sb_dir, cover_pdf)
-    make_chord_chart(sb_dir, chart_pdf)
-    make_back_cover(sb_dir, back_pdf)
+    make_cover(sb_dir, cover_pdf, cfg)
+    make_back_cover(sb_dir, back_pdf, cfg)
+
+    chart_pdf = None
+    if _resolve(sb_dir, "chords.png"):
+        chart_pdf = os.path.join(out_dir, f"{base}-chart.pdf")
+        make_chord_chart(sb_dir, chart_pdf)
     return cover_pdf, chart_pdf, back_pdf
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: make-cover.py <songbook-dir> <output-dir>", file=sys.stderr)
+        print("Usage: make-cover.py <songbook-dir> <output-dir>",
+              file=sys.stderr)
         sys.exit(1)
-    sb_dir = sys.argv[1]
-    out_dir = sys.argv[2]
-    os.makedirs(out_dir, exist_ok=True)
-    base = os.path.basename(os.path.normpath(sb_dir))
-    cover_pdf = os.path.join(out_dir, f"{base}-cover.pdf")
-    chart_pdf = os.path.join(out_dir, f"{base}-chart.pdf")
-    back_pdf = os.path.join(out_dir, f"{base}-back.pdf")
-    make_cover(sb_dir, cover_pdf)
-    make_chord_chart(sb_dir, chart_pdf)
-    make_back_cover(sb_dir, back_pdf)
-    print(f"Cover → {cover_pdf}")
-    print(f"Chart → {chart_pdf}")
-    print(f"Back  → {back_pdf}")
+    cover, chart, back = generate_cover_pdfs(sys.argv[1], sys.argv[2])
+    print(f"Cover → {cover}")
+    print(f"Chart → {chart or '(skipped, no chords.png)'}")
+    print(f"Back  → {back}")

@@ -1,3 +1,6 @@
-# Bricioline — Queen of Saba
+## Bricioline — Queen of Saba
 
-Songbook for the album *Bricioline* by Queen of Saba. Ukulele, Italian chord notation.
+Songbook for *Bricioline (Canzoni per chi cresce)* — "songs for those who
+grow up" — by the Venice-based Italian indie band Queen of Saba. Whimsical,
+imaginative pieces built for singing together with the very young. Ukulele,
+Italian chord notation.
