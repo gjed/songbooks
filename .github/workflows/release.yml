@@ -44,12 +44,17 @@ jobs:
           node-version: 24
 
       - name: Semantic release
+        id: release
+        uses: cycjimmy/semantic-release-action@v6
+        with:
+          semantic_version: 24
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report release
         run: |
-          npm install --no-save \
-            semantic-release@24 \
-            @semantic-release/commit-analyzer \
-            @semantic-release/release-notes-generator \
-            @semantic-release/github
-          npx semantic-release
+          if [ "${{ steps.release.outputs.new_release_published }}" = "true" ]; then
+            echo "Released ${{ steps.release.outputs.new_release_git_tag }}"
+          else
+            echo "No release cut for this push."
+          fi
