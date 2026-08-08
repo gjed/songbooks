@@ -5,7 +5,8 @@
 
 {comment: Str. | D | F#7 | Bm | G |  Rit. | Bm | D | A | Em |  Bridge | Em | Bm | F# | Bm | x2}
 
-{start_of_verse label="Intro"}
+{comment: Intro}
+{start_of_verse}
 [D] [F#7] [Bm] [G] x2
 {end_of_verse}
 
