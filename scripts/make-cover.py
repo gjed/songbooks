@@ -59,7 +59,8 @@ def make_cover(sb_dir, output):
         disp_h = disp_w * aspect
         x = (PAGE_W - disp_w) / 2
         y = (PAGE_H - disp_h) / 2 - 20  # slightly below true center to balance title
-        c.drawImage(uke_img, x, y, width=disp_w, height=disp_h, preserveAspectRatio=True)
+        c.drawImage(uke_img, x, y, width=disp_w, height=disp_h,
+                    preserveAspectRatio=True, mask="auto")
 
     # Bottom strip
     if os.path.exists(strip_bot):
