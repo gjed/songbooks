@@ -1,0 +1,61 @@
+// Layout overlay for the Diplomatico e il Collettivo Ninco Nanco songbook.
+// Merged on top of chordpro-ukulele.json by the Makefile.
+{
+  // Single-artist songbook: the stock TOC and outline formats append
+  // " - <artist>" to every entry, identical on all 23 lines.
+  //
+  // Only the track-order table is kept. The stock config also emits an
+  // alphabetical "Contents by Title" table; once the artist suffix is
+  // dropped it is a near-duplicate of this one, and every TOC costs two
+  // pages because ChordPro follows each one with a blank page.
+  // Song titles remain reachable alphabetically through the PDF outline.
+  "contents": [
+    {
+      "fields": [ "songindex" ],
+      "label": "Table of Contents",
+      "line": "%{title}",
+      "pageno": "%{page}",
+      "template": "stdtoc"
+    }
+  ],
+
+  "pdf": {
+    "outlines": [
+      {
+        "collapse": false,
+        "fields": [ "sorttitle" ],
+        "label": "By Title",
+        "letter": 5,
+        "line": "%{title}"
+      }
+    ],
+
+    // Repeated choruses are collapsed to {chorus} recalls; tag the recall
+    // with the same RIT marker used by the inline chorus comments.
+    "chorus": {
+      "recall": {
+        "tag": "RIT"
+      }
+    },
+
+    // Every song fits on a single page. Reclaimed from margins first
+    // (defaults are 40pt on every side), then line spacing, and only
+    // then type size — 11pt left two songs spilling onto a second page.
+    "marginleft": 25,
+    "marginright": 25,
+    "marginbottom": 25,
+    "columnspace": 12,
+    "footspace": 10,
+
+    "spacing": {
+      "lyrics": 1.0,
+      "chords": 1.0,
+      "empty": 0.5
+    },
+
+    "fonts": {
+      "text":  { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf", "size": 10 },
+      "chord": { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf", "size": 10, "color": "blue" }
+    }
+  }
+}
