@@ -3,8 +3,11 @@ name: PR Check
 on:
   pull_request:
     paths:
-      - "songbooks/**/*.cho"
+      - "songbooks/**"
       - "chordpro-ukulele.json"
+      - "scripts/make-cover.py"
+      - "Makefile"
+      - ".github/workflows/pr-check.yml"
 
 jobs:
   compile:
@@ -35,17 +38,45 @@ jobs:
 
       - name: Detect changed songbooks
         id: changed
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
-          SLUGS=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+          set -euo pipefail
+          CHANGED=$(git diff --name-only "origin/$BASE_REF...HEAD")
+          echo "Changed files:"
+          echo "$CHANGED" | sed 's/^/  /'
+
+          # A change to the build machinery (or to this workflow) affects
+          # every songbook, so compile the lot.
+          if echo "$CHANGED" | grep -qE '^(Makefile|scripts/make-cover\.py|chordpro-ukulele\.json|\.github/workflows/pr-check\.yml)$'; then
+            echo "Build machinery changed — compiling all songbooks."
+            echo "slugs=all" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SLUGS=$(echo "$CHANGED" \
             | grep '^songbooks/' \
             | cut -d/ -f2 \
             | sort -u \
-            | tr '\n' ' ')
+            | tr '\n' ' ' || true)
           echo "slugs=$SLUGS" >> "$GITHUB_OUTPUT"
 
       - name: Compile songbooks
+        env:
+          SLUGS: ${{ steps.changed.outputs.slugs }}
         run: |
-          for slug in ${{ steps.changed.outputs.slugs }}; do
-            echo "Compiling $slug..."
-            make $slug
-          done
+          set -euo pipefail
+          if [ -z "$SLUGS" ]; then
+            echo "::error::No songbooks detected — the PR filter fired but nothing was resolved."
+            exit 1
+          fi
+          if [ "$SLUGS" = "all" ]; then
+            make all
+          else
+            for slug in $SLUGS; do
+              echo "Compiling $slug..."
+              make "$slug"
+            done
+          fi
+          echo "Built PDFs:"
+          ls -la pdf/
