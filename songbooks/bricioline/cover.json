@@ -1,0 +1,33 @@
+{
+  "cover": {
+    "title": null,
+    "logo": "cover-bricioline.png",
+    "logo_width": 460,
+    "logo_offset": 20,
+    "strip_top": null,
+    "strip_bottom": null,
+    "subtitle": "songbook  \u00b7  ukulele",
+    "subtitle_font": "Courier-Bold",
+    "subtitle_size": 13,
+    "subtitle_color": "#3F7779",
+    "rules": [
+      { "color": "#92C7C8", "y": 790, "height": 9 },
+      { "color": "#3F7779", "y": 777, "height": 9 },
+      { "color": "#D6A8A1", "y": 764, "height": 9 },
+      { "color": "#92C7C8", "y": 56, "height": 9 },
+      { "color": "#3F7779", "y": 43, "height": 9 },
+      { "color": "#D6A8A1", "y": 30, "height": 9 }
+    ]
+  },
+  "back": {
+    "image": "back-poster.png",
+    "image_width": 360,
+    "caption": "bricioline  \u00b7  canzoni per chi cresce",
+    "caption_font": "Courier",
+    "caption_size": 10,
+    "caption_color": "#3F7779",
+    "rules": [
+      { "color": "#3F7779", "y": 30, "height": 9 }
+    ]
+  }
+}
