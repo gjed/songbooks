@@ -3,11 +3,12 @@
 {album: Ho visto il mondo}
 {key: D}
 
-{comment: Str. | D | F#7 | Bm | G |  Rit. | Bm | D | A | Em |  Bridge | Em | Bm | F# | Bm | x2}
+{comment: Strofa: D F#7 Bm G}
+{comment: Rit.: Bm D A Em}
+{comment: Bridge: Em Bm F# Bm}
 
-{comment: Intro}
 {start_of_verse}
-[D] [F#7] [Bm] [G] x2
+[D] [F#7] [Bm] [G] [D] [F#7] [Bm] [G]
 {end_of_verse}
 
 {start_of_verse}
@@ -39,18 +40,7 @@ dei ci[Bm]occolatini e le fes[G]te a natale
 [D]Ma sai dopo aver visto il [F#7]mondo non mi basterai[Bm][G]
 {end_of_verse}
 
-{start_of_chorus}
-{comment: RIT}
-[Bm]Era un po [D]più bello [A]quando pensavo a [Em]te[Bm]
-Anesteti[D]zzavi [A]tutti i mie[Em]i perchè[Bm]
-I tuoi baci [D]mi andav[A]ano a fondo[Em]
-E crede[Bm]vo di [D]avere [A]tutto[Em]
-[Bm]Era un po [D]più bello [A]quando pensavo a [Em]te[Bm]
-Anesteti[D]zzavi [A]tutti i mie[Em]i perchè[Bm]
-I tuoi baci [D]mi davan[A]o tutto[Em]
-Però po[Bm]i ho [D]visto [A]il mond[Em]o
-[Bm]Ohoho[D]hohoho[A]hohohoh[Em]
-{end_of_chorus}
+{chorus: x2}
 
 {start_of_bridge}
 [Em]Diciamo che le mie battute non [Bm]suonano piu come quelle di pri[F#]ma[Bm]
@@ -59,15 +49,4 @@ Però po[Bm]i ho [D]visto [A]il mond[Em]o
 [D]Ma sai da quando ho visto il mo[F#7]ndo non ho piu bisog[Bm]no di te....[G]
 {end_of_bridge}
 
-{start_of_chorus}
-{comment: RIT}
-[Bm]Era un po [D]più bello [A]quando pensavo a [Em]te[Bm]
-Anesteti[D]zzavi [A]tutti i mie[Em]i perchè[Bm]
-I tuoi baci [D]mi andav[A]ano a fondo[Em]
-E crede[Bm]vo di [D]avere [A]tutto[Em]
-[Bm]Era un po [D]più bello [A]quando pensavo a [Em]te[Bm]
-Anesteti[D]zzavi [A]tutti i mie[Em]i perchè[Bm]
-I tuoi baci [D]mi davan[A]o tutto[Em]
-Però po[Bm]i ho [D]visto [A]il mond[Em]o
-[Bm]Ohoho[D]hohoho[A]hohohoh[Em]
-{end_of_chorus}
+{chorus: x2}

@@ -36,14 +36,7 @@
 [Em]sabbia e fuoco mischiata al galoppo di un corpo ferito[D][C][B7]
 {end_of_verse}
 
-{start_of_chorus}
-{comment: RIT}
-[Em]e il vento arriverà a sollevare le gonne gitane[D]
-[C]nell'aria pesante il flamenco e le cueva[B7]
-[Em]a far volare coriandoli d'oro nei vicoli bui di una vecchia granada[D][C][B7]
-[Em]a pulire quel sangue bollente su sabbia rovente gli squarci sul legno[D][C][B7]
-[Em]a pulire il rumore di applausi tuonanti che bramano lame d'incanto[D][C][B7]
-{end_of_chorus}
+{chorus}
 
 {start_of_verse}
 [B7]l'attribuzione dell'odio non corrisponde mia cara si svegli
@@ -52,11 +45,4 @@
 [Em]seminare violenza lo sapete fare, io pago per voi[D][C]
 {end_of_verse}
 
-{start_of_chorus}
-{comment: RIT}
-[Em]e il vento arriverà a sollevare le gonne gitane[D]
-[C]nell'aria pesante il flamenco e le cueva[B7]
-[Em]a far volare coriandoli d'oro nei vicoli bui di una vecchia granada[D][C][B7]
-[Em]a pulire quel sangue bollente su sabbia rovente gli squarci sul legno[D][C][B7]
-[Em]a pulire il rumore di applausi tuonanti che bramano lame d'incanto[D][C][B7]
-{end_of_chorus}
+{chorus}

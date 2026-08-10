@@ -16,7 +16,7 @@ un bacio a te che [G]fai comizi per campare[G#dim]
 a chi non ha più voglia di punt[Am]are sull'amore x 2
 un bacio a te che m[F]i hai cresciuto col sorriso
 un bacio a chi nei m[C]atrimoni era l'intruso
-un bacio a te che t[G]e ne fotti se è sbagliato[G#dim]
+un bacio a te che t[G]e ne fotti se è sbagl[G#dim]iato
 e a chi molto spesso non è [Am]stato il benvoluto
 e chi da anni be[F]ve l'ultimo bicchiere
 perchè è condannato a non vol[C]er più ricordare
@@ -34,8 +34,10 @@ di doman non ho certezza[Am]
 di doman non ho certezza[F]
 {end_of_chorus}
 
-{comment: tema strumentale: F C F C G G}
-{comment: seconda strofa un tono sopra}
+{comment: Tema strumentale}
+{start_of_verse}
+[F] [C] [F] [C] [G] [G]
+{end_of_verse}
 
 {start_of_verse}
 un bacio a te che mi [D]saluti da lontano

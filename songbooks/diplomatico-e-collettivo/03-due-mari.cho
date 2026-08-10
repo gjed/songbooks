@@ -27,7 +27,6 @@
 {end_of_chorus}
 
 {start_of_verse}
-{comment: [Gm] [Cm] [D7] tutta così}
 Mentre Toto chiede lasciatemi cantare canto al funerale della nostra cara Italia
 Giusta e mala solidale mentre il fume sale e bagna gli occhi di mia madre
 Il buon Francesco dice Dio è morto da
@@ -43,28 +42,8 @@ Obbedire per sfamare sua maestà: i cani fedelissimi La corte, i conti anche que
 Come ai in cui la natura era padrona della terra dei due mari, del cielo del sole
 {end_of_verse}
 
-{start_of_chorus}
-{comment: RIT}
-E non è vero che è poco importante
-Fatti senti sentire la mia gente risponde
-Che non abbiam venduto l'anima
-Che non abbiam venduto l'anima
-E non è vero che è poco importante
-Fatti senti sentire la mia gente risponde
-Che non abbiam venduto l'anima
-Che non abbiam venduto l'anima
-Prappaparappaparappa Prappaparappaparappaparabom
-{end_of_chorus}
+{chorus: x2}
 
-{start_of_chorus}
-{comment: RIT}
-E non è vero che è poco importante
-Fatti senti sentire la mia gente risponde
-Che non abbiam venduto l'anima
-Che non abbiam venduto l'anima
-E non è vero che è poco importante
-Fatti senti sentire la mia gente risponde
-Che non abbiam venduto l'anima
-Che non abbiam venduto l'anima
+{start_of_verse}
 Prappaparappaparappa Prappaparappaparappaparabom
-{end_of_chorus}
+{end_of_verse}
