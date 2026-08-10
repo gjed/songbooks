@@ -16,11 +16,14 @@ Bevo e mi dispero tu a trent'anni eri [Fm]già un uomo
 Io a tre[G]nt'anni prendo il volo
 {end_of_verse}
 
-{start_of_chorus}
-{comment: RIT}
+{start_of_bridge}
 [Ab]Da sto mondo nuovo p[Eb]er me era troppo amore mio[Bb]
 D[G]ormi serena che non è un addio
 [Ab]Questo mondo nuovo, [Eb]per me era troppo, per me [Bb]era troppo[G]
+{end_of_bridge}
+
+{start_of_chorus}
+{comment: RIT}
 [Ab]Ridono spesso gli ae[Eb]reoplani ci salutano dall'[Bb]alto e ci stan sempre più lon[Cm]tani
 [Ab]Ridono spesso gli ae[Eb]reoplani ci salutano come [Bb]fossimo puntini[Cm]
 {end_of_chorus}
@@ -35,16 +38,13 @@ Il lungo viag[G]gio col cerotto sopra il cuore
 [Cm]E nella notte, che piango spesso e lei mi ascolta mentre respi[Fm]ro a fiato corto[G]
 {end_of_verse}
 
-{start_of_chorus}
-{comment: RIT}
+{start_of_bridge}
 [Ab]Da sto mondo nuovo p[Eb]er me era troppo amore mio[Bb]
 D[G]ormi serena che non è un addio
 [Ab]Questo mondo nuovo, [Eb]per me era troppo, per me [Bb]era troppo[G]
-[Ab]Ridono spesso gli ae[Eb]reoplani ci salutano dall'[Bb]alto e ci stan sempre più lon[Cm]tani
-[Ab]Ridono spesso gli ae[Eb]reoplani ci salutano come [Bb]fossimo puntini[Cm]
-[Ab]Ridono spesso gli ae[Eb]reoplani ci salutano dall'[Bb]alto e ci stan sempre più lon[Cm]tani
-[Ab]Ridono spesso gli ae[Eb]reoplani ci salutano come [Bb]fossimo puntini[Cm]
-{end_of_chorus}
+{end_of_bridge}
+
+{chorus: x2}
 
 {start_of_bridge}
 [Ab]Puntini come buchi sulle braccia d[Eb]ei perduti
@@ -53,13 +53,7 @@ D[G]ormi serena che non è un addio
 [Bb]Puntini in un mirino al suono di [Cm]una sveglia
 {end_of_bridge}
 
-{start_of_chorus}
-{comment: RIT}
-[Ab]Ridono spesso gli ae[Eb]reoplani ci salutano dall'[Bb]alto e ci stan sempre più lon[Cm]tani
-[Ab]Ridono spesso gli ae[Eb]reoplani ci salutano come [Bb]fossimo puntini[Cm]
-[Ab]Ridono spesso gli ae[Eb]reoplani ci salutano dall'[Bb]alto e ci stan sempre più lon[Cm]tani
-[Ab]Ridono spesso gli ae[Eb]reoplani ci salutano come [Bb]fossimo puntini[Cm]
-{end_of_chorus}
+{chorus: x2}
 
 {start_of_verse}
 [Cm]Purtroppo resto solo nel mio mondo trangugiando macedonie di emozioni,[Fm]
