@@ -69,18 +69,20 @@ endef
 
 $(foreach sb,$(SONGBOOKS),$(eval $(call SONGBOOK_RULE,$(sb))))
 
-# Ad-hoc preview: render a songbook for guitar with Italian chord notation,
-# bypassing the tracked ukulele config and any cover pages.
-# Usage: make guitar-italian SB=<songbook-slug>
-.PHONY: guitar-italian
-guitar-italian: | $(PDF_DIR)
-	@test -n "$(SB)" || { echo "Usage: make guitar-italian SB=<songbook-slug>"; exit 1; }
+# Ad-hoc preview: render a songbook for guitar, bypassing the tracked
+# ukulele config and any cover pages.
+# Usage: make guitar-ita SB=<songbook-slug>   (Italian chord notation)
+#        make guitar-eng SB=<songbook-slug>   (English chord notation)
+.PHONY: guitar-ita guitar-eng
+guitar-ita guitar-eng: | $(PDF_DIR)
+	@test -n "$(SB)" || { echo "Usage: make $@ SB=<songbook-slug>"; exit 1; }
 	@test -d songbooks/$(SB) || { echo "No such songbook: songbooks/$(SB)"; exit 1; }
 	$(CHORDPRO) $(if $(wildcard songbooks/$(SB)/layout.json),--config songbooks/$(SB)/layout.json) \
-	  --transcode=latin \
+	  --transcode=$(if $(filter guitar-ita,$@),latin,common) \
 	  songbooks/$(SB)/*.cho \
-	  -o $(PDF_DIR)/$(SB)-guitar-italian.pdf
+	  -o $(PDF_DIR)/$(SB)-$@.pdf
 
 clean:
 	rm -f $(PDFS) $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-chart.pdf \
-	  $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf $(PDF_DIR)/*-guitar-italian.pdf
+	  $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf \
+	  $(PDF_DIR)/*-guitar-ita.pdf $(PDF_DIR)/*-guitar-eng.pdf
