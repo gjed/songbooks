@@ -1,0 +1,60 @@
+// Layout overlay for the España Circo Este songbook.
+// Merged on top of chordpro-ukulele.json by the Makefile.
+{
+  // Single-artist songbook: the stock TOC and outline formats append
+  // " - <artist>" to every entry, identical on all 10 lines. Keep only
+  // the track-order table; the alphabetical "Contents by Title" table
+  // would be a near-duplicate and every TOC costs two pages because
+  // ChordPro follows each one with a blank page. Titles stay reachable
+  // alphabetically through the PDF outline.
+  "contents": [
+    {
+      "fields": [ "songindex" ],
+      "label": "Table of Contents",
+      "line": "%{title}",
+      "pageno": "%{page}",
+      "template": "stdtoc"
+    }
+  ],
+
+  "pdf": {
+    "outlines": [
+      {
+        "collapse": false,
+        "fields": [ "sorttitle" ],
+        "label": "By Title",
+        "letter": 5,
+        "line": "%{title}"
+      }
+    ],
+
+    // Repeated choruses are collapsed to {chorus} recalls; tag the recall
+    // with the same RIT marker used by the inline chorus comments.
+    "chorus": {
+      "recall": {
+        "tag": "RIT"
+      }
+    },
+
+    // Every song fits on a single page. Reclaimed from margins first
+    // (defaults are 40pt on every side), then type size, then line
+    // spacing — these songs run longer than the diplomatico set, so 10pt
+    // left four of them spilling onto a second page.
+    "marginleft": 25,
+    "marginright": 25,
+    "marginbottom": 25,
+    "columnspace": 12,
+    "footspace": 10,
+
+    "spacing": {
+      "lyrics": 0.95,
+      "chords": 0.95,
+      "empty": 0.5
+    },
+
+    "fonts": {
+      "text":  { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf", "size": 9 },
+      "chord": { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf", "size": 9, "color": "blue" }
+    }
+  }
+}
