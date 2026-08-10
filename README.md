@@ -75,3 +75,14 @@ Spotted a wrong chord, or want to contribute a song? Wonderful!
   fix — no coding required.
 - **Hands-on**: see [CONTRIBUTING.md](CONTRIBUTING.md) for the file
   conventions, how PDFs get built, and how to open a pull request.
+
+## License
+
+This repository does not claim any rights over the songs themselves. All
+lyrics, music, and chords remain the property of their respective artists,
+songwriters, and publishers. This project only repackages and organizes
+publicly available songs and chords into printable songbooks for personal,
+non-commercial use (rehearsals, sing-alongs, and the like).
+
+If you are a rights holder and want a song removed, please
+[open an issue](../../issues/new).
