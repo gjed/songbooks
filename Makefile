@@ -69,6 +69,18 @@ endef
 
 $(foreach sb,$(SONGBOOKS),$(eval $(call SONGBOOK_RULE,$(sb))))
 
+# Ad-hoc preview: render a songbook for guitar with Italian chord notation,
+# bypassing the tracked ukulele config and any cover pages.
+# Usage: make guitar-italian SB=<songbook-slug>
+.PHONY: guitar-italian
+guitar-italian: | $(PDF_DIR)
+	@test -n "$(SB)" || { echo "Usage: make guitar-italian SB=<songbook-slug>"; exit 1; }
+	@test -d songbooks/$(SB) || { echo "No such songbook: songbooks/$(SB)"; exit 1; }
+	$(CHORDPRO) $(if $(wildcard songbooks/$(SB)/layout.json),--config songbooks/$(SB)/layout.json) \
+	  --transcode=latin \
+	  songbooks/$(SB)/*.cho \
+	  -o $(PDF_DIR)/$(SB)-guitar-italian.pdf
+
 clean:
 	rm -f $(PDFS) $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-chart.pdf \
-	  $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf
+	  $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf $(PDF_DIR)/*-guitar-italian.pdf

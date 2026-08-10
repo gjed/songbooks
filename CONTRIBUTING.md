@@ -127,18 +127,16 @@ make bricioline    # a single songbook (target = folder slug)
 
 Output lands in `pdf/<slug>.pdf`, one song per page.
 
-To preview a songbook for a different instrument or chord notation without
-touching the tracked config, call `chordpro` directly and swap in a built-in
-instrument (`guitar`, `mandolin`, ...) and/or `--transcode` system (`latin`,
-`common`, `german`, ...), e.g. a guitar/Italian-notation render of
-`diplomatico-e-collettivo`:
+To preview a songbook for guitar with Italian chord notation (`Do`, `Re`,
+`Mi`...) instead of the tracked ukulele config, use:
 
 ```bash
-chordpro --config songbooks/diplomatico-e-collettivo/layout.json \
-  --transcode=latin \
-  songbooks/diplomatico-e-collettivo/*.cho \
-  -o pdf/diplomatico-guitar-italian.pdf
+make guitar-italian SB=diplomatico-e-collettivo
 ```
+
+Output lands in `pdf/<slug>-guitar-italian.pdf`. This bypasses cover pages
+and any custom chord diagrams — it's a preview render, not a release
+artifact.
 
 ## Commits and pull requests
 
