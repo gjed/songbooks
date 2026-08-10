@@ -69,15 +69,17 @@ endef
 
 $(foreach sb,$(SONGBOOKS),$(eval $(call SONGBOOK_RULE,$(sb))))
 
-# Ad-hoc preview: render a songbook for guitar, bypassing the tracked
-# ukulele config and any cover pages.
+# Ad-hoc preview: render a songbook for guitar instead of ukulele, keeping
+# the project's fonts/columns/margins. Swaps in the guitar instrument
+# (tuning + chord diagrams) on top of the project config, skips cover pages.
 # Usage: make guitar-ita SB=<songbook-slug>   (Italian chord notation)
 #        make guitar-eng SB=<songbook-slug>   (English chord notation)
 .PHONY: guitar-ita guitar-eng
 guitar-ita guitar-eng: | $(PDF_DIR)
 	@test -n "$(SB)" || { echo "Usage: make $@ SB=<songbook-slug>"; exit 1; }
 	@test -d songbooks/$(SB) || { echo "No such songbook: songbooks/$(SB)"; exit 1; }
-	$(CHORDPRO) $(if $(wildcard songbooks/$(SB)/layout.json),--config songbooks/$(SB)/layout.json) \
+	$(CHORDPRO) --config $(PROJECT_CFG) --config guitar \
+	  $(if $(wildcard songbooks/$(SB)/layout.json),--config songbooks/$(SB)/layout.json) \
 	  --transcode=$(if $(filter guitar-ita,$@),latin,common) \
 	  songbooks/$(SB)/*.cho \
 	  -o $(PDF_DIR)/$(SB)-$@.pdf
