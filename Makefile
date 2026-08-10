@@ -69,9 +69,10 @@ endef
 
 $(foreach sb,$(SONGBOOKS),$(eval $(call SONGBOOK_RULE,$(sb))))
 
-# Ad-hoc preview: render a songbook for guitar instead of ukulele, keeping
-# the project's fonts/columns/margins. Swaps in the guitar instrument
-# (tuning + chord diagrams) on top of the project config, skips cover pages.
+# Ad-hoc preview: render a full songbook (cover, chord chart, back cover,
+# songs) exactly like `make <slug>`, but for guitar instead of ukulele.
+# Swaps in the guitar instrument (tuning + chord diagrams) on top of the
+# project config; cover/back/chart pages are unaffected by instrument.
 # Usage: make guitar-ita SB=<songbook-slug>   (Italian chord notation)
 #        make guitar-eng SB=<songbook-slug>   (English chord notation)
 .PHONY: guitar-ita guitar-eng
@@ -81,8 +82,18 @@ guitar-ita guitar-eng: | $(PDF_DIR)
 	$(CHORDPRO) --config $(PROJECT_CFG) --config guitar \
 	  $(if $(wildcard songbooks/$(SB)/layout.json),--config songbooks/$(SB)/layout.json) \
 	  --transcode=$(if $(filter guitar-ita,$@),latin,common) \
-	  songbooks/$(SB)/*.cho \
-	  -o $(PDF_DIR)/$(SB)-$@.pdf
+	  $(filter-out songbooks/$(SB)/00-cover.cho songbooks/$(SB)/01-chord-chart.cho songbooks/$(SB)/99-back-cover.cho,$(wildcard songbooks/$(SB)/*.cho)) \
+	  -o $(PDF_DIR)/$(SB)-$@-songs.pdf
+	@if [ -f songbooks/$(SB)/cover.json ] || [ -f songbooks/$(SB)/00-cover.cho ]; then \
+	  $(MAKE_COVER) songbooks/$(SB) $(PDF_DIR) ; \
+	  parts="$(PDF_DIR)/$(SB)-cover.pdf" ; \
+	  [ -f $(PDF_DIR)/$(SB)-chart.pdf ] && parts="$$parts $(PDF_DIR)/$(SB)-chart.pdf" ; \
+	  parts="$$parts $(PDF_DIR)/$(SB)-$@-songs.pdf $(PDF_DIR)/$(SB)-back.pdf" ; \
+	  $(GS) -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=$(PDF_DIR)/$(SB)-$@.pdf $$parts ; \
+	  rm -f $(PDF_DIR)/$(SB)-cover.pdf $(PDF_DIR)/$(SB)-chart.pdf $(PDF_DIR)/$(SB)-back.pdf $(PDF_DIR)/$(SB)-$@-songs.pdf ; \
+	else \
+	  mv $(PDF_DIR)/$(SB)-$@-songs.pdf $(PDF_DIR)/$(SB)-$@.pdf ; \
+	fi
 
 clean:
 	rm -f $(PDFS) $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-chart.pdf \
