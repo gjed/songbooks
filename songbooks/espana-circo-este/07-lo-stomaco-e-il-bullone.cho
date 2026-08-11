@@ -3,7 +3,7 @@
 {album: Scienze della maleducazione}
 {key: Dm}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 Parapa [Dm]para papara pa[Bb]para papara pa[A]para papara pa[Dm]pa
 Parapa [Dm]para papara pa[Bb]para papara pa[A]para papara pa[Dm]pa
 {end_of_verse}
@@ -15,7 +15,7 @@ che vuol scoppi[Dm]are,
 continuerà a gi[Dm]rare.
 {end_of_verse}
 
-{start_of_verse label="Bridge"}
+{start_of_verse}
 Parapa [Dm]para papara pa[Bb]para papara pa[A]para papara pa[Dm]pa
 Parapa [Dm]para papara pa[Bb]para papara pa[A]para papara pa[Dm]pa
 {end_of_verse}
@@ -42,7 +42,7 @@ con [Gm]ogni cura ti pre[A]serverò
 [A]Non mangerò mai p[Dm]iù
 {end_of_chorus}
 
-{start_of_verse label="Bridge"}
+{start_of_verse}
 Parapa [Dm]para papara pa[Bb]para papara pa[A]para papara pa[Dm]pa
 {end_of_verse}
 
@@ -61,7 +61,7 @@ senza [Dm]mai intralciare il pro[F]gresso lascio andare,
 e a [Gm]manovella disubbidi[A]rò
 {end_of_verse}
 
-{start_of_verse label="Outro"}
+{start_of_verse}
 N.C.
 Oi mia, oi mia, oi mia
 N.C.
@@ -72,12 +72,12 @@ N.C
 Non mangerò mai più
 {end_of_verse}
 
-{start_of_verse label="Interlude"}
+{start_of_verse}
 [Dm][A][Dm]
 [Dm][A][Dm]
 {end_of_verse}
 
-{start_of_verse label="Outro"}
+{start_of_verse}
 [Gm]Oi mia oi mia oi m[F]ia
 [A]In gola c'ho un bull[Dm]one
 [Gm]Oi mia oi mia oi m[F]ia

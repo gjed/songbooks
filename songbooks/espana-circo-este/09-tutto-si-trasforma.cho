@@ -3,7 +3,7 @@
 {album: Canzoni per la decrescita felice}
 {key: Ab}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 [Ab][Eb][Bbm7][Bbm]
 {end_of_verse}
 
@@ -42,7 +42,7 @@ Non ci son[Bbm7]o giusti metodi, non c'è[Bbm] una sola forma
 Tutto c[Bbm7]ambia niente rimane tutt[Bbm]o si trasforma
 {end_of_chorus}
 
-{start_of_verse label="Instrumental"}
+{start_of_verse}
 [Ab][Eb][Bbm7][Bbm]
 [Ab][Eb][Bbm7][Bbm]
 {end_of_verse}
@@ -71,11 +71,11 @@ Non ci son[Bbm7]o giusti metodi, non c'è[Db] una sola forma
 Tutto c[Bbm7]ambia niente rimane tutt[Db]o si trasforma
 {end_of_chorus}
 
-{start_of_verse label="Instrumental"}
+{start_of_verse}
 [Ab](tu[Eb]tto[Bbm7] si t[Db]rasforma)
 {end_of_verse}
 
-{start_of_verse label="Bridge"}
+{start_of_verse}
 [Ab]Per chi è sempre di fretta
 [Eb]Bacia lentamentamente
 [Bbm7]Ama per davvero

@@ -3,7 +3,7 @@
 {album: Scienze della maleducazione}
 {key: Am}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 [E][Am]
 {end_of_verse}
 
@@ -39,7 +39,7 @@ Cara Vati[Am]cana Maria ti vedo [F]strana
 questo [Dm]sasso romperà il tuo cor[E]azon
 {end_of_chorus}
 
-{start_of_verse label="Interlude"}
+{start_of_verse}
 [E][Am][E7][Am]
 {end_of_verse}
 
@@ -73,12 +73,12 @@ Cara Vati[Am]cana Maria ti vedo [F]strana
 questo [Dm]sasso romperà il tuo cor[E]azon
 {end_of_chorus}
 
-{start_of_verse label="Interlude"}
+{start_of_verse}
 [E][Am][E7][Am]
 [E][Am][E7][Am]
 {end_of_verse}
 
-{start_of_verse label="Outro"}
+{start_of_verse}
 Mi[E]seria, Miseria
 
 a pranzo e a colazione
