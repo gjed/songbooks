@@ -3,7 +3,7 @@
 {album: Canzoni per la decrescita felice}
 {key: Am}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 [Am][C][G]
 {end_of_verse}
 
@@ -68,7 +68,7 @@ non pian[F]gono, addio.
 [Am]e nei giorni storti anche ridere.
 {end_of_chorus}
 
-{start_of_verse label="Interlude"}
+{start_of_verse}
 [C][G][Am]
 
 [F]Hey, sai che v[C]orrei,

@@ -3,7 +3,7 @@
 {album: Machu Picchu}
 {key: Am}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 [Am]Più dico una cosa, più mi contraddico
 [D]Il tempo che passa [D4]è mio nemico
 [Am]Si nasce in un monte, si studia in città
@@ -61,11 +61,11 @@ Nat[D]o nel posto giusto ma i[D4]n un mondo sbagliato
 
 {chorus}
 
-{start_of_verse label="Instrumental"}
+{start_of_verse}
 [Am][C][D][D4]
 {end_of_verse}
 
-{start_of_verse label="Outro"}
+{start_of_verse}
 Qui [Am]si divide tutto, non solo la fortuna
 Sot[C]to lo stesso sole, sotto la stessa luna
 [D]Passo dopo passo, paesi e città

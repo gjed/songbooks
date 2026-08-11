@@ -20,7 +20,7 @@ La [Am]lucha, la suerte y el dol[F]or
 Oi mi cora[Dm]zon, can't stop that's a[E]mor.
 {end_of_chorus}
 
-{start_of_verse label="Interlude"}
+{start_of_verse}
 [Am][F][Dm][E]
 [Am][F][Dm][E]
 {end_of_verse}
@@ -37,12 +37,12 @@ Qui solo io e [Dm]te, fuori un [E]mondo che c'ha pa[F]ura.[G]
 
 {chorus}
 
-{start_of_verse label="Interlude"}
+{start_of_verse}
 [Am][F][Dm][E]
 [Am][F][Dm][E]
 {end_of_verse}
 
-{start_of_verse label="Bridge"}
+{start_of_verse}
 [Am][Dm][G][E]
 
 Oi [Am]Che dimelo tu por[Dm]que,
@@ -53,7 +53,7 @@ Ensename desp[G]ues, a vivirlo sin [E]ti.
 
 {chorus}
 
-{start_of_verse label="Outro"}
+{start_of_verse}
 [Am][F][Dm][E]
 [Am][F][Dm][E]
 {end_of_verse}

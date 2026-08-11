@@ -3,7 +3,7 @@
 {album: Canzoni per la decrescita felice}
 {key: D}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 [G] [A] [D] [D] x4
 {end_of_verse}
 
@@ -38,7 +38,7 @@ E anc[G]ora non sai [A]bene c[D]osa fare
 È un bel copio[D]ne[F#m]
 {end_of_chorus}
 
-{start_of_verse label="Instrumental"}
+{start_of_verse}
 [Em][G][Gm][D][F#m]
 [G][A][D][D]
 [G][A][D][D]
@@ -71,7 +71,7 @@ Can[G]zoni in spiagg[A]ia collezion[D]are
 È un bel copio[D]ne[F#m]
 {end_of_chorus}
 
-{start_of_verse label="Outro"}
+{start_of_verse}
 [Em]Ora che [G]fai
 [D]Aspetti che finisca l'acqua[F#m]zzone
 [Em]Io parti[G]rei
@@ -85,6 +85,6 @@ Can[G]zoni in spiagg[A]ia collezion[D]are
 È quello che so far[Bm]e[G][D][A]
 {end_of_verse}
 
-{start_of_verse label="Outro"}
+{start_of_verse}
 [Bm][G][D][A]
 {end_of_verse}

@@ -3,7 +3,7 @@
 {album: La revolución del amor}
 {key: Am}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 [Am]
 {end_of_verse}
 
@@ -33,7 +33,7 @@ Annaffier[Dm]ò il fiore della colli[Am]na, il vero fio[E]re della revolucio[Am]
 Annaffie[Dm]rò il fiore della coll[Am]ina, il vero f[E]iore della revoluc[Am]ion.
 {end_of_verse}
 
-{start_of_verse label="Interlude"}
+{start_of_verse}
 [Am][E][Am]
 [Am][E][Am]
 {end_of_verse}
