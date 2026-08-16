@@ -3,7 +3,7 @@
 {album: il dolce ricordo della nostra disperata gioventù}
 {key: Gm}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 [Gm][Dm][Eb][Bb]
 [Cm][Gm][F][F]
 [Gm][Dm][Eb][Bb]
@@ -49,7 +49,7 @@ Che sarai per sempre q[Bb]ui (qui)
 Uh-uh-uh-[Eb]uh, uh-uh-[Bb]uh, uh-uh[F]-uh
 {end_of_chorus}
 
-{start_of_verse label="Bridge"}
+{start_of_verse}
 [D]Non chiedo altro
 Che un piccolo angolo di paradiso
 Per spegnere con te il dolce ricordo
@@ -74,6 +74,6 @@ Che sarai per sempre q[Bb]ui (qui)
 Uh-uh-uh-[Eb]uh, uh-uh-[Bb]uh, uh-uh[F]-uh
 {end_of_chorus}
 
-{start_of_verse label="Outro (arpeggiata)"}
+{start_of_verse}
 {comment: Ripete il ritornello}
 {end_of_verse}

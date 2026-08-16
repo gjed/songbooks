@@ -3,7 +3,7 @@
 {album: il dolce ricordo della nostra disperata gioventù}
 {key: A}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 [A]
 {end_of_verse}
 
@@ -42,7 +42,7 @@ Da stringere per sempre coi [A]miei
 Poi buttami di nuovo nel [A]mare
 {end_of_verse}
 
-{start_of_verse label="Pre-Chorus"}
+{start_of_verse}
 [F#m]    E se con l'acqua alla gola toccherò la s[C#m]cogliera
 Di [Bm]nuovo con tutta la voce potrò [E]respirare
 E res[F#m]pirerò, e con un fiato finirò l'atmo[C#m]sfera
@@ -64,6 +64,6 @@ Vedrai, [E]vedrai, vedrai, vedrai
 (Portami a ballare in primavera)
 {end_of_chorus}
 
-{start_of_verse label="Outro"}
+{start_of_verse}
 [Bm][E][A][F#m][Bm][E][A]
 {end_of_verse}

@@ -3,7 +3,7 @@
 {album: il dolce ricordo della nostra disperata gioventù}
 {key: Bb}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 [Bb][F][Bb][F][C][F]
 {end_of_verse}
 
@@ -84,6 +84,6 @@ E il tempo scorre all'ins[G]ù[D]
 Ah-[C]uh
 {end_of_verse}
 
-{start_of_verse label="Outro"}
+{start_of_verse}
 [G][C][G][D]
 {end_of_verse}

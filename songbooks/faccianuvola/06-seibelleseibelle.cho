@@ -3,7 +3,7 @@
 {album: Singolo}
 {key: A}
 
-{start_of_verse label="Intro"}
+{start_of_verse}
 Ma non so come dirti che
 Sei b[F#m]ellə, sei bellə, sei bel[E]lə)
 (Sei bellə da riempirsi gl[D]i occhi)
@@ -24,7 +24,7 @@ E ho s[Dmaj7]fogliato canzonieri e diz[E7b13]ionari
 Per scriverti q[A]ualcosa e farti stare[E/B] qui
 {end_of_verse}
 
-{start_of_verse label="Pre-Chorus"}
+{start_of_verse}
 Ma non so come dirti [C#7]che
 {end_of_verse}
 
@@ -57,7 +57,7 @@ Torn[Dmaj7]erò su quei sentieri arco[E7b13]baleno
 E guarderò a[A]nche per te e ti r[E/B]icordo
 {end_of_verse}
 
-{start_of_verse label="Pre-Chorus"}
+{start_of_verse}
 Ma non so come dirti [C#7]che
 {end_of_verse}
 
@@ -81,7 +81,7 @@ Ma è una lamina nel [F#m]petto che raffredda tutti gli[E] organi
 Se non respiro [D]te
 {end_of_chorus}
 
-{start_of_verse label="Outro"}
+{start_of_verse}
 [A][E][D][C#7]
 [A][C#m][G][N.C.]
 {comment: double time}
