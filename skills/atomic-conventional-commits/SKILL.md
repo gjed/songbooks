@@ -53,10 +53,10 @@ docs: update README with new songbook
 ## Checklist before every commit
 
 1. `git status --short` — confirm only the intended files are staged.
-2. Change builds: `make <affected-slug>` exits 0.
-3. Message type matches the actual change (would a reader agree this is a
+1. Change builds: `make <affected-slug>` exits 0.
+1. Message type matches the actual change (would a reader agree this is a
    `fix` vs `feat`?), scope is the songbook slug, subject is imperative.
-4. The commit is self-contained: revertable without breaking anything else.
+1. The commit is self-contained: revertable without breaking anything else.
 
 ## Edge cases
 

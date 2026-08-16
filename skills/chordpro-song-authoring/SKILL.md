@@ -57,8 +57,10 @@ All four headers are required. `{key: ...}` always uses English note names
 - Verses: `{start_of_verse}` / `{end_of_verse}`. Choruses:
   `{start_of_chorus}` / `{end_of_chorus}` with `{comment: RIT}` as first
   line (Italian songbooks) — English songbooks omit the RIT comment.
+
 - Every `start_of_*` MUST have its matching `end_of_*`. Never nest a verse
   inside a chorus or vice versa — fix nesting before touching chords.
+
 - Intro/Bridge/Outro/Solo: use a labeled verse with inline chords, e.g.:
 
   ```text
@@ -72,24 +74,24 @@ All four headers are required. `{key: ...}` always uses English note names
 
 ## Critical rules (baseline failure modes)
 
-| Temptation | Correct behavior |
-|---|---|
-| Source shows chords only on verse 1 → copy them onto verse 2+ | NO. Later verses/choruses get **no inline chords** unless the source explicitly shows them |
-| Put intro chords in a `{comment:}` | Use `{start_of_verse label="Intro"}` with inline `[CHORD]`s |
-| Write `{key: Do}` for Italian songs | Key header is English: `{key: C}` |
-| OCR/HTML source looks plausible | Verify chord placement against the source alignment; mark uncertainty with a `# TODO` comment line rather than guessing |
-| Second voice as separate verse/lines | Render harmony as `first voice (second voice)` on ONE line |
-| Invent missing lyrics or chords | Never. Transcribe only what the source provides |
+| Temptation                                                    | Correct behavior                                                                                                        |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Source shows chords only on verse 1 → copy them onto verse 2+ | NO. Later verses/choruses get **no inline chords** unless the source explicitly shows them                              |
+| Put intro chords in a `{comment:}`                            | Use `{start_of_verse label="Intro"}` with inline `[CHORD]`s                                                             |
+| Write `{key: Do}` for Italian songs                           | Key header is English: `{key: C}`                                                                                       |
+| OCR/HTML source looks plausible                               | Verify chord placement against the source alignment; mark uncertainty with a `# TODO` comment line rather than guessing |
+| Second voice as separate verse/lines                          | Render harmony as `first voice (second voice)` on ONE line                                                              |
+| Invent missing lyrics or chords                               | Never. Transcribe only what the source provides                                                                         |
 
 ## Steps
 
 1. Read 1–2 sibling `.cho` files in the target songbook to confirm chord
    notation (Italian vs English) and local conventions.
-2. Extract metadata (title, artist, album, key) and write the header block.
-3. Convert body: chords-over-lyrics → inline `[CHORD]` at the exact
+1. Extract metadata (title, artist, album, key) and write the header block.
+1. Convert body: chords-over-lyrics → inline `[CHORD]` at the exact
    syllable position given by column alignment in the source.
-4. Wrap sections in paired verse/chorus markers; label intro/bridge/outro.
-5. Verify:
+1. Wrap sections in paired verse/chorus markers; label intro/bridge/outro.
+1. Verify:
    - every `start_of_*` has a matching `end_of_*` (grep both, counts equal);
    - no `{comment:}` line contains only chords;
    - no chords appear in verses the source left unchorded;

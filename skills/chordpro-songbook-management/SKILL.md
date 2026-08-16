@@ -51,6 +51,7 @@ page needs content fixes or user sign-off, not silent acceptance.
 
 - Instrument comes from `"include": ["ukulele"]` — never set instrument
   inside `.cho` files.
+
 - **Unknown chord warning** → add a definition to the `"chords"` array:
 
   ```json
@@ -60,9 +61,11 @@ page needs content fixes or user sign-off, not silent acceptance.
   `frets` are G-C-E-A strings, 0 = open. Italian chord names are aliases
   with the same fingering as their English equivalents — copy the English
   shape when adding an Italian alias.
+
 - **Unwanted diagram** (slash chord, rare voicing that clutters the page)
   → add the exact chord name to `"diagrams".suppress`. Suppression hides
   the diagram but keeps the chord valid in lyrics.
+
 - Layout knobs live under `"settings"` (columns) and `"pdf"` (fonts,
   spacing, margins). Change these repo-wide only with user approval —
   they affect every songbook.
@@ -70,14 +73,14 @@ page needs content fixes or user sign-off, not silent acceptance.
 ## Steps: new songbook
 
 1. `mkdir songbooks/<slug>` (kebab-case).
-2. Add songs per `chordpro-song-authoring` conventions, numbered per the
+1. Add songs per `chordpro-song-authoring` conventions, numbered per the
    chosen scheme above.
-3. Optionally add `00-cover.cho`, `01-chord-chart.cho`, `99-back-cover.cho`
+1. Optionally add `00-cover.cho`, `01-chord-chart.cho`, `99-back-cover.cho`
    plus image assets for `scripts/make-cover.py`.
-4. Update the songbooks list in `README.md`.
-5. Verify: `make <slug>` exits 0; inspect warnings; page count == song
+1. Update the songbooks list in `README.md`.
+1. Verify: `make <slug>` exits 0; inspect warnings; page count == song
    count (+ special pages).
-6. Commit: `feat(<slug>): add <songbook or song title>` (Conventional
+1. Commit: `feat(<slug>): add <songbook or song title>` (Conventional
    Commits, scope = songbook slug).
 
 ## Edge cases
