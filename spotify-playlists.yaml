@@ -1,0 +1,199 @@
+# Spotify playlist manifest — the contract between the two phases.
+#
+# `resolve` (local, interactive) pins a track URI for every song.
+# `sync` (CI, unattended) pushes those URIs and nothing else.
+#
+# Track values are one of three states:
+#   ""                       not yet resolved — a search candidate
+#   spotify:track:<id>       pinned to this recording
+#   null                     deliberately not on Spotify — stop asking
+#
+# Track keys are .cho filename stems, in file order.
+# Regenerate entries with: make spotify-resolve
+$schema_version: 1
+songbooks:
+  bricioline:
+    mode: album
+    playlist_name: Bricioline
+    spotify_album: ''
+  canzoni-ribelli:
+    playlist_name: Canzoni Ribelli
+    playlist_id: null
+    tracks:
+      10-fischia-il-vento-e-infuria-la-bufera: ''
+  diplomatico-e-collettivo:
+    playlist_name: Diplomatico e il Collettivo Ninco Nanco
+    playlist_id: null
+    tracks:
+      01-diplomatico: ''
+      02-radicale: ''
+      03-due-mari: ''
+      04-il-premio-di-oscar: ''
+      05-puntini: ''
+      06-tabacco: ''
+      07-venerdi: ''
+      08-la-vecchia-citta-sul-mare: ''
+      09-sophie: ''
+      10-ine: ''
+      11-cest-la-vie: ''
+      12-una-bellissima-festa: ''
+      13-adios-amigo: ''
+      14-straniera: ''
+      15-bla-bla: ''
+      16-lindifferenza: ''
+      17-raton: ''
+      18-muri-di-citta: ''
+      19-comico: ''
+      20-miranda: ''
+      21-buendia: ''
+      22-bocca-dargento: ''
+      23-america: ''
+  espana-circo-este:
+    playlist_name: España Circo Este
+    playlist_id: null
+    tracks:
+      01-addio-paura: ''
+      02-cara-vaticana: ''
+      03-dormo-poco-e-sogno-molto: ''
+      04-la-mia-rivolta: ''
+      05-la-revolucion-del-amor: ''
+      06-larte-della-fuga: ''
+      07-lo-stomaco-e-il-bullone: ''
+      08-mal-educacion: ''
+      09-tutto-si-trasforma: ''
+      10-vino-in-cartone-canzone-per-la-decrescita-felice: ''
+  faccianuvola:
+    playlist_name: faccianuvola
+    playlist_id: null
+    tracks:
+      01-portami-a-ballare-in-primavera: ''
+      02-unora-come-prima: ''
+      03-disperata-gioventu: ''
+      04-rondine-angelica: ''
+      05-verticale: ''
+      06-seibelleseibelle: ''
+  good-songs:
+    playlist_name: Good Songs
+    playlist_id: null
+    tracks:
+      01-boondocks: ''
+      02-buon-viaggio: ''
+      03-cup-song: ''
+      04-gianna: ''
+      05-halleluja: ''
+      06-hoist-the-colors: ''
+      07-i-see-fire: ''
+      08-pontoon: ''
+      09-the-last-goodbye: ''
+      10-the-sound-of-silence: ''
+      11-tornado: ''
+      12-urca-urca-tirulero: ''
+  hsb-eng:
+    playlist_name: HBS Songbook — English
+    playlist_id: null
+    tracks:
+      10-5-years-time: ''
+      10-500-miles: ''
+      10-7-years: ''
+      10-a-horse-with-no-name: ''
+      10-a-million-dreams: ''
+      10-adventure-time: ''
+      10-all-together-now: ''
+      10-always-look-on-the-bright-side: ''
+      10-another-brick-in-the-wall: ''
+      10-auld-lang-syne: ''
+      10-blowin-in-the-wind: ''
+      10-california-dreamin: ''
+      10-can-you-feel-the-love-tonight: ''
+      10-cant-help-falling-in-love: ''
+      10-cats-in-the-cradle: ''
+      10-circle-of-life: ''
+      10-city-of-stars: ''
+      10-do-you-hear-the-people-sing: ''
+      10-dont-worry-be-happy: ''
+      10-dreaming-of-you: ''
+      10-drunken-sailor: ''
+      10-dumb-ways-to-die: ''
+      10-facing-west: ''
+      10-far-over-the-misty-mountains: ''
+      10-fireflies: ''
+      10-greensleeves: ''
+      10-guaranteed: ''
+      10-hallelujah: ''
+      10-hey-brother: ''
+      10-hey-soul-sister: ''
+      10-hey-there-delilah: ''
+      10-hey-ya: ''
+      10-hit-the-road-jack: ''
+      10-ho-hey: ''
+      10-house-of-the-rising-sun: ''
+      10-how-far-ill-go: ''
+      10-i-love-the-mountains: ''
+      10-if-i-had-a-boat: ''
+      10-if-youre-happy-and-you-know-it: ''
+      10-ill-make-a-man-out-of-you: ''
+      10-im-a-believer: ''
+      10-imagine: ''
+      10-johnny-i-hardly-knew-ye: ''
+      10-jolene: ''
+      10-king-of-the-bongo: ''
+      10-knocking-on-heavens-door: ''
+      10-la-bamba: ''
+      10-la-vie-en-rose: ''
+      10-land-of-the-silver-birch: ''
+      10-lava-song: ''
+      10-lemon-tree: ''
+      10-let-it-be: ''
+      10-light-my-fire: ''
+      10-little-boxes: ''
+      10-little-talks: ''
+      10-loch-lomond: ''
+      10-long-nights: ''
+      10-losing-my-religion: ''
+      10-lost: ''
+      10-mad-world: ''
+      10-mamma-mia: ''
+      10-mr-sandman: ''
+      10-mr-tambourine-man: ''
+      10-my-bonnie-lies-over-the-ocean: ''
+      10-my-heart-will-go-on: ''
+      10-oh-my-darling-clementine: ''
+      10-old-macdonald-had-a-farm: ''
+      10-oo-de-lally: ''
+      10-over-and-done-with: ''
+      10-perfect: ''
+      10-postcards-from-italy: ''
+      10-reality: ''
+      10-renegades: ''
+      10-riptide: ''
+      10-rise: ''
+      10-riverside: ''
+      10-run: ''
+      10-scarborough-fair: ''
+      10-society: ''
+      10-somebody-that-i-used-to-know: ''
+      10-stand-by-me: ''
+      10-summer-nights: ''
+      10-sunrise: ''
+      10-sweet-home-alabama: ''
+      10-take-me-home-country-roads: ''
+      10-the-bare-necessities: ''
+      10-the-boxer: ''
+      10-the-cave: ''
+      10-the-drunken-scotsman: ''
+      10-the-lion-sleeps-tonight: ''
+      10-the-passenger: ''
+      10-the-penalty: ''
+      10-the-sound-of-silence: ''
+      10-the-wellerman: ''
+      10-the-wild-rover: ''
+      10-they-call-me-trinity: ''
+      10-three-little-birds: ''
+      10-viva-la-vida: ''
+      10-we-know-the-way: ''
+      10-whatever-you-want: ''
+      10-whiskey-in-the-jar: ''
+      10-winter-winds: ''
+      10-wish-you-were-here: ''
+      10-yo-ho-ho: ''
+      10-you-are-my-sunshine: ''
