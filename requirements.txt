@@ -1,0 +1,11 @@
+# Helper scripts only — not needed for building songbooks with ChordPro
+
+# Cover / chord-chart page generation (scripts/make-cover.py)
+Pillow
+reportlab
+
+# Spotify playlist sync (scripts/spotify_playlists.py)
+# Note: spotipy is needed only for interactive auth/resolve login.
+# validate needs only PyYAML; sync runs on PyYAML alone.
+PyYAML
+spotipy
