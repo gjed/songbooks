@@ -1,0 +1,57 @@
+# Spotify Sync
+#
+# Two-phase model:
+# 1. Matching is curated locally into the committed manifest (spotify-playlists.yaml)
+# 2. This job only pushes the already-pinned URIs to Spotify, never searches
+#
+# Runs on push to main when songbooks, manifest, or scripts change.
+# Manual reruns via workflow_dispatch for recovery from transient failures.
+
+name: Spotify Sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "songbooks/**"
+      - "spotify-playlists.yaml"
+      - "scripts/spotify_playlists.py"
+      - "requirements.txt"
+      - ".github/workflows/spotify-sync.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync playlists to Spotify
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Sync playlists to Spotify
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 scripts/spotify_playlists.py sync --apply || {
+            EXIT_CODE=$?
+            echo "::error::Spotify sync failed. If this failed on authentication, the Spotify refresh token has been invalidated. Fix: run 'python3 scripts/spotify_playlists.py auth' locally, then update the SPOTIFY_REFRESH_TOKEN repository secret with the new value."
+            exit $EXIT_CODE
+          }
