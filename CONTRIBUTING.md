@@ -52,6 +52,23 @@ optional; omitted keys fall back to the built-in defaults:
     "image": "back-logo.png",
     "image_width": 260,
     "caption": "Album  ·  Album  ·  Album",
+    "description": ["First paragraph.", "Second paragraph."],
+    "description_font": "Courier",
+    "description_size": 9,
+    "description_color": "#000000",
+    "description_leading": 13.5,
+    "description_width": 360,
+    "description_y": null,
+    "spotify": true,
+    "spotify_label": "Listen on Spotify",
+    "spotify_font": "Courier-Bold",
+    "spotify_url_font": "Courier",
+    "spotify_size": 9,
+    "spotify_color": null,
+    "spotify_qr_size": 72,
+    "spotify_qr_color": null,
+    "spotify_x": null,
+    "spotify_y": null,
     "rules": []
   }
 }
@@ -64,6 +81,16 @@ Notes:
 - `logo_offset` shifts the logo vertically from the page centre.
 - Set a value to `null` to drop that element (for example `"title": null`
   when the logo already contains the band name).
+- `description` is a string or a list of strings (one per paragraph),
+  wrapped to `description_width` points and centred. `description_y` is
+  the first baseline; by default the block sits just below the back image.
+- The Spotify block is automatic: when the songbook has a resolved
+  playlist or album link in `spotify-playlists.yaml`, the back page draws
+  a label + clickable URL next to a vector QR code of the same link. An
+  unresolved link (or a missing manifest) skips the block silently. Set
+  `"spotify": false` to opt out. `spotify_color` and `spotify_qr_color`
+  default to `caption_color`; `spotify_x` / `spotify_y` are the right and
+  bottom edges of the block in PDF points.
 - Images may carry alpha; transparency is preserved.
 - The chord-chart page is emitted only when the songbook ships a
   `chords.png`.
