@@ -40,9 +40,38 @@ cover.json schema (all keys optional):
       "caption_font": "Courier",
       "caption_size": 11,
       "caption_color": "#000000",
+      "description": ["paragraph one", "paragraph two"],
+      "description_font": "Courier",
+      "description_size": 9,
+      "description_color": "#000000",
+      "description_leading": 13.5,
+      "description_width": 360,
+      "description_y": 173,
+      "spotify": true,
+      "spotify_label": "Listen on Spotify",
+      "spotify_font": "Courier-Bold",
+      "spotify_url_font": "Courier",
+      "spotify_size": 9,
+      "spotify_color": "#000000",
+      "spotify_qr_size": 72,
+      "spotify_qr_color": "#000000",
+      "spotify_x": 566.9,
+      "spotify_y": 80.3,
       "rules": []
     }
   }
+
+`description` is a single string or a list of strings, one per
+paragraph; each paragraph is wrapped to `description_width` and centred.
+`description_y` is the first baseline and defaults to just below the back
+image, so the block follows whatever `image_width` the songbook uses.
+
+The Spotify block is automatic: the back page reads the repo-root
+`spotify-playlists.yaml` and, when the songbook has a resolved album or
+playlist link, draws a right-aligned label + URL (clickable) next to a
+vector QR code of the same URL. Missing file, missing PyYAML, or an
+unresolved link simply skips the block. `spotify_x` / `spotify_y` are the
+right and bottom edges of that block.
 """
 
 import json
@@ -50,6 +79,9 @@ import os
 import sys
 
 from PIL import Image
+from reportlab.graphics import renderPDF
+from reportlab.graphics.barcode.qr import QrCodeWidget
+from reportlab.graphics.shapes import Drawing
 from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
@@ -59,6 +91,9 @@ from reportlab.pdfgen import canvas
 
 PAGE_W, PAGE_H = A4  # 595.27 x 841.89 pt
 MARGIN = 10 * mm     # 28.35 pt
+
+MANIFEST = "spotify-playlists.yaml"
+SPOTIFY_URL = "https://open.spotify.com/{kind}/{ident}"
 
 DEFAULTS = {
     "cover": {
@@ -86,6 +121,23 @@ DEFAULTS = {
         "caption_font": "Courier",
         "caption_size": 11,
         "caption_color": "#000000",
+        "description": None,
+        "description_font": "Courier",
+        "description_size": 9,
+        "description_color": None,
+        "description_leading": None,
+        "description_width": 360,
+        "description_y": None,
+        "spotify": True,
+        "spotify_label": "Listen on Spotify",
+        "spotify_font": "Courier-Bold",
+        "spotify_url_font": "Courier",
+        "spotify_size": 9,
+        "spotify_color": None,
+        "spotify_qr_size": 72,
+        "spotify_qr_color": None,
+        "spotify_x": None,
+        "spotify_y": None,
         "rules": [],
     },
 }
@@ -152,6 +204,151 @@ def _draw_centered_image(c, img_path, width, center_y):
     return disp_h
 
 
+def _find_manifest(sb_dir):
+    """Walk up from sb_dir looking for the Spotify manifest, else None."""
+    path = os.path.abspath(sb_dir)
+    while True:
+        candidate = os.path.join(path, MANIFEST)
+        if os.path.exists(candidate):
+            return candidate
+        parent = os.path.dirname(path)
+        if parent == path:
+            return None
+        path = parent
+
+
+def spotify_url(sb_dir):
+    """Return the public Spotify URL for this songbook, or None.
+
+    Reads the repo-root manifest. Anything missing or unresolved -- no
+    manifest, no PyYAML, unknown songbook, empty album URI, null playlist
+    id -- yields None so the back page simply omits the block.
+    """
+    path = _find_manifest(sb_dir)
+    if not path:
+        return None
+    try:
+        import yaml
+    except ImportError:
+        return None
+    try:
+        with open(path, encoding="utf-8") as fh:
+            data = yaml.safe_load(fh) or {}
+    except (OSError, ValueError):
+        return None
+    if not isinstance(data, dict):
+        return None
+    books = data.get("songbooks")
+    if not isinstance(books, dict):
+        return None
+    entry = books.get(os.path.basename(os.path.normpath(sb_dir)))
+    if not isinstance(entry, dict):
+        return None
+    if entry.get("mode") == "album":
+        kind, ident = "album", entry.get("spotify_album")
+    else:
+        kind, ident = "playlist", entry.get("playlist_id")
+    if not isinstance(ident, str) or not ident.strip():
+        return None
+    ident = ident.strip().rsplit(":", 1)[-1].rsplit("/", 1)[-1]
+    return SPOTIFY_URL.format(kind=kind, ident=ident) if ident else None
+
+
+def _wrap(c, text, font, size, max_width):
+    """Greedy word wrap of one paragraph into a list of lines."""
+    lines, line = [], ""
+    for word in str(text).split():
+        probe = f"{line} {word}".strip()
+        if line and c.stringWidth(probe, font, size) > max_width:
+            lines.append(line)
+            line = word
+        else:
+            line = probe
+    if line:
+        lines.append(line)
+    return lines
+
+
+def _draw_description(c, conf, top_y):
+    """Draw the centred description block; return the last baseline used."""
+    text = conf.get("description")
+    if not text:
+        return top_y
+    paragraphs = [text] if isinstance(text, str) else list(text)
+    font = conf["description_font"]
+    size = conf["description_size"]
+    leading = conf.get("description_leading") or size * 1.5
+    max_width = min(conf["description_width"], PAGE_W - 2 * MARGIN)
+    color = conf.get("description_color") or conf["caption_color"]
+
+    c.saveState()
+    c.setFont(font, size)
+    c.setFillColor(HexColor(color))
+    y = conf.get("description_y")
+    if y is None:
+        y = top_y
+    for index, paragraph in enumerate(paragraphs):
+        if index:
+            y -= leading * 0.6
+        for line in _wrap(c, paragraph, font, size, max_width):
+            c.drawCentredString(PAGE_W / 2, y, line)
+            y -= leading
+    c.restoreState()
+    return y + leading
+
+
+def _draw_qr(c, url, x, y, size, color):
+    """Draw a vector QR code with its quiet zone inside the given box."""
+    qr = QrCodeWidget(url, barLevel="M", barBorder=4)
+    qr.barFillColor = HexColor(color)
+    bounds = qr.getBounds()
+    src_w = bounds[2] - bounds[0]
+    src_h = bounds[3] - bounds[1]
+    drawing = Drawing(size, size,
+                      transform=[size / src_w, 0, 0, size / src_h, 0, 0])
+    drawing.add(qr)
+    renderPDF.draw(drawing, c, x, y)
+
+
+def _draw_spotify(c, conf, url):
+    """Draw the bottom-right QR code plus clickable label and URL."""
+    right = conf.get("spotify_x")
+    if right is None:
+        right = PAGE_W - MARGIN
+    bottom = conf.get("spotify_y")
+    if bottom is None:
+        bottom = MARGIN + 60
+    size = conf["spotify_size"]
+    color = conf.get("spotify_color") or conf["caption_color"]
+    qr_size = conf["spotify_qr_size"]
+    qr_color = conf.get("spotify_qr_color") or color
+    label = conf.get("spotify_label")
+
+    url_baseline = bottom
+    label_baseline = url_baseline + size * 1.4
+    qr_bottom = label_baseline + size * 0.9
+
+    c.saveState()
+    # Light plate so the code stays scannable over tinted backgrounds.
+    c.setFillColorRGB(1, 1, 1)
+    c.rect(right - qr_size, qr_bottom, qr_size, qr_size, stroke=0, fill=1)
+    _draw_qr(c, url, right - qr_size, qr_bottom, qr_size, qr_color)
+
+    c.setFillColor(HexColor(color))
+    if label:
+        c.setFont(conf["spotify_font"], size)
+        c.drawRightString(right, label_baseline, label)
+    c.setFont(conf["spotify_url_font"], size)
+    c.drawRightString(right, url_baseline, url)
+    c.restoreState()
+
+    url_width = c.stringWidth(url, conf["spotify_url_font"], size)
+    c.linkURL(url, (right - url_width, url_baseline - size * 0.3,
+                    right, url_baseline + size), relative=0, thickness=0)
+    c.linkURL(url, (right - qr_size, qr_bottom,
+                    right, qr_bottom + qr_size), relative=0, thickness=0)
+
+
 def make_cover(sb_dir, output, cfg):
     """Cover: optional title/subtitle, decorative strips or rules, logo."""
     conf = cfg["cover"]
@@ -213,20 +410,34 @@ def make_chord_chart(sb_dir, output):
 
 
 def make_back_cover(sb_dir, output, cfg):
-    """Back cover: centred image with optional caption and rules."""
+    """Back cover: centred image, optional caption, description, rules.
+
+    The description block starts just under the image and reads down; the
+    Spotify block sits in the bottom-right corner, clear of both.
+    """
     conf = cfg["back"]
     c = canvas.Canvas(output, pagesize=A4)
     _paint_background(c, conf.get("background"))
     _draw_rules(c, conf.get("rules"))
 
+    img_bottom = PAGE_H / 2
     img_path = _resolve(sb_dir, conf.get("image"))
     if img_path:
-        _draw_centered_image(c, img_path, conf["image_width"], PAGE_H / 2)
+        img_h = _draw_centered_image(c, img_path, conf["image_width"],
+                                     PAGE_H / 2)
+        img_bottom = PAGE_H / 2 - img_h / 2
 
     if conf.get("caption"):
         c.setFont(conf["caption_font"], conf["caption_size"])
         c.setFillColor(HexColor(conf["caption_color"]))
         c.drawCentredString(PAGE_W / 2, MARGIN + 40, conf["caption"])
+
+    _draw_description(c, conf, img_bottom - 22 - conf["description_size"])
+
+    if conf.get("spotify"):
+        url = spotify_url(sb_dir)
+        if url:
+            _draw_spotify(c, conf, url)
 
     c.showPage()
     c.save()
