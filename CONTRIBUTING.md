@@ -165,6 +165,99 @@ Each release compiles all songbooks and attaches the PDFs as release
 assets. Commit types directly control published versions — pick them
 accurately.
 
+## Spotify playlists
+
+Each non-empty songbook maps to a Spotify link: either a playlist this repo
+owns and curates track by track, or — when the songbook *is* one official
+release (like `bricioline`) — a direct link to that album. The mapping lives
+in `spotify-playlists.yaml` at the repo root, driven by
+`scripts/spotify_playlists.py`.
+
+### Two-phase model
+
+Track matching is human work; playlist pushing is machine work. They never
+mix:
+
+1. **resolve** (local, interactive): scans `.cho` files, searches Spotify,
+   and a human picks the right recording for each song. Picks are written
+   into `spotify-playlists.yaml` and committed. Never runs in CI.
+1. **sync** (CI, unattended): reads the committed manifest and pushes the
+   pinned URIs to Spotify on every push to `main`
+   (`.github/workflows/spotify-sync.yml`). It performs no searching and no
+   guessing.
+
+A PR check (`spotify-validate` in `pr-check.yml`) verifies the manifest
+covers every song — no network, no secrets, safe on fork PRs.
+
+### Manifest modes
+
+Each songbook entry has a `mode`, set by hand in the manifest:
+
+- `mode: playlist` (default) — per-song curation into a repo-owned playlist.
+- `mode: album` — the songbook is one artist's official release; `resolve`
+  links the album once (`spotify_album`) and `sync` has nothing to push.
+
+Track values are one of three states: `""` (not yet resolved), a
+`spotify:track:<id>` URI (pinned), or `null` (deliberately not on Spotify —
+resolve stops asking).
+
+### One-time Spotify app setup
+
+1. Create an app at <https://developer.spotify.com/dashboard> (Development
+   Mode is enough; the owner account needs Premium).
+1. Add a redirect URI, e.g. `http://127.0.0.1:8080/callback`.
+1. Export `SPOTIPY_CLIENT_ID`, `SPOTIPY_CLIENT_SECRET`,
+   `SPOTIPY_REDIRECT_URI` locally.
+1. Install dependencies: `pip install -r requirements.txt`.
+
+### Curating a new song
+
+```bash
+make spotify-resolve SB=<slug>   # or without SB= for all songbooks
+```
+
+For each unmatched song you get numbered candidates; press Enter to accept
+the pre-selected exact match, type a number to pick another, `s` to skip
+for now, `n` to pin "not on Spotify", `q` to quit. The manifest is saved
+after every pick, so Ctrl-C is always safe. Commit the updated
+`spotify-playlists.yaml`.
+
+New playlists need an id recorded once:
+
+```bash
+python3 scripts/spotify_playlists.py resolve --write-ids
+```
+
+### Fixing a bad pick
+
+```bash
+python3 scripts/spotify_playlists.py resolve --songbook <slug> --recheck
+```
+
+### Release notes
+
+The release workflow appends a "Spotify" section with every resolved
+playlist/album link to the release notes, via
+`python3 scripts/spotify_playlists.py links` (pure manifest read).
+
+### CI credentials and token rotation
+
+CI reads `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, and
+`SPOTIFY_REFRESH_TOKEN` from GitHub Actions secrets. Generate the refresh
+token once:
+
+```bash
+python3 scripts/spotify_playlists.py auth
+```
+
+It prints the refresh token exactly once — paste it into the
+`SPOTIFY_REFRESH_TOKEN` repository secret and don't store it anywhere else.
+
+**When the sync job fails on authentication** (Spotify invalidates refresh
+tokens periodically — expect roughly every 6 months for Development Mode
+apps): rerun `auth` locally and update the `SPOTIFY_REFRESH_TOKEN` secret.
+That is the whole fix; nothing in the repo changes.
+
 ## Agent skills
 
 Vendor-neutral skills (SKILL.md standard) live in `skills/`:
