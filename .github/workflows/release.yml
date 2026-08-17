@@ -34,7 +34,7 @@ jobs:
             | sudo debconf-set-selections
           sudo apt-get install -y ttf-mscorefonts-installer ghostscript
           sudo fc-cache -f
-          pip install Pillow reportlab
+          pip install Pillow reportlab PyYAML
 
       - name: Compile all songbooks
         run: make all
@@ -50,6 +50,23 @@ jobs:
           semantic_version: 24
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add Spotify links to release notes
+        if: steps.release.outputs.new_release_published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.release.outputs.new_release_git_tag }}"
+          # `links` reads only the committed manifest — no network, no secrets.
+          LINKS="$(python3 scripts/spotify_playlists.py links)"
+          if [ -n "$LINKS" ]; then
+            gh release view "$TAG" --json body -q .body > release-notes.md
+            printf '\n%s\n' "$LINKS" >> release-notes.md
+            gh release edit "$TAG" --notes-file release-notes.md
+          else
+            echo "No resolved Spotify links yet — release notes unchanged."
+          fi
 
       - name: Report release
         run: |
