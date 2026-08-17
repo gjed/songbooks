@@ -8,6 +8,8 @@ on:
       - "scripts/make-cover.py"
       - "Makefile"
       - ".github/workflows/pr-check.yml"
+      - "spotify-playlists.yaml"
+      - "scripts/spotify_playlists.py"
 
 jobs:
   compile:
@@ -80,3 +82,26 @@ jobs:
           fi
           echo "Built PDFs:"
           ls -la pdf/
+
+  spotify-validate:
+    name: Validate Spotify manifest
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - name: Install PyYAML
+        run: pip install PyYAML
+
+      - name: Validate Spotify manifest
+        run: |
+          set -euo pipefail
+          python3 scripts/spotify_playlists.py validate || {
+            EXIT_CODE=$?
+            echo "::error::Spotify manifest validation failed. A song is awaiting Spotify curation. Fix: run 'make spotify-resolve' locally and commit the updated spotify-playlists.yaml."
+            exit $EXIT_CODE
+          }
