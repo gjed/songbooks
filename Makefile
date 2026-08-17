@@ -6,6 +6,7 @@ PDFS         := $(foreach sb,$(SONGBOOKS),$(PDF_DIR)/$(sb).pdf)
 GS           := gs
 PYTHON       := python3
 MAKE_COVER   := $(PYTHON) scripts/make-cover.py
+SPOTIFY      := $(PYTHON) scripts/spotify_playlists.py
 
 .PHONY: all clean $(SONGBOOKS)
 
@@ -99,3 +100,20 @@ clean:
 	rm -f $(PDFS) $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-chart.pdf \
 	  $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf \
 	  $(PDF_DIR)/*-guitar-ita.pdf $(PDF_DIR)/*-guitar-eng.pdf
+
+# Spotify playlist sync: two-phase model
+# - resolve: interactive local curation, writes committed manifest spotify-playlists.yaml
+# - sync: pushes already-pinned track URIs, never searches (dry-run by default)
+.PHONY: spotify-validate spotify-resolve spotify-sync spotify-sync-apply
+
+spotify-validate:
+	$(SPOTIFY) validate
+
+spotify-resolve:
+	$(SPOTIFY) resolve $(if $(SB),--songbook $(SB))
+
+spotify-sync:
+	$(SPOTIFY) sync $(if $(SB),--songbook $(SB))
+
+spotify-sync-apply:
+	$(SPOTIFY) sync --apply $(if $(SB),--songbook $(SB))
