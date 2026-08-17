@@ -4,3 +4,6 @@ raw*.txt
 *.docx
 .worktrees/
 *.zip
+
+# Spotify OAuth token cache (local only — never commit)
+.spotify-token-cache*
