@@ -37,6 +37,9 @@ CFG_FLAGS_$(1) := --config $(PROJECT_CFG) \
 # the songbook actually provides a chords.png.
 HAS_COVER_$(1)  := $$(wildcard songbooks/$(1)/cover.json songbooks/$(1)/00-cover.cho)
 HAS_CHART_$(1)  := $$(wildcard songbooks/$(1)/chords.png)
+# The intro page (album description + Spotify link) exists only when the
+# cover.json declares an "intro" section.
+HAS_INTRO_$(1)  := $$(shell grep -ls '"intro"' songbooks/$(1)/cover.json 2>/dev/null)
 
 ifeq ($$(strip $$(HAS_COVER_$(1))),)
 # No cover — render everything normally
@@ -50,11 +53,12 @@ SONG_ONLY_$(1)  := $$(filter-out $$(addprefix songbooks/$(1)/,$(COVER_FILES)),$$
 COVER_PDF_$(1)  := $(PDF_DIR)/$(1)-cover.pdf
 BACK_PDF_$(1)   := $(PDF_DIR)/$(1)-back.pdf
 CHART_PDF_$(1)  := $$(if $$(HAS_CHART_$(1)),$(PDF_DIR)/$(1)-chart.pdf)
+INTRO_PDF_$(1)  := $$(if $$(HAS_INTRO_$(1)),$(PDF_DIR)/$(1)-intro.pdf)
 SONGS_PDF_$(1)  := $$(if $$(SONG_ONLY_$(1)),$(PDF_DIR)/$(1)-songs.pdf)
-PARTS_$(1)      := $$(COVER_PDF_$(1)) $$(CHART_PDF_$(1)) $$(SONGS_PDF_$(1)) $$(BACK_PDF_$(1))
+PARTS_$(1)      := $$(COVER_PDF_$(1)) $$(INTRO_PDF_$(1)) $$(CHART_PDF_$(1)) $$(SONGS_PDF_$(1)) $$(BACK_PDF_$(1))
 
-# Generate cover (and chart, when present) and back PDFs via Python
-$$(COVER_PDF_$(1)) $$(CHART_PDF_$(1)) $$(BACK_PDF_$(1)) &: scripts/make-cover.py $$(call COVER_ASSETS,songbooks/$(1)) | $(PDF_DIR)
+# Generate cover (and intro/chart, when present) and back PDFs via Python
+$$(COVER_PDF_$(1)) $$(INTRO_PDF_$(1)) $$(CHART_PDF_$(1)) $$(BACK_PDF_$(1)) &: scripts/make-cover.py $$(call COVER_ASSETS,songbooks/$(1)) | $(PDF_DIR)
 	$(MAKE_COVER) songbooks/$(1) $(PDF_DIR)
 
 # Songs rendered via ChordPro (2-column)
@@ -88,17 +92,18 @@ guitar-ita guitar-eng: | $(PDF_DIR)
 	@if [ -f songbooks/$(SB)/cover.json ] || [ -f songbooks/$(SB)/00-cover.cho ]; then \
 	  $(MAKE_COVER) songbooks/$(SB) $(PDF_DIR) ; \
 	  parts="$(PDF_DIR)/$(SB)-cover.pdf" ; \
+	  [ -f $(PDF_DIR)/$(SB)-intro.pdf ] && parts="$$parts $(PDF_DIR)/$(SB)-intro.pdf" ; \
 	  [ -f $(PDF_DIR)/$(SB)-chart.pdf ] && parts="$$parts $(PDF_DIR)/$(SB)-chart.pdf" ; \
 	  parts="$$parts $(PDF_DIR)/$(SB)-$@-songs.pdf $(PDF_DIR)/$(SB)-back.pdf" ; \
 	  $(GS) -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=$(PDF_DIR)/$(SB)-$@.pdf $$parts ; \
-	  rm -f $(PDF_DIR)/$(SB)-cover.pdf $(PDF_DIR)/$(SB)-chart.pdf $(PDF_DIR)/$(SB)-back.pdf $(PDF_DIR)/$(SB)-$@-songs.pdf ; \
+	  rm -f $(PDF_DIR)/$(SB)-cover.pdf $(PDF_DIR)/$(SB)-intro.pdf $(PDF_DIR)/$(SB)-chart.pdf $(PDF_DIR)/$(SB)-back.pdf $(PDF_DIR)/$(SB)-$@-songs.pdf ; \
 	else \
 	  mv $(PDF_DIR)/$(SB)-$@-songs.pdf $(PDF_DIR)/$(SB)-$@.pdf ; \
 	fi
 
 clean:
-	rm -f $(PDFS) $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-chart.pdf \
-	  $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf \
+	rm -f $(PDFS) $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-intro.pdf \
+	  $(PDF_DIR)/*-chart.pdf $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf \
 	  $(PDF_DIR)/*-guitar-ita.pdf $(PDF_DIR)/*-guitar-eng.pdf
 
 # Spotify playlist sync: two-phase model
