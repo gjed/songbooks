@@ -15,7 +15,7 @@ songbooks:
   bricioline:
     mode: album
     playlist_name: Bricioline
-    spotify_album: ''
+    spotify_album: spotify:album:6V2grIdTNAYNMe8UnG3lmp
   canzoni-ribelli:
     playlist_name: Canzoni Ribelli
     playlist_id: null
