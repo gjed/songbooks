@@ -7,3 +7,6 @@ raw*.txt
 
 # Spotify OAuth token cache (local only — never commit)
 .spotify-token-cache*
+
+# Local Spotify app credentials (never commit)
+.env
