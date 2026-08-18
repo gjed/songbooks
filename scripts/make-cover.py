@@ -95,8 +95,8 @@ paragraph; each paragraph is wrapped to `description_width` and centred.
 `description_y` is the first baseline and defaults to just below the back
 image, so the block follows whatever `image_width` the songbook uses.
 
-The Spotify block is automatic: the back page reads the repo-root
-`spotify-playlists.yaml` and, when the songbook has a resolved album or
+The Spotify block is automatic: the back page reads the songbook's own
+`spotify.yaml` manifest and, when the songbook has a resolved album or
 playlist link, draws a right-aligned label + URL (clickable) next to a
 vector QR code of the same URL. Missing file, missing PyYAML, or an
 unresolved link simply skips the block. `spotify_x` / `spotify_y` are the
@@ -142,7 +142,7 @@ from reportlab.pdfgen import canvas
 PAGE_W, PAGE_H = A4  # 595.27 x 841.89 pt
 MARGIN = 10 * mm     # 28.35 pt
 
-MANIFEST = "spotify-playlists.yaml"
+MANIFEST = "spotify.yaml"  # lives inside each songbook folder
 SPOTIFY_URL = "https://open.spotify.com/{kind}/{ident}"
 
 LINK_ROW_GAP = 18  # vertical breathing room between stacked link rows
@@ -303,28 +303,15 @@ def _draw_centered_image(c, img_path, width, center_y, max_height=None):
     return disp_h
 
 
-def _find_manifest(sb_dir):
-    """Walk up from sb_dir looking for the Spotify manifest, else None."""
-    path = os.path.abspath(sb_dir)
-    while True:
-        candidate = os.path.join(path, MANIFEST)
-        if os.path.exists(candidate):
-            return candidate
-        parent = os.path.dirname(path)
-        if parent == path:
-            return None
-        path = parent
-
-
 def spotify_url(sb_dir):
     """Return the public Spotify URL for this songbook, or None.
 
-    Reads the repo-root manifest. Anything missing or unresolved -- no
-    manifest, no PyYAML, unknown songbook, empty album URI, null playlist
+    Reads the songbook's own spotify.yaml manifest. Anything missing or
+    unresolved -- no manifest, no PyYAML, empty album URI, null playlist
     id -- yields None so the back page simply omits the block.
     """
-    path = _find_manifest(sb_dir)
-    if not path:
+    path = os.path.join(sb_dir, MANIFEST)
+    if not os.path.exists(path):
         return None
     try:
         import yaml
@@ -332,15 +319,9 @@ def spotify_url(sb_dir):
         return None
     try:
         with open(path, encoding="utf-8") as fh:
-            data = yaml.safe_load(fh) or {}
+            entry = yaml.safe_load(fh) or {}
     except (OSError, ValueError):
         return None
-    if not isinstance(data, dict):
-        return None
-    books = data.get("songbooks")
-    if not isinstance(books, dict):
-        return None
-    entry = books.get(os.path.basename(os.path.normpath(sb_dir)))
     if not isinstance(entry, dict):
         return None
     if entry.get("mode") == "album":

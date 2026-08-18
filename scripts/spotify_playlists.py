@@ -1,6 +1,7 @@
 """Curate and sync one Spotify playlist per songbook.
 
-Two phases, split by the committed manifest `spotify-playlists.yaml`:
+Two phases, split by committed per-songbook manifests
+(`songbooks/<slug>/spotify.yaml`):
 
   resolve   Local, interactive, human-curated. Searches Spotify, shows the
             candidates, and a human decides which recording is correct. The
@@ -76,7 +77,7 @@ except ModuleNotFoundError:  # pragma: no cover - dependency guard
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SONGBOOKS_DIR = REPO_ROOT / "songbooks"
-MANIFEST_PATH = REPO_ROOT / "spotify-playlists.yaml"
+MANIFEST_NAME = "spotify.yaml"  # one manifest per songbook folder
 TOKEN_CACHE = REPO_ROOT / ".spotify-token-cache.json"
 README_PATH = REPO_ROOT / "README.md"
 
@@ -200,33 +201,47 @@ def scan_songbooks(only: str | None = None) -> list[Songbook]:
 
 
 class ManifestError(RuntimeError):
-    """The manifest is missing or structurally wrong."""
+    """A manifest file is missing or structurally wrong."""
+
+
+def manifest_path(slug: str) -> Path:
+    """Path of one songbook's manifest: songbooks/<slug>/spotify.yaml."""
+    return SONGBOOKS_DIR / slug / MANIFEST_NAME
+
+
+def manifest_label(slug: str) -> str:
+    """Human-readable manifest path for messages, relative to the repo root."""
+    return f"songbooks/{slug}/{MANIFEST_NAME}"
 
 
 def load_manifest() -> dict[str, Any]:
-    """Load the manifest, or return an empty skeleton if absent."""
-    if not MANIFEST_PATH.exists():
-        return {"$schema_version": SCHEMA_VERSION, "songbooks": {}}
-    with MANIFEST_PATH.open(encoding="utf-8") as handle:
-        data = yaml.safe_load(handle)
-    if data is None:
-        return {"$schema_version": SCHEMA_VERSION, "songbooks": {}}
-    if not isinstance(data, dict):
-        raise ManifestError(
-            f"{MANIFEST_PATH.name}: expected a mapping at the top level"
-        )
-    version = data.get("$schema_version")
-    if version != SCHEMA_VERSION:
-        raise ManifestError(
-            f"{MANIFEST_PATH.name}: $schema_version is {version!r}, "
-            f"this tool speaks {SCHEMA_VERSION}"
-        )
-    if not isinstance(data.get("songbooks"), dict):
-        raise ManifestError(
-            f"{MANIFEST_PATH.name}: 'songbooks' must be a mapping of "
-            f"slug -> playlist entry"
-        )
-    return data
+    """Assemble all per-songbook manifests into one in-memory mapping.
+
+    Each songbook folder owns its own spotify.yaml. In memory the tool keeps
+    the historical shape {"songbooks": {slug: entry}} so the command layer
+    doesn't care how storage is laid out.
+    """
+    songbooks: dict[str, Any] = {}
+    if SONGBOOKS_DIR.is_dir():
+        for path in sorted(SONGBOOKS_DIR.glob(f"*/{MANIFEST_NAME}")):
+            slug = path.parent.name
+            with path.open(encoding="utf-8") as handle:
+                data = yaml.safe_load(handle)
+            if data is None:
+                continue  # empty file — treat as absent
+            if not isinstance(data, dict):
+                raise ManifestError(
+                    f"{manifest_label(slug)}: expected a mapping at the top level"
+                )
+            version = data.get("$schema_version")
+            if version != SCHEMA_VERSION:
+                raise ManifestError(
+                    f"{manifest_label(slug)}: $schema_version is {version!r}, "
+                    f"this tool speaks {SCHEMA_VERSION}"
+                )
+            entry = {k: v for k, v in data.items() if k != "$schema_version"}
+            songbooks[slug] = entry
+    return {"$schema_version": SCHEMA_VERSION, "songbooks": songbooks}
 
 
 class _Dumper(yaml.SafeDumper):
@@ -236,14 +251,36 @@ class _Dumper(yaml.SafeDumper):
         return super().increase_indent(flow, False)
 
 
-def save_manifest(data: dict[str, Any]) -> None:
-    """Write the manifest atomically, preserving key order.
+MANIFEST_HEADER = (
+    "# Spotify manifest for this songbook — the contract between two phases.\n"
+    "#\n"
+    "# `resolve` (local, interactive) pins a track/album URI for every song.\n"
+    "# `sync` (CI, unattended) pushes those URIs and nothing else.\n"
+    "#\n"
+    "# `mode`, set by hand:\n"
+    "#   mode: playlist (default)  curate one track at a time -> a playlist\n"
+    "#                             this repo owns and pushes to.\n"
+    "#   mode: album               the songbook IS one official Spotify\n"
+    "#                             album (one artist, one release). No\n"
+    "#                             playlist is created; `resolve` just links\n"
+    "#                             the album once.\n"
+    "#\n"
+    "# String values (tracks, spotify_album, playlist_id) are one of three\n"
+    "# states:\n"
+    '#   ""                       not yet resolved — a search candidate\n'
+    "#   spotify:track:<id> / spotify:album:<id>   pinned\n"
+    "#   null                     deliberately not on Spotify — stop asking\n"
+    "#\n"
+    "# Track keys are .cho filename stems, in file order.\n"
+    "# Regenerate with: make spotify-resolve\n"
+)
 
-    Written via temp file + os.replace so a Ctrl-C mid-write can never leave a
-    truncated manifest behind.
-    """
+
+def _write_one_manifest(slug: str, entry: dict[str, Any]) -> None:
+    """Write one songbook's spotify.yaml atomically (temp file + os.replace)."""
+    path = manifest_path(slug)
     body = yaml.dump(
-        data,
+        {"$schema_version": SCHEMA_VERSION, **entry},
         Dumper=_Dumper,
         sort_keys=False,
         allow_unicode=True,
@@ -251,42 +288,33 @@ def save_manifest(data: dict[str, Any]) -> None:
         indent=2,
         width=100,
     )
-    header = (
-        "# Spotify playlist manifest — the contract between the two phases.\n"
-        "#\n"
-        "# `resolve` (local, interactive) pins a track/album URI for every\n"
-        "# songbook. `sync` (CI, unattended) pushes those URIs and nothing else.\n"
-        "#\n"
-        "# Each songbook has a `mode`, set by hand:\n"
-        "#   mode: playlist (default)  curate one track at a time -> a playlist\n"
-        "#                             this repo owns and pushes to.\n"
-        "#   mode: album               the songbook IS one official Spotify\n"
-        "#                             album (one artist, one release). No\n"
-        "#                             playlist is created; `resolve` just links\n"
-        "#                             the album once. Flip a songbook to this\n"
-        "#                             mode by hand when it stops being a\n"
-        "#                             multi-artist compilation.\n"
-        "#\n"
-        "# String values (tracks, spotify_album, playlist_id) are one of three\n"
-        "# states:\n"
-        '#   ""                       not yet resolved — a search candidate\n'
-        "#   spotify:track:<id> / spotify:album:<id>   pinned\n"
-        "#   null                     deliberately not on Spotify — stop asking\n"
-        "#\n"
-        "# Track keys are .cho filename stems, in file order.\n"
-        "# Regenerate entries with: make spotify-resolve\n"
-    )
     fd, tmp_name = tempfile.mkstemp(
-        dir=str(MANIFEST_PATH.parent), prefix=".spotify-playlists.", suffix=".tmp"
+        dir=str(path.parent), prefix=".spotify.", suffix=".tmp"
     )
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            handle.write(header)
+            handle.write(MANIFEST_HEADER)
             handle.write(body)
-        os.replace(tmp_name, MANIFEST_PATH)
+        os.replace(tmp_name, path)
     except BaseException:
         Path(tmp_name).unlink(missing_ok=True)
         raise
+
+
+def save_manifest(data: dict[str, Any]) -> None:
+    """Fan the in-memory mapping back out to per-songbook spotify.yaml files.
+
+    Each entry is written atomically. Manifest files whose slug is no longer
+    in the mapping (songbook emptied or deleted) are removed.
+    """
+    songbooks: dict[str, Any] = data.get("songbooks", {})
+    for slug, entry in songbooks.items():
+        if manifest_path(slug).parent.is_dir():
+            _write_one_manifest(slug, entry)
+    if SONGBOOKS_DIR.is_dir():
+        for path in SONGBOOKS_DIR.glob(f"*/{MANIFEST_NAME}"):
+            if path.parent.name not in songbooks:
+                path.unlink()
 
 
 def is_album_mode(entry: dict[str, Any]) -> bool:
@@ -787,13 +815,12 @@ def cmd_validate(args: argparse.Namespace) -> int:
     Coverage gaps are reported as information so curation stays visible.
     """
     books = scan_songbooks(args.songbook)
-    if not MANIFEST_PATH.exists():
-        # No manifest simply means nothing has been curated yet.
-        print(f"{MANIFEST_PATH.name} not found — nothing curated yet, OK.")
-        return 0
-
     manifest = load_manifest()
     entries = manifest.get("songbooks", {})
+    if not entries:
+        # No manifest files simply mean nothing has been curated yet.
+        print(f"no {MANIFEST_NAME} manifests found — nothing curated yet, OK.")
+        return 0
 
     unresolved: list[str] = []
     missing_entries: list[str] = []
@@ -897,8 +924,8 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
     if broken:
         print(
-            f"\n  {MANIFEST_PATH.name} is malformed — fix the entries above "
-            f"by hand or re-run:  make spotify-resolve",
+            f"\n  a {MANIFEST_NAME} manifest is malformed — fix the entries "
+            f"above by hand or re-run:  make spotify-resolve",
             file=sys.stderr,
         )
         return 1
@@ -936,7 +963,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
         print(
             "\n  curation is optional — to curate, run:  make spotify-resolve"
             + (f" SB={args.songbook}" if args.songbook else "")
-            + f"\n  then commit the updated {MANIFEST_PATH.name}"
+            + f"\n  then commit the updated songbooks/*/{MANIFEST_NAME}"
         )
 
     total = sum(len(book.songs) for book in books)
@@ -955,7 +982,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
     album_slugs = sum(1 for entry in scoped.values() if is_album_mode(entry))
     playlist_slugs = len(expected_slugs) - album_slugs
     print(
-        f"{MANIFEST_PATH.name} is well-formed: {total} songs across "
+        f"manifests are well-formed: {total} songs across "
         f"{playlist_slugs} playlist songbook(s) and {album_slugs} linked "
         f"album(s) — {pinned} tracks pinned."
     )
@@ -1133,7 +1160,7 @@ def cmd_resolve(args: argparse.Namespace) -> int:
         if remaining
         else "\ndone. every songbook is pinned."
     )
-    print(f"review the diff: git diff {MANIFEST_PATH.name}")
+    print(f"review the diff: git diff songbooks/*/{MANIFEST_NAME}")
     return 0
 
 
@@ -1236,8 +1263,8 @@ def cmd_sync(args: argparse.Namespace) -> int:
     structural = argparse.Namespace(songbook=args.songbook)
     if cmd_validate(structural) != 0:
         print(
-            f"\nerror: refusing to sync — {MANIFEST_PATH.name} is malformed "
-            f"(see above).",
+            f"\nerror: refusing to sync — a {MANIFEST_NAME} manifest is "
+            f"malformed (see above).",
             file=sys.stderr,
         )
         return 1
