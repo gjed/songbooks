@@ -54,6 +54,10 @@ cover.json schema (all keys optional):
       "spotify_qr_size": 96,
       "spotify_qr_color": "#000000",
       "spotify_y": null,
+      "links": [
+        { "label": "Bandcamp", "url": "https://example.bandcamp.com",
+          "color": "#000000", "qr_color": "#000000" }
+      ],
       "rules": []
     },
     "back": {
@@ -81,6 +85,7 @@ cover.json schema (all keys optional):
       "spotify_qr_color": "#000000",
       "spotify_x": 566.9,
       "spotify_y": 80.3,
+      "links": [],
       "rules": []
     }
   }
@@ -104,6 +109,19 @@ row (QR code on the left, label stacked over the clickable URL on the
 right). Set `spotify: false`, or leave the songbook unresolved in the
 manifest, to get a description-only page. `spotify_y` is the bottom edge
 of the QR code; it defaults to a spot in the lower third of the page.
+
+`links` adds arbitrary hand-written link rows to the intro or back page:
+a list of `{label, url}` objects, each optionally overriding `color` and
+`qr_color`. These are pure cover.json data -- no manifest involved -- and
+each row is drawn exactly like the Spotify one, stacked vertically and
+centred as a single group. When both the automatic Spotify block and
+custom `links` appear on a page they share that one stack: the `links`
+entries first in array order, then the Spotify row last. Typography and
+QR size come from the page's `spotify_*` keys so every row matches, and
+several rows on one page scale their QR codes down together to fit. On
+the back page, declaring `links` moves the whole group from its historic
+bottom-right corner to the centred stack; with no `links` the corner
+layout is untouched.
 """
 
 import json
@@ -126,6 +144,10 @@ MARGIN = 10 * mm     # 28.35 pt
 
 MANIFEST = "spotify-playlists.yaml"
 SPOTIFY_URL = "https://open.spotify.com/{kind}/{ident}"
+
+LINK_ROW_GAP = 18  # vertical breathing room between stacked link rows
+MIN_QR_SIZE = 56   # floor when several rows are scaled down to fit
+MIN_IMAGE_HEIGHT = 180  # back-cover art never shrinks below this for links
 
 DEFAULTS = {
     "cover": {
@@ -167,6 +189,7 @@ DEFAULTS = {
         "spotify_qr_size": 96,
         "spotify_qr_color": None,
         "spotify_y": None,
+        "links": [],
         "rules": [],
     },
     "back": {
@@ -194,6 +217,7 @@ DEFAULTS = {
         "spotify_qr_color": None,
         "spotify_x": None,
         "spotify_y": None,
+        "links": [],
         "rules": [],
     },
 }
@@ -258,12 +282,20 @@ def _draw_rules(c, rules):
         c.restoreState()
 
 
-def _draw_centered_image(c, img_path, width, center_y):
-    """Draw an image centred horizontally at the given width."""
+def _draw_centered_image(c, img_path, width, center_y, max_height=None):
+    """Draw an image centred horizontally at the given width.
+
+    `max_height` scales the image down further when the caller has less
+    vertical room than the requested width implies; without it the image
+    keeps whatever height its aspect ratio dictates.
+    """
     img = _open_img(img_path)
     w, h = img.getSize()
     disp_w = min(width, PAGE_W - 2 * MARGIN)
     disp_h = disp_w * (h / w)
+    if max_height is not None and disp_h > max_height:
+        disp_h = max_height
+        disp_w = disp_h * (w / h)
     x = (PAGE_W - disp_w) / 2
     y = center_y - disp_h / 2
     c.drawImage(img, x, y, width=disp_w, height=disp_h,
@@ -365,6 +397,21 @@ def _draw_description(c, conf, top_y):
     return y + leading
 
 
+def _description_height(c, conf):
+    """Vertical space the description block will occupy, 0 when empty."""
+    text = conf.get("description")
+    if not text:
+        return 0
+    paragraphs = [text] if isinstance(text, str) else list(text)
+    font = conf["description_font"]
+    size = conf["description_size"]
+    leading = conf.get("description_leading") or size * 1.5
+    max_width = min(conf["description_width"], PAGE_W - 2 * MARGIN)
+    lines = sum(len(_wrap(c, p, font, size, max_width)) for p in paragraphs)
+    gaps = leading * 0.6 * max(len(paragraphs) - 1, 0)
+    return lines * leading + gaps
+
+
 def _draw_qr(c, url, x, y, size, color):
     """Draw a vector QR code with its quiet zone inside the given box."""
     qr = QrCodeWidget(url, barLevel="M", barBorder=4)
@@ -417,29 +464,24 @@ def _draw_spotify(c, conf, url):
                     right, qr_bottom + qr_size), relative=0, thickness=0)
 
 
-def _draw_spotify_row(c, conf, url, qr_bottom):
-    """Draw a centred QR + label/URL row; return the row's bottom edge.
+def _draw_link_row(c, x_center, y_bottom, label, url, color, qr_color,
+                   qr_size, size, label_font, url_font):
+    """Draw one QR + label/URL row centred on `x_center`.
 
-    The QR sits on the left, the label stacked over the clickable URL on
-    its right, both left-aligned and vertically centred on the code.
+    The QR sits on the left with a white plate under it, the label
+    stacked over the clickable URL on its right, both left-aligned and
+    vertically centred on the code. `y_bottom` is the QR's bottom edge.
+    Both the QR square and the URL text get their own link region.
     """
-    size = conf["spotify_size"]
-    color = conf.get("spotify_color") or "#000000"
-    qr_size = conf["spotify_qr_size"]
-    qr_color = conf.get("spotify_qr_color") or color
-    label = conf.get("spotify_label")
-    label_font = conf["spotify_font"]
-    url_font = conf["spotify_url_font"]
-
     gap = size * 1.6
     label_w = c.stringWidth(label, label_font, size) if label else 0
     url_w = c.stringWidth(url, url_font, size)
     text_w = max(label_w, url_w)
     row_w = qr_size + gap + text_w
-    qr_x = (PAGE_W - row_w) / 2
+    qr_x = x_center - row_w / 2
     text_x = qr_x + qr_size + gap
 
-    center_y = qr_bottom + qr_size / 2
+    center_y = y_bottom + qr_size / 2
     if label:
         label_baseline = center_y + size * 0.35
         url_baseline = label_baseline - size * 1.7
@@ -450,8 +492,8 @@ def _draw_spotify_row(c, conf, url, qr_bottom):
     c.saveState()
     # Light plate so the code stays scannable over tinted backgrounds.
     c.setFillColorRGB(1, 1, 1)
-    c.rect(qr_x, qr_bottom, qr_size, qr_size, stroke=0, fill=1)
-    _draw_qr(c, url, qr_x, qr_bottom, qr_size, qr_color)
+    c.rect(qr_x, y_bottom, qr_size, qr_size, stroke=0, fill=1)
+    _draw_qr(c, url, qr_x, y_bottom, qr_size, qr_color)
 
     c.setFillColor(HexColor(color))
     if label:
@@ -464,16 +506,154 @@ def _draw_spotify_row(c, conf, url, qr_bottom):
     c.linkURL(url, (text_x, url_baseline - size * 0.3,
                     text_x + url_w, url_baseline + size),
               relative=0, thickness=0)
-    c.linkURL(url, (qr_x, qr_bottom, qr_x + qr_size, qr_bottom + qr_size),
+    c.linkURL(url, (qr_x, y_bottom, qr_x + qr_size, y_bottom + qr_size),
               relative=0, thickness=0)
-    return qr_bottom
+    return y_bottom
+
+
+def _link_rows(conf, auto_url=None):
+    """Build the ordered link-row descriptors for a page.
+
+    The user-authored `links` entries come first in array order, then the
+    manifest-driven Spotify row (when enabled and resolved) closes the
+    stack. Entries inherit the page's spotify_* typography and QR size;
+    each may override `color` and `qr_color`. Malformed or url-less
+    entries are skipped rather than raising.
+    """
+    size = conf["spotify_size"]
+    qr_size = conf["spotify_qr_size"]
+    default_color = (conf.get("spotify_color") or conf.get("caption_color")
+                     or "#000000")
+    style = {
+        "qr_size": qr_size,
+        "size": size,
+        "label_font": conf["spotify_font"],
+        "url_font": conf["spotify_url_font"],
+    }
+
+    rows = []
+    for entry in conf.get("links") or []:
+        if not isinstance(entry, dict):
+            continue
+        url = entry.get("url")
+        if not isinstance(url, str) or not url.strip():
+            continue
+        color = entry.get("color") or default_color
+        rows.append(dict(style, label=entry.get("label"), url=url.strip(),
+                         color=color,
+                         qr_color=entry.get("qr_color") or color))
+    if auto_url:
+        color = default_color
+        rows.append(dict(style, label=conf.get("spotify_label"),
+                         url=auto_url, color=color,
+                         qr_color=conf.get("spotify_qr_color") or color))
+    return rows
+
+
+def _link_stack_height(rows):
+    """Total height of the stacked link rows, gaps included."""
+    if not rows:
+        return 0
+    return (sum(row["qr_size"] for row in rows)
+            + LINK_ROW_GAP * (len(rows) - 1))
+
+
+def _row_width(c, row):
+    """Full width of one link row: QR + gap + widest of label/URL."""
+    size = row["size"]
+    label = row["label"]
+    label_w = c.stringWidth(label, row["label_font"], size) if label else 0
+    url_w = c.stringWidth(row["url"], row["url_font"], size)
+    return row["qr_size"] + size * 1.6 + max(label_w, url_w)
+
+
+def _draw_link_stack(c, rows, y_top, x_center=None):
+    """Draw link rows top-down from `y_top`; return the stack's bottom.
+
+    The group is centred as a whole and every QR shares one left edge, so
+    rows with different label/URL lengths line up instead of drifting
+    left and right of each other.
+    """
+    if x_center is None:
+        x_center = PAGE_W / 2
+    rows = _fit_row_widths(c, rows)
+    group_w = max(_row_width(c, row) for row in rows)
+    qr_left = x_center - group_w / 2
+
+    y = y_top
+    for index, row in enumerate(rows):
+        if index:
+            y -= LINK_ROW_GAP
+        y -= row["qr_size"]
+        # Feed each row the centre that puts its QR on the shared edge.
+        row_center = qr_left + _row_width(c, row) / 2
+        _draw_link_row(c, row_center, y, row["label"], row["url"],
+                       row["color"], row["qr_color"], row["qr_size"],
+                       row["size"], row["label_font"], row["url_font"])
+    return y
+
+
+def _fit_rows(rows, available):
+    """Shrink QR codes proportionally until the stack fits `available`.
+
+    A single row keeps its configured size. Several rows on one page will
+    happily overflow at the default 96pt, so they scale down together --
+    never below MIN_QR_SIZE, which is still comfortably scannable.
+    """
+    stack_h = _link_stack_height(rows)
+    if stack_h <= available or len(rows) < 2:
+        return rows
+    gaps = LINK_ROW_GAP * (len(rows) - 1)
+    qr_total = sum(row["qr_size"] for row in rows)
+    scale = max((available - gaps) / qr_total, 0)
+    return [dict(row, qr_size=max(row["qr_size"] * scale, MIN_QR_SIZE))
+            for row in rows]
+
+
+def _fit_row_widths(c, rows):
+    """Shrink QR codes so the widest row fits between the margins.
+
+    Long URLs cannot wrap, so a row can be wider than the printable area.
+    The QR is the only elastic part, and trimming it pulls the whole
+    group back inside the margins. Bounded by MIN_QR_SIZE; a URL long
+    enough to overflow even then is a cover.json problem, not a layout
+    one.
+    """
+    if not rows:
+        return rows
+    available = PAGE_W - 2 * MARGIN
+    overflow = max(_row_width(c, row) for row in rows) - available
+    if overflow <= 0:
+        return rows
+    return [dict(row, qr_size=max(row["qr_size"] - overflow, MIN_QR_SIZE))
+            for row in rows]
+
+
+def _place_link_stack(rows, text_bottom, clearance, floor_pad):
+    """Return (rows, y_top): rows fitted to free space, group centred.
+
+    The band runs from `clearance` below the last text baseline down to
+    `floor_pad` above the page margin. Rows are shrunk to fit that band,
+    then the group is centred in it. If even MIN_QR_SIZE overflows -- a
+    page asking for more link rows than its image and text leave room for
+    -- the stack anchors on the floor and grows upward, so it always
+    stays on the page instead of sliding under the bottom margin.
+    """
+    band_top = text_bottom - clearance
+    band_bottom = MARGIN + floor_pad
+    rows = _fit_rows(rows, band_top - band_bottom)
+    stack_h = _link_stack_height(rows)
+    if band_top - band_bottom >= stack_h:
+        return rows, (band_top + band_bottom + stack_h) / 2
+    return rows, band_bottom + stack_h
 
 
 def make_intro(sb_dir, output, cfg):
-    """Intro page: optional title, description, centred Spotify row.
+    """Intro page: optional title, description, centred link rows.
 
     Opt-in via an `intro` section in cover.json. The text block sits in
-    the upper-middle of the page; the Spotify row is centred in whatever
+    the upper-middle of the page; the link stack (any custom `links`,
+    then the manifest Spotify row) is centred as one group in whatever
     space is left below it, so short and long descriptions both breathe.
     """
     conf = cfg["intro"]
@@ -493,18 +673,15 @@ def make_intro(sb_dir, output, cfg):
 
     text_bottom = _draw_description(c, conf, text_top)
 
-    url = spotify_url(sb_dir) if conf.get("spotify") else None
-    if url:
-        qr_size = conf["spotify_qr_size"]
-        qr_bottom = conf.get("spotify_y")
-        if qr_bottom is None:
-            band_top = text_bottom - 56
-            band_bottom = MARGIN + 96
-            if band_top - band_bottom > qr_size:
-                qr_bottom = (band_top + band_bottom - qr_size) / 2
-            else:
-                qr_bottom = band_bottom
-        _draw_spotify_row(c, conf, url, qr_bottom)
+    auto_url = spotify_url(sb_dir) if conf.get("spotify") else None
+    rows = _link_rows(conf, auto_url)
+    if rows:
+        override = conf.get("spotify_y")
+        if override is None:
+            rows, y_top = _place_link_stack(rows, text_bottom, 56, 96)
+        else:
+            y_top = override + _link_stack_height(rows)
+        _draw_link_stack(c, rows, y_top)
 
     c.showPage()
     c.save()
@@ -573,19 +750,39 @@ def make_chord_chart(sb_dir, output):
 def make_back_cover(sb_dir, output, cfg):
     """Back cover: centred image, optional caption, description, rules.
 
-    The description block starts just under the image and reads down; the
-    Spotify block sits in the bottom-right corner, clear of both.
+    The description block starts just under the image and reads down.
+    With no custom `links`, the manifest Spotify block keeps its historic
+    bottom-right corner placement. As soon as `links` are declared the
+    page switches to the centred stack shared with the intro page, so
+    every link gets the same treatment instead of one corner element
+    fighting a second group for space.
     """
     conf = cfg["back"]
     c = canvas.Canvas(output, pagesize=A4)
     _paint_background(c, conf.get("background"))
     _draw_rules(c, conf.get("rules"))
 
+    auto_url = spotify_url(sb_dir) if conf.get("spotify") else None
+    rows = _link_rows(conf, auto_url) if conf.get("links") else []
+
+    # A stacked link group needs its space reserved up front, otherwise a
+    # large poster leaves the rows nowhere to go. Cap the image height to
+    # whatever is left once the stack, description and caption are booked.
+    img_max_h = None
+    if rows:
+        floor_pad = 70 if conf.get("caption") else 40
+        reserved = (_link_stack_height(rows) + MARGIN + floor_pad + 40
+                    + _description_height(c, conf) + 22
+                    + conf["description_size"])
+        # Never shrink the artwork away entirely: past MIN_IMAGE_HEIGHT the
+        # QR rows scale down instead (see _fit_rows).
+        img_max_h = max(2 * (PAGE_H / 2 - reserved), MIN_IMAGE_HEIGHT)
+
     img_bottom = PAGE_H / 2
     img_path = _resolve(sb_dir, conf.get("image"))
     if img_path:
         img_h = _draw_centered_image(c, img_path, conf["image_width"],
-                                     PAGE_H / 2)
+                                     PAGE_H / 2, img_max_h)
         img_bottom = PAGE_H / 2 - img_h / 2
 
     if conf.get("caption"):
@@ -593,12 +790,19 @@ def make_back_cover(sb_dir, output, cfg):
         c.setFillColor(HexColor(conf["caption_color"]))
         c.drawCentredString(PAGE_W / 2, MARGIN + 40, conf["caption"])
 
-    _draw_description(c, conf, img_bottom - 22 - conf["description_size"])
+    text_bottom = _draw_description(
+        c, conf, img_bottom - 22 - conf["description_size"])
 
-    if conf.get("spotify"):
-        url = spotify_url(sb_dir)
-        if url:
-            _draw_spotify(c, conf, url)
+    if rows:
+        override = conf.get("spotify_y")
+        if override is None:
+            floor_pad = 70 if conf.get("caption") else 40
+            rows, y_top = _place_link_stack(rows, text_bottom, 40, floor_pad)
+        else:
+            y_top = override + _link_stack_height(rows)
+        _draw_link_stack(c, rows, y_top)
+    elif auto_url:
+        _draw_spotify(c, conf, auto_url)
 
     c.showPage()
     c.save()
