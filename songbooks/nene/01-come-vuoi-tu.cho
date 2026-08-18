@@ -5,49 +5,67 @@
 {capo: 1}
 
 {start_of_verse}
-[Am]Siamo nudi [D]stesi al [G]pavimento[Em]
-Almeno da mezz'ora
-E non mi guardi
-Più negli occhi ed è passata un'ora
-E fare l'amore per ore per ore
-A cosa è servito
-Se te ne vai di schiena
-E chiederci ancora
-Se ne vale la pena
-Incontrarci nei posti nascosti da grandi
+[Am][D][G][Em]
+[Am][D][G][Em]
 {end_of_verse}
+
+{start_of_verse}
+[Am]Siamo[D] nudi stesi al pavim[G]ento
+Almeno da mezz'ora[Em]
+E n[Am]on mi guar[D]di 
+Più negli oc[G]chi ed è passata un'ora[Em]
+{end_of_verse}
+
+{start_of_bridge}
+E fare l'amore[Am] per ore per o[D]re
+A cosa è servi[G]to
+Se te ne vai di [Em]schiena
+E chiederci anc[Am]ora
+Se ne vale la pe[D]na
+Incontrarci nei [G]posti nascosti da [Em]grandi
+{end_of_bridge}
 
 {start_of_chorus}
 {comment: RIT}
-Farò come vuoi tu
-Farò come vuoi tu
+Farò come vuoi tu[Am][D][G][Em]
+Farò come vuoi tu[Am][D][G][Em]
 {end_of_chorus}
 
 {start_of_verse}
-Siamo in 10 stasera
-Ma non ci sei tu
-Ho chiamato qualche amico
-Per non cadere di nuovo giù
-Perché quando beviamo
-Poi ci viene la voglia
-Di abbracciarci più forte
-anche se è già notte
-Perché quando fumiamo
-Rotti da star male
-Poi restiamo a parlare
-A pensare
+Sia[Am]mo in 10[D] stasera
+Ma[G] non ci sei [Em]tu
+Ho chiama[Am]to qualche ami[D]co
+Per non cade[G]re di nuovo giù[Em]
+Perché quando bevia[Am]mo
+Poi ci viene la vog[D]lia
+Di abbracciarci più for[G]te
+anche se è già not[Em]te
+Perché quando fumi[Am]amo
+Rotti da star ma[D]le
+Poi restiamo a par[G]lare
+A pensa[Em]re
 Che
-Fare l'amore per ore per ore a cosa è servito se te ne vai di schiena
-E chiedersi ancora se ne vale la pena incontrarsi nei posti nascosti da grandi
 {end_of_verse}
+
+{start_of_bridge}
+E fare l'amore[Am] per ore per o[D]re
+A cosa è servi[G]to
+Se te ne vai di [Em]schiena
+E chiederci anc[Am]ora
+Se ne vale la pe[D]na
+Incontrarci nei [G]posti nascosti da [Em]grandi
+{end_of_bridge}
 
 {start_of_chorus}
 {comment: RIT}
-Farò come vuoi tu
-Farò come vuoi tu
 {end_of_chorus}
 
-{start_of_verse label="Outro"}
-E farò come vuoi tu (anche se poi scappi se poi te ne vai)
-Farò come vuoi tu (anche se rimani se poi resti qua)
+{start_of_verse}
+E farò come vuoi tu[Am][D][G][Em]
+(anche se poi scappi se poi te ne vai)
+Farò come vuoi tu[Am][D][G][Em]
+(anche se rimani se poi resti qua)
+
+[Am][D][G][Em]
+[Am][D][G][Em]
 {end_of_verse}
