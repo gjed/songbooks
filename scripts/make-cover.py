@@ -46,7 +46,7 @@ cover.json schema (all keys optional):
       "description_width": 380,
       "description_y": null,
       "spotify": true,
-      "spotify_label": "Open with Spotify",
+      "spotify_label": "Ascolta su Spotify",
       "spotify_font": "Courier-Bold",
       "spotify_url_font": "Courier",
       "spotify_size": 10,
