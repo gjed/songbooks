@@ -102,6 +102,6 @@ jobs:
           set -euo pipefail
           python3 scripts/spotify_playlists.py validate || {
             EXIT_CODE=$?
-            echo "::error::Spotify manifest validation failed. A song is awaiting Spotify curation. Fix: run 'make spotify-resolve' locally and commit the updated spotify-playlists.yaml."
+            echo "::error::spotify-playlists.yaml is malformed (bad YAML shape or invalid URI). Fix the entries listed above by hand, or run 'make spotify-resolve' locally and commit the result."
             exit $EXIT_CODE
           }
