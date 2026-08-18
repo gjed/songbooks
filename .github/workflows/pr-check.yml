@@ -8,7 +8,6 @@ on:
       - "scripts/make-cover.py"
       - "Makefile"
       - ".github/workflows/pr-check.yml"
-      - "spotify-playlists.yaml"
       - "scripts/spotify_playlists.py"
 
 jobs:
@@ -69,8 +68,8 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "$SLUGS" ]; then
-            echo "::error::No songbooks detected — the PR filter fired but nothing was resolved."
-            exit 1
+            echo "No songbook content changed — nothing to compile."
+            exit 0
           fi
           if [ "$SLUGS" = "all" ]; then
             make all
@@ -102,6 +101,6 @@ jobs:
           set -euo pipefail
           python3 scripts/spotify_playlists.py validate || {
             EXIT_CODE=$?
-            echo "::error::spotify-playlists.yaml is malformed (bad YAML shape or invalid URI). Fix the entries listed above by hand, or run 'make spotify-resolve' locally and commit the result."
+            echo "::error::A songbooks/*/spotify.yaml manifest is malformed (bad YAML shape or invalid URI). Fix the entries listed above by hand, or run 'make spotify-resolve' locally and commit the result."
             exit $EXIT_CODE
           }
