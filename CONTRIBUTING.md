@@ -213,8 +213,13 @@ mix:
    (`.github/workflows/spotify-sync.yml`). It performs no searching and no
    guessing.
 
-A PR check (`spotify-validate` in `pr-check.yml`) verifies the manifest
-covers every song — no network, no secrets, safe on fork PRs.
+Curation is **optional** — there is no guarantee a song exists on Spotify
+at all, so nothing enforces full coverage. `sync` pushes a playlist only
+for songbooks with at least one pinned track and silently skips the rest;
+unpinned songs are simply absent from the playlist. A PR check
+(`spotify-validate` in `pr-check.yml`) only fails on a *malformed* manifest
+(bad YAML shape, invalid URIs); coverage gaps are reported as notes — no
+network, no secrets, safe on fork PRs.
 
 ### Manifest modes
 
@@ -249,7 +254,9 @@ for now, `n` to pin "not on Spotify", `q` to quit. The manifest is saved
 after every pick, so Ctrl-C is always safe. Commit the updated
 `spotify-playlists.yaml`.
 
-New playlists need an id recorded once:
+If a curated songbook has no `playlist_id` yet, `sync` creates the playlist
+on the fly (matching by exact name first, so re-runs never duplicate).
+Recording the id in the manifest is still the durable fix:
 
 ```bash
 python3 scripts/spotify_playlists.py resolve --write-ids
