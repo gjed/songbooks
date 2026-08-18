@@ -24,6 +24,7 @@ or open it on a tablet — that's it.
 | [Good Songs](songbooks/good-songs/)                                            | A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …) |
 | [HBS Songbook — Italiano](songbooks/hbs-ita/)                                  | Italian songs, with cover and chord chart                |
 | [HBS Songbook — English](songbooks/hsb-eng/)                                   | 100+ English songs, with cover and chord chart           |
+| [Nené](songbooks/nene/)                                                        | Homemade Italian singles, phone-recorded                 |
 
 ## How this repo is organized
 
