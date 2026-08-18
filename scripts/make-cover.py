@@ -1,4 +1,4 @@
-"""Generate cover, chord-chart, and back-cover PDFs for a songbook.
+"""Generate cover, intro, chord-chart, and back-cover PDFs for a songbook.
 
 Usage:
   python3 make-cover.py <songbook-dir> <output-dir>
@@ -31,6 +31,30 @@ cover.json schema (all keys optional):
       "logo_width": 480,
       "logo_offset": -20,
       "rules": [ { "color": "#D7489A", "y": 700, "height": 6 } ]
+    },
+    "intro": {
+      "background": "#FFFFFF",
+      "title": "Album Name",
+      "title_font": "Courier-Bold",
+      "title_size": 20,
+      "title_color": "#000000",
+      "description": ["paragraph one", "paragraph two"],
+      "description_font": "Courier",
+      "description_size": 10,
+      "description_color": "#000000",
+      "description_leading": 15,
+      "description_width": 380,
+      "description_y": null,
+      "spotify": true,
+      "spotify_label": "Open with Spotify",
+      "spotify_font": "Courier-Bold",
+      "spotify_url_font": "Courier",
+      "spotify_size": 10,
+      "spotify_color": "#000000",
+      "spotify_qr_size": 96,
+      "spotify_qr_color": "#000000",
+      "spotify_y": null,
+      "rules": []
     },
     "back": {
       "background": "#FFFFFF",
@@ -72,6 +96,14 @@ playlist link, draws a right-aligned label + URL (clickable) next to a
 vector QR code of the same URL. Missing file, missing PyYAML, or an
 unresolved link simply skips the block. `spotify_x` / `spotify_y` are the
 right and bottom edges of that block.
+
+The `intro` section is opt-in: no `intro` key means no intro page at all.
+When present it renders one extra A4 page right after the cover with an
+optional title, the description block, and a centred horizontal Spotify
+row (QR code on the left, label stacked over the clickable URL on the
+right). Set `spotify: false`, or leave the songbook unresolved in the
+manifest, to get a description-only page. `spotify_y` is the bottom edge
+of the QR code; it defaults to a spot in the lower third of the page.
 """
 
 import json
@@ -113,6 +145,30 @@ DEFAULTS = {
         "logo_offset": -20,
         "rules": [],
     },
+    "intro": {
+        "background": None,
+        "title": None,
+        "title_font": "Courier-Bold",
+        "title_size": 20,
+        "title_color": "#000000",
+        "description": None,
+        "description_font": "Courier",
+        "description_size": 10,
+        "description_color": None,
+        "description_leading": None,
+        "description_width": 380,
+        "description_y": None,
+        "spotify": True,
+        "spotify_label": "Open with Spotify",
+        "spotify_font": "Courier-Bold",
+        "spotify_url_font": "Courier",
+        "spotify_size": 10,
+        "spotify_color": None,
+        "spotify_qr_size": 96,
+        "spotify_qr_color": None,
+        "spotify_y": None,
+        "rules": [],
+    },
     "back": {
         "background": None,
         "image": "cover-celtic.jpeg",
@@ -144,14 +200,25 @@ DEFAULTS = {
 
 
 def load_config(sb_dir):
-    """Merge cover.json (if present) on top of the built-in defaults."""
+    """Merge cover.json (if present) on top of the built-in defaults.
+
+    Each merged section carries a `_declared` flag telling whether the
+    songbook actually spelled that section out, so opt-in pages (the
+    intro) can distinguish "absent" from "present but all defaults".
+    """
     cfg = {section: dict(values) for section, values in DEFAULTS.items()}
+    user = {}
     path = os.path.join(sb_dir, "cover.json")
     if os.path.exists(path):
         with open(path, encoding="utf-8") as fh:
             user = json.load(fh)
-        for section in cfg:
-            cfg[section].update(user.get(section, {}))
+    for section, conf in cfg.items():
+        section_cfg = user.get(section)
+        if isinstance(section_cfg, dict):
+            conf["_declared"] = True
+            conf.update(section_cfg)
+        else:
+            conf["_declared"] = False
     return cfg
 
 
@@ -279,7 +346,8 @@ def _draw_description(c, conf, top_y):
     size = conf["description_size"]
     leading = conf.get("description_leading") or size * 1.5
     max_width = min(conf["description_width"], PAGE_W - 2 * MARGIN)
-    color = conf.get("description_color") or conf["caption_color"]
+    color = (conf.get("description_color") or conf.get("caption_color")
+             or "#000000")
 
     c.saveState()
     c.setFont(font, size)
@@ -347,6 +415,99 @@ def _draw_spotify(c, conf, url):
                     right, url_baseline + size), relative=0, thickness=0)
     c.linkURL(url, (right - qr_size, qr_bottom,
                     right, qr_bottom + qr_size), relative=0, thickness=0)
+
+
+def _draw_spotify_row(c, conf, url, qr_bottom):
+    """Draw a centred QR + label/URL row; return the row's bottom edge.
+
+    The QR sits on the left, the label stacked over the clickable URL on
+    its right, both left-aligned and vertically centred on the code.
+    """
+    size = conf["spotify_size"]
+    color = conf.get("spotify_color") or "#000000"
+    qr_size = conf["spotify_qr_size"]
+    qr_color = conf.get("spotify_qr_color") or color
+    label = conf.get("spotify_label")
+    label_font = conf["spotify_font"]
+    url_font = conf["spotify_url_font"]
+
+    gap = size * 1.6
+    label_w = c.stringWidth(label, label_font, size) if label else 0
+    url_w = c.stringWidth(url, url_font, size)
+    text_w = max(label_w, url_w)
+    row_w = qr_size + gap + text_w
+    qr_x = (PAGE_W - row_w) / 2
+    text_x = qr_x + qr_size + gap
+
+    center_y = qr_bottom + qr_size / 2
+    if label:
+        label_baseline = center_y + size * 0.35
+        url_baseline = label_baseline - size * 1.7
+    else:
+        label_baseline = None
+        url_baseline = center_y - size * 0.35
+
+    c.saveState()
+    # Light plate so the code stays scannable over tinted backgrounds.
+    c.setFillColorRGB(1, 1, 1)
+    c.rect(qr_x, qr_bottom, qr_size, qr_size, stroke=0, fill=1)
+    _draw_qr(c, url, qr_x, qr_bottom, qr_size, qr_color)
+
+    c.setFillColor(HexColor(color))
+    if label:
+        c.setFont(label_font, size)
+        c.drawString(text_x, label_baseline, label)
+    c.setFont(url_font, size)
+    c.drawString(text_x, url_baseline, url)
+    c.restoreState()
+
+    c.linkURL(url, (text_x, url_baseline - size * 0.3,
+                    text_x + url_w, url_baseline + size),
+              relative=0, thickness=0)
+    c.linkURL(url, (qr_x, qr_bottom, qr_x + qr_size, qr_bottom + qr_size),
+              relative=0, thickness=0)
+    return qr_bottom
+
+
+def make_intro(sb_dir, output, cfg):
+    """Intro page: optional title, description, centred Spotify row.
+
+    Opt-in via an `intro` section in cover.json. The text block sits in
+    the upper-middle of the page; the Spotify row is centred in whatever
+    space is left below it, so short and long descriptions both breathe.
+    """
+    conf = cfg["intro"]
+    c = canvas.Canvas(output, pagesize=A4)
+    _paint_background(c, conf.get("background"))
+    _draw_rules(c, conf.get("rules"))
+
+    text_top = PAGE_H - 225
+    title = conf.get("title")
+    if title:
+        title_size = conf["title_size"]
+        title_baseline = PAGE_H - 200
+        c.setFont(conf["title_font"], title_size)
+        c.setFillColor(HexColor(conf["title_color"]))
+        c.drawCentredString(PAGE_W / 2, title_baseline, title)
+        text_top = title_baseline - title_size * 2.3
+
+    text_bottom = _draw_description(c, conf, text_top)
+
+    url = spotify_url(sb_dir) if conf.get("spotify") else None
+    if url:
+        qr_size = conf["spotify_qr_size"]
+        qr_bottom = conf.get("spotify_y")
+        if qr_bottom is None:
+            band_top = text_bottom - 56
+            band_bottom = MARGIN + 96
+            if band_top - band_bottom > qr_size:
+                qr_bottom = (band_top + band_bottom - qr_size) / 2
+            else:
+                qr_bottom = band_bottom
+        _draw_spotify_row(c, conf, url, qr_bottom)
+
+    c.showPage()
+    c.save()
 
 
 def make_cover(sb_dir, output, cfg):
@@ -444,10 +605,11 @@ def make_back_cover(sb_dir, output, cfg):
 
 
 def generate_cover_pdfs(sb_dir, out_dir=None):
-    """Generate the cover, optional chart, and back PDFs.
+    """Generate the cover, optional intro/chart, and back PDFs.
 
-    The chord-chart page is produced only when the songbook ships a
-    chords.png; otherwise the returned chart path is None.
+    The intro page is produced only when cover.json declares an `intro`
+    section, and the chord-chart page only when the songbook ships a
+    chords.png; otherwise the matching returned path is None.
     """
     if out_dir is None:
         out_dir = os.path.join(sb_dir, "..", "..", "pdf")
@@ -459,11 +621,16 @@ def generate_cover_pdfs(sb_dir, out_dir=None):
     make_cover(sb_dir, cover_pdf, cfg)
     make_back_cover(sb_dir, back_pdf, cfg)
 
+    intro_pdf = None
+    if cfg["intro"].get("_declared"):
+        intro_pdf = os.path.join(out_dir, f"{base}-intro.pdf")
+        make_intro(sb_dir, intro_pdf, cfg)
+
     chart_pdf = None
     if _resolve(sb_dir, "chords.png"):
         chart_pdf = os.path.join(out_dir, f"{base}-chart.pdf")
         make_chord_chart(sb_dir, chart_pdf)
-    return cover_pdf, chart_pdf, back_pdf
+    return cover_pdf, intro_pdf, chart_pdf, back_pdf
 
 
 if __name__ == "__main__":
@@ -471,7 +638,9 @@ if __name__ == "__main__":
         print("Usage: make-cover.py <songbook-dir> <output-dir>",
               file=sys.stderr)
         sys.exit(1)
-    cover, chart, back = generate_cover_pdfs(sys.argv[1], sys.argv[2])
+    cover, intro, chart, back = generate_cover_pdfs(sys.argv[1], sys.argv[2])
     print(f"Cover → {cover}")
+    if intro:
+        print(f"Intro → {intro}")
     print(f"Chart → {chart or '(skipped, no chords.png)'}")
     print(f"Back  → {back}")
