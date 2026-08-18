@@ -19,6 +19,26 @@
       { "color": "#D6A8A1", "y": 30, "height": 9 }
     ]
   },
+  "intro": {
+    "title": "bricioline",
+    "title_color": "#3F7779",
+    "description": [
+      "Bricioline è l'album dei Queen of Saba, il duo veneto di Fabio Santi e Lorenzo Battistel. Fiati, ukulele e cori costruiscono un immaginario fiabesco in cui mondo adulto e infantile si intrecciano: l'infanzia come terra sconfinata, dove niente è rigido e definito e la gioia non è ancora soffocata dalle logiche del mondo dei grandi.",
+      "Tra smorfie allo specchio, limoni con la scorza, rizomi e rifugi degli animali, le canzoni celebrano la cura, il consenso e la famiglia che ci scegliamo — briciole lasciate lungo il sentiero per ricordare dove tornare, e dove una mano stringerà la tua.",
+      "Un'utopia gentile che può diventare realtà."
+    ],
+    "description_color": "#3F7779",
+    "spotify_color": "#3F7779",
+    "spotify_qr_color": "#3F7779",
+    "rules": [
+      { "color": "#92C7C8", "y": 790, "height": 9 },
+      { "color": "#3F7779", "y": 777, "height": 9 },
+      { "color": "#D6A8A1", "y": 764, "height": 9 },
+      { "color": "#92C7C8", "y": 56, "height": 9 },
+      { "color": "#3F7779", "y": 43, "height": 9 },
+      { "color": "#D6A8A1", "y": 30, "height": 9 }
+    ]
+  },
   "back": {
     "image": "back-poster.png",
     "image_width": 360,
@@ -26,6 +46,7 @@
     "caption_font": "Courier",
     "caption_size": 10,
     "caption_color": "#3F7779",
+    "spotify": false,
     "rules": [
       { "color": "#3F7779", "y": 30, "height": 9 }
     ]
