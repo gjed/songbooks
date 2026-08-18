@@ -1,0 +1,35 @@
+# Spotify manifest for this songbook — the contract between two phases.
+#
+# `resolve` (local, interactive) pins a track/album URI for every song.
+# `sync` (CI, unattended) pushes those URIs and nothing else.
+#
+# `mode`, set by hand:
+#   mode: playlist (default)  curate one track at a time -> a playlist
+#                             this repo owns and pushes to.
+#   mode: album               the songbook IS one official Spotify
+#                             album (one artist, one release). No
+#                             playlist is created; `resolve` just links
+#                             the album once.
+#
+# String values (tracks, spotify_album, playlist_id) are one of three
+# states:
+#   ""                       not yet resolved — a search candidate
+#   spotify:track:<id> / spotify:album:<id>   pinned
+#   null                     deliberately not on Spotify — stop asking
+#
+# Track keys are .cho filename stems, in file order.
+# Regenerate with: make spotify-resolve
+$schema_version: 1
+playlist_name: España Circo Este
+playlist_id: null
+tracks:
+  01-addio-paura: ''
+  02-cara-vaticana: ''
+  03-dormo-poco-e-sogno-molto: ''
+  04-la-mia-rivolta: ''
+  05-la-revolucion-del-amor: ''
+  06-larte-della-fuga: ''
+  07-lo-stomaco-e-il-bullone: ''
+  08-mal-educacion: ''
+  09-tutto-si-trasforma: ''
+  10-vino-in-cartone-canzone-per-la-decrescita-felice: ''
