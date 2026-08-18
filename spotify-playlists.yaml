@@ -197,3 +197,9 @@ songbooks:
       10-wish-you-were-here: ''
       10-yo-ho-ho: ''
       10-you-are-my-sunshine: ''
+  nene:
+    playlist_name: Nené
+    playlist_id: null
+    tracks:
+      01-come-vuoi-tu: spotify:track:2ObchMLJWJ5JUX73jJsn6l
+      02-roma: spotify:track:641HWJZJC5Lu5JyGoPXYQg
