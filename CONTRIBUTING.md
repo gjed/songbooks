@@ -85,7 +85,7 @@ Notes:
   wrapped to `description_width` points and centred. `description_y` is
   the first baseline; by default the block sits just below the back image.
 - The Spotify block is automatic: when the songbook has a resolved
-  playlist or album link in `spotify-playlists.yaml`, the back page draws
+  playlist or album link in its `spotify.yaml`, the back page draws
   a label + clickable URL next to a vector QR code of the same link. An
   unresolved link (or a missing manifest) skips the block silently. Set
   `"spotify": false` to opt out. `spotify_color` and `spotify_qr_color`
@@ -196,8 +196,8 @@ accurately.
 
 Each non-empty songbook maps to a Spotify link: either a playlist this repo
 owns and curates track by track, or — when the songbook *is* one official
-release (like `bricioline`) — a direct link to that album. The mapping lives
-in `spotify-playlists.yaml` at the repo root, driven by
+release (like `bricioline`) — a direct link to that album. Each songbook
+owns its mapping in `songbooks/<slug>/spotify.yaml`, driven by
 `scripts/spotify_playlists.py`.
 
 ### Two-phase model
@@ -207,11 +207,12 @@ mix:
 
 1. **resolve** (local, interactive): scans `.cho` files, searches Spotify,
    and a human picks the right recording for each song. Picks are written
-   into `spotify-playlists.yaml` and committed. Never runs in CI.
-1. **sync** (CI, unattended): reads the committed manifest and pushes the
+   into the songbook's `spotify.yaml` and committed. Never runs in CI.
+1. **sync** (CI, unattended): reads the committed manifests and pushes the
    pinned URIs to Spotify on every push to `main`
-   (`.github/workflows/spotify-sync.yml`). It performs no searching and no
-   guessing.
+   (`.github/workflows/spotify-sync.yml`). Only songbooks changed by the
+   push are synced (manual `workflow_dispatch` reruns sync everything).
+   It performs no searching and no guessing.
 
 Curation is **optional** — there is no guarantee a song exists on Spotify
 at all, so nothing enforces full coverage. `sync` pushes a playlist only
@@ -252,7 +253,7 @@ For each unmatched song you get numbered candidates; press Enter to accept
 the pre-selected exact match, type a number to pick another, `s` to skip
 for now, `n` to pin "not on Spotify", `q` to quit. The manifest is saved
 after every pick, so Ctrl-C is always safe. Commit the updated
-`spotify-playlists.yaml`.
+`songbooks/<slug>/spotify.yaml`.
 
 If a curated songbook has no `playlist_id` yet, `sync` creates the playlist
 on the fly (matching by exact name first, so re-runs never duplicate).
