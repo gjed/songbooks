@@ -107,7 +107,7 @@ clean:
 	  $(PDF_DIR)/*-guitar-ita.pdf $(PDF_DIR)/*-guitar-eng.pdf
 
 # Spotify playlist sync: two-phase model
-# - resolve: interactive local curation, writes committed manifest spotify-playlists.yaml
+# - resolve: interactive local curation, writes committed songbooks/<slug>/spotify.yaml
 # - sync: pushes already-pinned track URIs, never searches (dry-run by default)
 .PHONY: spotify-validate spotify-resolve spotify-sync spotify-sync-apply
 
