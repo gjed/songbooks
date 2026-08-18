@@ -653,6 +653,9 @@ def _require_env(*names: str) -> list[str]:
 def interactive_token() -> str:
     """Access token via the interactive Authorization Code flow (spotipy)."""
     try:
+        from spotipy.cache_handler import (  # noqa: PLC0415 - optional dep
+            CacheFileHandler,
+        )
         from spotipy.oauth2 import SpotifyOAuth  # noqa: PLC0415 - optional dep
     except ModuleNotFoundError as exc:
         raise AuthError(
@@ -675,13 +678,14 @@ def interactive_token() -> str:
     )
     auth = SpotifyOAuth(
         scope=SCOPES,
-        cache_path=str(TOKEN_CACHE),
+        cache_handler=CacheFileHandler(cache_path=str(TOKEN_CACHE)),
         open_browser=True,
     )
-    token = auth.get_access_token(as_dict=True)
-    if not token or not token.get("access_token"):
+    # as_dict=False avoids spotipy's DeprecationWarning.
+    access = auth.get_access_token(as_dict=False)
+    if not access:
         raise AuthError("interactive login did not return an access token")
-    return str(token["access_token"])
+    return str(access)
 
 
 def refresh_token_grant(
@@ -1293,6 +1297,9 @@ def cmd_sync(args: argparse.Namespace) -> int:
 def cmd_auth(args: argparse.Namespace) -> int:
     """One-time interactive login that prints the CI refresh token."""
     try:
+        from spotipy.cache_handler import (  # noqa: PLC0415 - optional dep
+            CacheFileHandler,
+        )
         from spotipy.oauth2 import SpotifyOAuth  # noqa: PLC0415 - optional dep
     except ModuleNotFoundError as exc:
         raise AuthError(
@@ -1308,9 +1315,14 @@ def cmd_auth(args: argparse.Namespace) -> int:
     )
 
     auth = SpotifyOAuth(
-        scope=SCOPES, cache_path=str(TOKEN_CACHE), open_browser=True
+        scope=SCOPES,
+        cache_handler=CacheFileHandler(cache_path=str(TOKEN_CACHE)),
+        open_browser=True,
     )
-    token = auth.get_access_token(as_dict=True)
+    # as_dict=False avoids spotipy's DeprecationWarning; the full token
+    # (including refresh_token) is persisted via the cache handler.
+    auth.get_access_token(as_dict=False)
+    token = auth.cache_handler.get_cached_token()
     refresh = (token or {}).get("refresh_token")
     if not refresh:
         raise AuthError("login returned no refresh token")
