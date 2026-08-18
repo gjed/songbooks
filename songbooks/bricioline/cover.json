@@ -30,6 +30,20 @@
     "description_color": "#3F7779",
     "spotify_color": "#3F7779",
     "spotify_qr_color": "#3F7779",
+    "links": [
+      {
+        "label": "Buy the album",
+        "url": "https://queenofsaba.bandcamp.com/album/bricioline-canzoni-per-chi-cresce",
+        "color": "#3F7779",
+        "qr_color": "#3F7779"
+      },
+      {
+        "label": "Support the artist",
+        "url": "https://queenofsaba.bandcamp.com/music",
+        "color": "#3F7779",
+        "qr_color": "#3F7779"
+      }
+    ],
     "rules": [
       { "color": "#92C7C8", "y": 790, "height": 9 },
       { "color": "#3F7779", "y": 777, "height": 9 },
