@@ -77,6 +77,15 @@
 
   "pdf": {
     "pagealign-songs": 0,
+    // Every TOC ChordPro renders is followed by a forced blank page so the
+    // next section starts on an odd/even page for double-sided printing
+    // (see ChordPro::Output::PDF generate_songbook). This project prints
+    // single-sided and never uses ChordPro's own front-matter/back-matter/
+    // title options (covers are merged in separately via make-cover.py +
+    // Ghostscript), and pagealign-songs above already disables the only
+    // other place this flag would touch song pagination — so turning it
+    // off here removes the TOC blank pages with no effect on songs.
+    "even-odd-pages": 0,
     "fonts": {
       "text":    { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf",   "size": 11 },
       "chord":   { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf", "size": 11, "color": "blue" },
