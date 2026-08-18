@@ -1,0 +1,48 @@
+# Spotify manifest for this songbook — the contract between two phases.
+#
+# `resolve` (local, interactive) pins a track/album URI for every song.
+# `sync` (CI, unattended) pushes those URIs and nothing else.
+#
+# `mode`, set by hand:
+#   mode: playlist (default)  curate one track at a time -> a playlist
+#                             this repo owns and pushes to.
+#   mode: album               the songbook IS one official Spotify
+#                             album (one artist, one release). No
+#                             playlist is created; `resolve` just links
+#                             the album once.
+#
+# String values (tracks, spotify_album, playlist_id) are one of three
+# states:
+#   ""                       not yet resolved — a search candidate
+#   spotify:track:<id> / spotify:album:<id>   pinned
+#   null                     deliberately not on Spotify — stop asking
+#
+# Track keys are .cho filename stems, in file order.
+# Regenerate with: make spotify-resolve
+$schema_version: 1
+playlist_name: Diplomatico e il Collettivo Ninco Nanco
+playlist_id: null
+tracks:
+  01-diplomatico: ''
+  02-radicale: ''
+  03-due-mari: ''
+  04-il-premio-di-oscar: ''
+  05-puntini: ''
+  06-tabacco: ''
+  07-venerdi: ''
+  08-la-vecchia-citta-sul-mare: ''
+  09-sophie: ''
+  10-ine: ''
+  11-cest-la-vie: ''
+  12-una-bellissima-festa: ''
+  13-adios-amigo: ''
+  14-straniera: ''
+  15-bla-bla: ''
+  16-lindifferenza: ''
+  17-raton: ''
+  18-muri-di-citta: ''
+  19-comico: ''
+  20-miranda: ''
+  21-buendia: ''
+  22-bocca-dargento: ''
+  23-america: ''

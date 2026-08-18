@@ -1,0 +1,31 @@
+# Spotify manifest for this songbook — the contract between two phases.
+#
+# `resolve` (local, interactive) pins a track/album URI for every song.
+# `sync` (CI, unattended) pushes those URIs and nothing else.
+#
+# `mode`, set by hand:
+#   mode: playlist (default)  curate one track at a time -> a playlist
+#                             this repo owns and pushes to.
+#   mode: album               the songbook IS one official Spotify
+#                             album (one artist, one release). No
+#                             playlist is created; `resolve` just links
+#                             the album once.
+#
+# String values (tracks, spotify_album, playlist_id) are one of three
+# states:
+#   ""                       not yet resolved — a search candidate
+#   spotify:track:<id> / spotify:album:<id>   pinned
+#   null                     deliberately not on Spotify — stop asking
+#
+# Track keys are .cho filename stems, in file order.
+# Regenerate with: make spotify-resolve
+$schema_version: 1
+playlist_name: faccianuvola
+playlist_id: null
+tracks:
+  01-portami-a-ballare-in-primavera: ''
+  02-unora-come-prima: ''
+  03-disperata-gioventu: ''
+  04-rondine-angelica: ''
+  05-verticale: ''
+  06-seibelleseibelle: ''

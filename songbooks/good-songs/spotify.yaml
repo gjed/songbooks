@@ -1,0 +1,37 @@
+# Spotify manifest for this songbook — the contract between two phases.
+#
+# `resolve` (local, interactive) pins a track/album URI for every song.
+# `sync` (CI, unattended) pushes those URIs and nothing else.
+#
+# `mode`, set by hand:
+#   mode: playlist (default)  curate one track at a time -> a playlist
+#                             this repo owns and pushes to.
+#   mode: album               the songbook IS one official Spotify
+#                             album (one artist, one release). No
+#                             playlist is created; `resolve` just links
+#                             the album once.
+#
+# String values (tracks, spotify_album, playlist_id) are one of three
+# states:
+#   ""                       not yet resolved — a search candidate
+#   spotify:track:<id> / spotify:album:<id>   pinned
+#   null                     deliberately not on Spotify — stop asking
+#
+# Track keys are .cho filename stems, in file order.
+# Regenerate with: make spotify-resolve
+$schema_version: 1
+playlist_name: Good Songs
+playlist_id: null
+tracks:
+  01-boondocks: ''
+  02-buon-viaggio: ''
+  03-cup-song: ''
+  04-gianna: ''
+  05-halleluja: ''
+  06-hoist-the-colors: ''
+  07-i-see-fire: ''
+  08-pontoon: ''
+  09-the-last-goodbye: ''
+  10-the-sound-of-silence: ''
+  11-tornado: ''
+  12-urca-urca-tirulero: ''
