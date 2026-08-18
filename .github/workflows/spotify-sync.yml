@@ -1,11 +1,12 @@
 # Spotify Sync
 #
 # Two-phase model:
-# 1. Matching is curated locally into the committed manifest (spotify-playlists.yaml)
+# 1. Matching is curated locally into per-songbook manifests (songbooks/<slug>/spotify.yaml)
 # 2. This job only pushes the already-pinned URIs to Spotify, never searches
 #
-# Runs on push to main when songbooks, manifest, or scripts change.
+# Runs on push to main when songbooks, manifests, or scripts change.
 # Manual reruns via workflow_dispatch for recovery from transient failures.
+# For push events, only changed songbooks are synced; for manual dispatch, all are synced.
 
 name: Spotify Sync
 
@@ -15,7 +16,6 @@ on:
       - main
     paths:
       - "songbooks/**"
-      - "spotify-playlists.yaml"
       - "scripts/spotify_playlists.py"
       - "requirements.txt"
       - ".github/workflows/spotify-sync.yml"
@@ -35,6 +35,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # needed for git diff to detect changed songbooks
 
       - uses: actions/setup-python@v7
         with:
@@ -43,15 +45,75 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Detect changed songbooks
+        id: changed
+        run: |
+          set -euo pipefail
+          
+          # For workflow_dispatch, sync all songbooks
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual dispatch — syncing all songbooks."
+            echo "slugs=all" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
+          # For push events, detect changed songbooks
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+          
+          # Guard against new branch (before is all-zeros) or shallow/force push
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BEFORE" 2>/dev/null; then
+            echo "New branch or commit not fetched — syncing all songbooks."
+            echo "slugs=all" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
+          CHANGED=$(git diff --name-only "$BEFORE..$AFTER")
+          echo "Changed files:"
+          echo "$CHANGED" | sed 's/^/  /'
+          
+          # If scripts or workflow changed, sync all songbooks
+          if echo "$CHANGED" | grep -qE '^(scripts/spotify_playlists\.py|requirements\.txt|\.github/workflows/spotify-sync\.yml)$'; then
+            echo "Script or workflow changed — syncing all songbooks."
+            echo "slugs=all" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
+          # Extract changed songbook slugs from songbooks/<slug>/* changes
+          SLUGS=$(echo "$CHANGED" \
+            | grep '^songbooks/' \
+            | cut -d/ -f2 \
+            | sort -u \
+            | tr '\n' ' ' || true)
+          echo "slugs=$SLUGS" >> "$GITHUB_OUTPUT"
+
       - name: Sync playlists to Spotify
         env:
+          SLUGS: ${{ steps.changed.outputs.slugs }}
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
         run: |
           set -euo pipefail
-          python3 scripts/spotify_playlists.py sync --apply || {
-            EXIT_CODE=$?
-            echo "::error::Spotify sync failed. If this failed on authentication, the Spotify refresh token has been invalidated. Fix: run 'python3 scripts/spotify_playlists.py auth' locally, then update the SPOTIFY_REFRESH_TOKEN repository secret with the new value."
-            exit $EXIT_CODE
+          
+          if [ -z "$SLUGS" ]; then
+            echo "No songbook content changed — nothing to sync."
+            exit 0
+          fi
+          
+          sync_with_error_handling() {
+            python3 scripts/spotify_playlists.py sync --apply "$@" || {
+              EXIT_CODE=$?
+              echo "::error::Spotify sync failed. If this failed on authentication, the Spotify refresh token has been invalidated. Fix: run 'python3 scripts/spotify_playlists.py auth' locally, then update the SPOTIFY_REFRESH_TOKEN repository secret with the new value."
+              exit $EXIT_CODE
+            }
           }
+          
+          if [ "$SLUGS" = "all" ]; then
+            sync_with_error_handling
+          else
+            for slug in $SLUGS; do
+              echo "Syncing $slug..."
+              sync_with_error_handling --songbook "$slug"
+            done
+          fi
