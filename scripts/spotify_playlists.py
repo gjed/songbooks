@@ -774,17 +774,19 @@ def cached_token() -> str | None:
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
-    """Filesystem + YAML consistency check. No network, no credentials."""
+    """Structural manifest check. No network, no credentials.
+
+    Curation coverage is NOT enforced: songs may stay unresolved forever
+    (there is no guarantee a song exists on Spotify at all), songbooks may
+    lack a playlist, and none of that fails validation. Only a *malformed*
+    manifest — unparseable YAML, wrong shapes, bad URIs — is an error.
+    Coverage gaps are reported as information so curation stays visible.
+    """
     books = scan_songbooks(args.songbook)
     if not MANIFEST_PATH.exists():
-        print(f"::error::{MANIFEST_PATH.name} is missing.", file=sys.stderr)
-        print(
-            f"error: {MANIFEST_PATH.name} not found — every songbook song must "
-            f"be pinned there.\n"
-            f"  fix: make spotify-resolve",
-            file=sys.stderr,
-        )
-        return 1
+        # No manifest simply means nothing has been curated yet.
+        print(f"{MANIFEST_PATH.name} not found — nothing curated yet, OK.")
+        return 0
 
     manifest = load_manifest()
     entries = manifest.get("songbooks", {})
@@ -794,6 +796,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
     orphans: list[str] = []
     no_playlist: list[str] = []
     bad_uris: list[str] = []
+    malformed: list[str] = []
     expected_slugs: set[str] = set()
 
     for book in books:
@@ -805,7 +808,10 @@ def cmd_validate(args: argparse.Namespace) -> int:
             continue
         expected_slugs.add(book.slug)
         entry = entries.get(book.slug)
-        if not isinstance(entry, dict):
+        if entry is not None and not isinstance(entry, dict):
+            malformed.append(f"{book.slug}: manifest entry is not a mapping")
+            continue
+        if entry is None:
             missing_entries.append(
                 f"{book.slug}: no manifest entry ({len(book.songs)} songs)"
             )
@@ -827,8 +833,10 @@ def cmd_validate(args: argparse.Namespace) -> int:
             continue
 
         tracks = entry.get("tracks")
+        if tracks is None:
+            tracks = {}
         if not isinstance(tracks, dict):
-            missing_entries.append(f"{book.slug}: 'tracks' is not a mapping")
+            malformed.append(f"{book.slug}: 'tracks' is not a mapping")
             continue
 
         for song in book.songs:
@@ -852,98 +860,100 @@ def cmd_validate(args: argparse.Namespace) -> int:
         if not entry.get("playlist_id"):
             no_playlist.append(book.slug)
 
-    # Unresolved = present in the manifest but never curated. Distinguished
-    # from "missing entry" so the message tells the human which step is next.
-    # (Playlist-mode songbooks with no playlist_id are reported above, per
-    # songbook, as part of the main scan loop.)
     for slug, entry in entries.items():
         if args.songbook and slug != args.songbook:
             continue
         if not isinstance(entry, dict):
-            orphans.append(f"{slug}: manifest entry is not a mapping")
+            malformed.append(f"{slug}: manifest entry is not a mapping")
             continue
         if slug not in expected_slugs and slug not in {b.slug for b in books}:
             orphans.append(f"{slug}: no such songbook on disk")
 
-    problems = False
+    # --- fatal: the manifest itself is broken -----------------------------
+    broken = False
 
-    if missing_entries:
-        problems = True
+    if malformed:
+        broken = True
         print(
-            f"error: {len(missing_entries)} song(s) have no manifest entry:",
+            f"error: {len(malformed)} malformed manifest entr(ies):",
             file=sys.stderr,
         )
-        for item in missing_entries:
-            print(f"  - {item}", file=sys.stderr)
-
-    if orphans:
-        problems = True
-        print(
-            f"error: {len(orphans)} orphaned manifest entr(ies) point at "
-            f"songs that no longer exist:",
-            file=sys.stderr,
-        )
-        for item in orphans:
-            print(f"  - {item}", file=sys.stderr)
-
-    if unresolved:
-        problems = True
-        print(
-            f"error: {len(unresolved)} song(s) are awaiting Spotify curation:",
-            file=sys.stderr,
-        )
-        for item in unresolved:
+        for item in malformed:
             print(f"  - {item}", file=sys.stderr)
 
     if bad_uris:
-        problems = True
+        broken = True
         print(
-            f"error: {len(bad_uris)} malformed track URI(s) "
-            f"(expected spotify:track:<id> or null):",
+            f"error: {len(bad_uris)} malformed URI(s) "
+            f"(expected spotify:track:<id> / spotify:album:<id> or null):",
             file=sys.stderr,
         )
         for item in bad_uris:
             print(f"  - {item}", file=sys.stderr)
 
-    if no_playlist:
-        problems = True
+    if broken:
         print(
-            f"error: {len(no_playlist)} songbook(s) have no playlist_id:",
-            file=sys.stderr,
-        )
-        for item in no_playlist:
-            print(f"  - {item}", file=sys.stderr)
-        print(
-            "  fix: python3 scripts/spotify_playlists.py resolve --write-ids",
-            file=sys.stderr,
-        )
-
-    if problems:
-        print(
-            "\n  fix unresolved songs with:  make spotify-resolve"
-            + (f" SB={args.songbook}" if args.songbook else "")
-            + f"\n  then commit the updated {MANIFEST_PATH.name}",
+            f"\n  {MANIFEST_PATH.name} is malformed — fix the entries above "
+            f"by hand or re-run:  make spotify-resolve",
             file=sys.stderr,
         )
         return 1
 
+    # --- informational: curation coverage is optional, never an error -----
+    # A song with no Spotify counterpart may stay unresolved forever, and a
+    # songbook without a playlist simply isn't synced.
+    if missing_entries:
+        print(f"note: {len(missing_entries)} song(s) have no manifest entry yet:")
+        for item in missing_entries:
+            print(f"  - {item}")
+
+    if orphans:
+        print(
+            f"note: {len(orphans)} stale manifest entr(ies) point at songs "
+            f"that no longer exist (resolve will prune them):"
+        )
+        for item in orphans:
+            print(f"  - {item}")
+
+    if unresolved:
+        print(f"note: {len(unresolved)} song(s) not curated yet:")
+        for item in unresolved:
+            print(f"  - {item}")
+
+    if no_playlist:
+        print(
+            f"note: {len(no_playlist)} songbook(s) have no playlist_id "
+            f"(they are skipped by sync until one is written):"
+        )
+        for item in no_playlist:
+            print(f"  - {item}")
+
+    if missing_entries or orphans or unresolved or no_playlist:
+        print(
+            "\n  curation is optional — to curate, run:  make spotify-resolve"
+            + (f" SB={args.songbook}" if args.songbook else "")
+            + f"\n  then commit the updated {MANIFEST_PATH.name}"
+        )
+
     total = sum(len(book.songs) for book in books)
+    scoped = {
+        slug: entry
+        for slug, entry in entries.items()
+        if slug in expected_slugs and isinstance(entry, dict)
+    }
     pinned = sum(
         1
-        for entry in entries.values()
-        if isinstance(entry, dict) and not is_album_mode(entry)
+        for entry in scoped.values()
+        if not is_album_mode(entry)
         for uri in (entry.get("tracks") or {}).values()
         if uri
     )
-    skipped = total - pinned
-    album_slugs = sum(
-        1 for entry in entries.values() if isinstance(entry, dict) and is_album_mode(entry)
-    )
+    album_slugs = sum(1 for entry in scoped.values() if is_album_mode(entry))
     playlist_slugs = len(expected_slugs) - album_slugs
     print(
-        f"{MANIFEST_PATH.name} is consistent: {total} songs across "
-        f"{playlist_slugs} playlist(s) and {album_slugs} linked album(s) — "
-        f"{pinned} tracks pinned, {skipped} marked not on Spotify."
+        f"{MANIFEST_PATH.name} is well-formed: {total} songs across "
+        f"{playlist_slugs} playlist songbook(s) and {album_slugs} linked "
+        f"album(s) — {pinned} tracks pinned."
     )
     return 0
 
@@ -1203,17 +1213,27 @@ def description_for(count: int) -> str:
 
 
 def cmd_sync(args: argparse.Namespace) -> int:
-    """Push the pinned URIs to Spotify. No searching, no matching."""
+    """Push the pinned URIs to Spotify. No searching, no matching.
+
+    Sync is optional and coverage is never enforced: a songbook is synced
+    only when it has at least one pinned track. Songbooks with nothing
+    curated (or in album mode, where the album already exists on Spotify)
+    are skipped without error. A curated songbook missing its playlist_id
+    gets the playlist created on the fly (found by exact name first, so
+    re-runs don't create duplicates) — committing the id via
+    `resolve --write-ids` is still the durable fix.
+    """
     books = scan_songbooks(args.songbook)
     manifest = load_manifest()
+    entries = manifest.get("songbooks", {})
 
-    # Refuse to run on drift: syncing a manifest that no longer matches the
-    # songbooks would silently publish a stale playlist.
-    drift = argparse.Namespace(songbook=args.songbook)
-    if cmd_validate(drift) != 0:
+    # A structurally broken manifest is still a hard stop — pushing from
+    # garbage would publish garbage. Coverage gaps are fine.
+    structural = argparse.Namespace(songbook=args.songbook)
+    if cmd_validate(structural) != 0:
         print(
-            "\nerror: refusing to sync — the manifest does not match the "
-            "songbooks (see above).",
+            f"\nerror: refusing to sync — {MANIFEST_PATH.name} is malformed "
+            f"(see above).",
             file=sys.stderr,
         )
         return 1
@@ -1221,23 +1241,36 @@ def cmd_sync(args: argparse.Namespace) -> int:
     plan: list[tuple[str, dict[str, Any], list[str], int]] = []
     for book in books:
         if not book.songs:
-            print(f"{book.slug}: no songs — skipping (no playlist)")
             continue
-        entry = manifest["songbooks"][book.slug]
+        entry = entries.get(book.slug)
+        if not isinstance(entry, dict):
+            print(f"{book.slug}: not curated yet — skipping")
+            continue
         if is_album_mode(entry):
             # Nothing to push: the album already exists on Spotify as-is.
             print(f"{book.slug}: linked to an existing album — nothing to sync")
             continue
-        tracks = entry["tracks"]
+        tracks = entry.get("tracks") or {}
         uris = [tracks[song.stem] for song in book.songs if tracks.get(song.stem)]
+        if not uris:
+            print(f"{book.slug}: no tracks pinned yet — skipping")
+            continue
         plan.append((book.slug, entry, uris, len(book.songs) - len(uris)))
+
+    if not plan:
+        print("\nnothing to sync — no songbook has pinned tracks.")
+        return 0
 
     if not args.apply:
         for slug, entry, uris, absent in plan:
-            print(
-                f"{slug}: would push {len(uris)} track(s) to "
+            target = (
                 f"{entry['playlist_name']!r} ({entry['playlist_id']})"
-                + (f", {absent} not on Spotify" if absent else "")
+                if entry.get("playlist_id")
+                else f"{entry['playlist_name']!r} (playlist will be created)"
+            )
+            print(
+                f"{slug}: would push {len(uris)} track(s) to {target}"
+                + (f", {absent} song(s) unpinned" if absent else "")
             )
         print("\ndry run — nothing was written. Re-run with --apply to push.")
         return 0
@@ -1250,10 +1283,34 @@ def cmd_sync(args: argparse.Namespace) -> int:
     client = Spotify(token)
 
     changed = 0
+    by_name: dict[str, str] | None = None  # lazy: only fetched when needed
     for slug, entry, uris, absent in plan:
-        playlist_id = str(entry["playlist_id"])
         name = str(entry["playlist_name"])
         description = description_for(len(uris))
+
+        playlist_id = entry.get("playlist_id")
+        if not playlist_id:
+            # No committed id. Find the playlist by exact name first so
+            # repeated CI runs never create duplicates; create otherwise.
+            if by_name is None:
+                by_name = {
+                    str(p.get("name") or ""): str(p.get("id") or "")
+                    for p in client.my_playlists()
+                }
+            playlist_id = by_name.get(name)
+            if playlist_id:
+                print(f"{slug}: found existing playlist {name!r} ({playlist_id})")
+            else:
+                user_id = str(client.me().get("id"))
+                playlist_id = client.create_playlist(user_id, name, description)
+                by_name[name] = playlist_id
+                print(f"{slug}: created playlist {name!r} ({playlist_id})")
+            print(
+                f"{slug}: note — playlist_id is not in the manifest; run "
+                f"'python3 scripts/spotify_playlists.py resolve --write-ids' "
+                f"locally and commit it to make this durable."
+            )
+        playlist_id = str(playlist_id)
 
         current = client.playlist_uris(playlist_id)
         details = client.playlist(playlist_id)
