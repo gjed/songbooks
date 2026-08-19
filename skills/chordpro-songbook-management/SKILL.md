@@ -73,11 +73,14 @@ page needs content fixes or user sign-off, not silent acceptance.
 ## Steps: new songbook
 
 1. `mkdir songbooks/<slug>` (kebab-case).
+1. Add `songbooks/<slug>/songbook.yaml` (metadata: slug, title, language,
+   notation, blurb, description — schema in CONTRIBUTING.md).
 1. Add songs per `chordpro-song-authoring` conventions, numbered per the
    chosen scheme above.
-1. Optionally add `00-cover.cho`, `01-chord-chart.cho`, `99-back-cover.cho`
-   plus image assets for `scripts/make-cover.py`.
-1. Update the songbooks list in `README.md`.
+1. Optionally declare `cover:` / `intro:` / `back:` sections in
+   `songbook.yaml` plus image assets for `scripts/make-cover.py`.
+1. Regenerate the root README songbook table:
+   `python3 scripts/readme-table.py` (never edit it by hand).
 1. Verify: `make <slug>` exits 0; inspect warnings; page count == song
    count (+ special pages).
 1. Commit: `feat(<slug>): add <songbook or song title>` (Conventional
