@@ -9,8 +9,9 @@ setup, and PR workflow.
 songbooks/
   <songbook-slug>/      one folder per songbook, kebab-case
     NN-song-slug.cho    two-digit track prefix, kebab-case slug
+    songbook.yaml       metadata + optional cover / intro / back layout
     layout.json         optional per-songbook layout overlay
-    cover.json          optional cover / back-cover layout
+    spotify.yaml        Spotify mapping (machine-written, see below)
 pdf/                    compiled PDFs (build output)
 scripts/                helper scripts (cover generation)
 chordpro-ukulele.json   global ChordPro config
@@ -23,55 +24,87 @@ Numbering conventions:
 - Songbooks with special pages reserve `00-cover.cho`,
   `01-chord-chart.cho`, and `99-back-cover.cho`; songs start at `10-`.
 
+## Songbook metadata (`songbook.yaml`)
+
+Every songbook ships a human-authored `songbooks/<slug>/songbook.yaml`.
+It is the single source for the songbook's identity and prose:
+
+```yaml
+slug: bricioline          # matches the folder name
+title: Bricioline         # display name (README table, Spotify playlists)
+artist: Queen of Saba     # optional — single-artist songbooks only
+language: it              # primary language of the songs
+notation: common          # chord names in the .cho files: common | latin
+
+blurb: Queen of Saba — Italian children's music   # one line, README table
+
+description: >-           # longer prose, markdown allowed
+  Songbook for *Bricioline (Canzoni per chi cresce)* …
+```
+
+The songbook table in the root `README.md` is generated from these
+files — after adding or editing one, run:
+
+```bash
+python3 scripts/readme-table.py
+```
+
+Never edit the table by hand.
+
+The optional `cover:`, `intro:`, and `back:` sections of the same file
+drive the printed cover pages (next section). `spotify.yaml` stays a
+separate file because it is machine-written: `spotify_playlists.py resolve` rewrites it wholesale.
+
 ## Covers
 
 Covers are not rendered by ChordPro. `scripts/make-cover.py` draws them
 with `reportlab`, and the Makefile merges them around the ChordPro-rendered
 songs with Ghostscript.
 
-A songbook gets cover pages when it contains a `cover.json`. Every key is
+A songbook gets cover pages when its `songbook.yaml` declares a `cover:`
+section (and an intro page when it declares `intro:`). Every key is
 optional; omitted keys fall back to the built-in defaults:
 
-```json
-{
-  "cover": {
-    "title": "Songbook Title",
-    "title_font": "Courier-Bold",
-    "title_size": 28,
-    "title_color": "#000000",
-    "subtitle": "ukulele",
-    "logo": "cover-logo.png",
-    "logo_width": 470,
-    "logo_offset": 10,
-    "strip_top": "strip-top.png",
-    "strip_bottom": "strip-bottom.png",
-    "background": "#FFFFFF",
-    "rules": [{ "color": "#D7489A", "y": 764, "height": 9 }]
-  },
-  "back": {
-    "image": "back-logo.png",
-    "image_width": 260,
-    "caption": "Album  ·  Album  ·  Album",
-    "description": ["First paragraph.", "Second paragraph."],
-    "description_font": "Courier",
-    "description_size": 9,
-    "description_color": "#000000",
-    "description_leading": 13.5,
-    "description_width": 360,
-    "description_y": null,
-    "spotify": true,
-    "spotify_label": "Listen on Spotify",
-    "spotify_font": "Courier-Bold",
-    "spotify_url_font": "Courier",
-    "spotify_size": 9,
-    "spotify_color": null,
-    "spotify_qr_size": 72,
-    "spotify_qr_color": null,
-    "spotify_x": null,
-    "spotify_y": null,
-    "rules": []
-  }
-}
+```yaml
+cover:
+  title: Songbook Title
+  title_font: Courier-Bold
+  title_size: 28
+  title_color: "#000000"
+  subtitle: ukulele
+  logo: cover-logo.png
+  logo_width: 470
+  logo_offset: 10
+  strip_top: strip-top.png
+  strip_bottom: strip-bottom.png
+  background: "#FFFFFF"
+  rules:
+    - { color: "#D7489A", y: 764, height: 9 }
+
+back:
+  image: back-logo.png
+  image_width: 260
+  caption: "Album  ·  Album  ·  Album"
+  description:
+    - First paragraph.
+    - Second paragraph.
+  description_font: Courier
+  description_size: 9
+  description_color: "#000000"
+  description_leading: 13.5
+  description_width: 360
+  description_y: null
+  spotify: true
+  spotify_label: Listen on Spotify
+  spotify_font: Courier-Bold
+  spotify_url_font: Courier
+  spotify_size: 9
+  spotify_color: null
+  spotify_qr_size: 72
+  spotify_qr_color: null
+  spotify_x: null
+  spotify_y: null
+  rules: []
 ```
 
 Notes:
@@ -133,8 +166,10 @@ Notes:
 ## Adding a songbook
 
 1. Create `songbooks/<songbook-slug>/`
+1. Add `songbook.yaml` with at least `slug`, `title`, `language`,
+   `notation`, `blurb`, and `description`
 1. Add songs following the conventions above
-1. Update the songbook table in `README.md`
+1. Regenerate the root README table: `python3 scripts/readme-table.py`
 
 ## Building PDFs locally
 

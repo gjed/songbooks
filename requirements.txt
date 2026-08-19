@@ -4,8 +4,11 @@
 Pillow
 reportlab
 
+# songbook.yaml loading (make-cover.py, readme-table.py,
+# spotify_playlists.py) and the Spotify manifests
+PyYAML
+
 # Spotify playlist sync (scripts/spotify_playlists.py)
 # Note: spotipy is needed only for interactive auth/resolve login.
-# validate needs only PyYAML; sync runs on PyYAML alone.
-PyYAML
+# validate and sync run on PyYAML alone.
 spotipy

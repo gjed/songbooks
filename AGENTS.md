@@ -48,8 +48,11 @@ Band and album metadata live in each song's ChordPro headers, not in the folder 
 ## Adding a new songbook
 
 1. Create `songbooks/<songbook-slug>/` directory
+1. Add `songbooks/<slug>/songbook.yaml` (metadata: slug, title, language,
+   notation, blurb, description — see CONTRIBUTING.md)
 1. Add songs following the song convention above
-1. Update `README.md` songbooks list
+1. Regenerate the root `README.md` songbook table:
+   `python3 scripts/readme-table.py` (never edit the table by hand)
 
 ## Commit conventions
 
