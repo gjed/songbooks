@@ -14,6 +14,8 @@ or open it on a tablet — that's it.
 
 ## The songbooks
 
+<!-- songbooks:begin -->
+
 | Songbook                                                                       | What's inside                                            |
 | ------------------------------------------------------------------------------ | -------------------------------------------------------- |
 | [Bricioline](songbooks/bricioline/)                                            | Queen of Saba — Italian children's music                 |
@@ -25,6 +27,12 @@ or open it on a tablet — that's it.
 | [HBS Songbook — Italiano](songbooks/hbs-ita/)                                  | Italian songs, with cover and chord chart                |
 | [HBS Songbook — English](songbooks/hsb-eng/)                                   | 100+ English songs, with cover and chord chart           |
 | [Nené](songbooks/nene/)                                                        | Homemade Italian singles, phone-recorded                 |
+
+<!-- songbooks:end -->
+
+The table above is generated from each songbook's `songbook.yaml` —
+edit that file and run `python3 scripts/readme-table.py`, don't edit
+the table by hand.
 
 ## How this repo is organized
 
