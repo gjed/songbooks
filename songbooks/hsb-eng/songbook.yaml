@@ -1,0 +1,28 @@
+# Songbook metadata + print layout. Human-authored.
+# spotify.yaml is machine-written (spotify_playlists.py) and stays separate.
+# The cover/back values below spell out the historic HBS defaults that this
+# songbook previously inherited implicitly (via the 00-cover.cho marker).
+slug: hsb-eng
+title: HBS Songbook — English
+language: en        # primary language — drives the printed intro page (#36)
+notation: common    # chord names used in the .cho files (C D E …)
+
+blurb: 100+ English songs, with cover and chord chart
+
+description: >-
+  100+ English songs for the Hike Song Book (HSB) — folk, pop, and campfire
+  classics for group singing on the trail. Includes cover and ukulele chord
+  chart.
+
+# Print layout — presence of `cover:` is what enables cover pages.
+cover:
+  title: HBS Songbook
+  strip_top: strip-top.png
+  strip_bottom: strip-bottom.png
+  logo: cover-uke.png
+  logo_width: 480
+  logo_offset: -20
+
+back:
+  image: cover-celtic.jpeg
+  image_width: 240

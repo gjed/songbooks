@@ -3,8 +3,9 @@
 Usage:
   python3 make-cover.py <songbook-dir> <output-dir>
 
-Layout is driven by an optional `cover.json` in the songbook directory.
-When absent, the built-in defaults reproduce the original HBS layout:
+Layout is driven by the `cover`, `intro`, and `back` sections of the
+songbook's `songbook.yaml`. When a section is absent, the built-in
+defaults reproduce the original HBS layout:
 
   cover-uke.png        - logo (cover)
   strip-top.png        - top decorative strip
@@ -12,7 +13,8 @@ When absent, the built-in defaults reproduce the original HBS layout:
   cover-celtic.jpeg    - image (back cover)
   chords.png           - chord chart diagram
 
-cover.json schema (all keys optional):
+Layout schema (all keys optional; shown as JSON for compactness, the
+sections live as YAML in songbook.yaml):
 
   {
     "cover": {
@@ -112,7 +114,7 @@ of the QR code; it defaults to a spot in the lower third of the page.
 
 `links` adds arbitrary hand-written link rows to the intro or back page:
 a list of `{label, url}` objects, each optionally overriding `color` and
-`qr_color`. These are pure cover.json data -- no manifest involved -- and
+`qr_color`. These are pure songbook.yaml data -- no manifest involved -- and
 each row is drawn exactly like the Spotify one, stacked vertically and
 centred as a single group. When both the automatic Spotify block and
 custom `links` appear on a page they share that one stack: the `links`
@@ -124,10 +126,10 @@ bottom-right corner to the centred stack; with no `links` the corner
 layout is untouched.
 """
 
-import json
 import os
 import sys
 
+import yaml
 from PIL import Image
 from reportlab.graphics import renderPDF
 from reportlab.graphics.barcode.qr import QrCodeWidget
@@ -224,7 +226,7 @@ DEFAULTS = {
 
 
 def load_config(sb_dir):
-    """Merge cover.json (if present) on top of the built-in defaults.
+    """Merge songbook.yaml layout sections on top of the built-in defaults.
 
     Each merged section carries a `_declared` flag telling whether the
     songbook actually spelled that section out, so opt-in pages (the
@@ -232,10 +234,10 @@ def load_config(sb_dir):
     """
     cfg = {section: dict(values) for section, values in DEFAULTS.items()}
     user = {}
-    path = os.path.join(sb_dir, "cover.json")
+    path = os.path.join(sb_dir, "songbook.yaml")
     if os.path.exists(path):
         with open(path, encoding="utf-8") as fh:
-            user = json.load(fh)
+            user = yaml.safe_load(fh) or {}
     for section, conf in cfg.items():
         section_cfg = user.get(section)
         if isinstance(section_cfg, dict):
@@ -597,7 +599,7 @@ def _fit_row_widths(c, rows):
     Long URLs cannot wrap, so a row can be wider than the printable area.
     The QR is the only elastic part, and trimming it pulls the whole
     group back inside the margins. Bounded by MIN_QR_SIZE; a URL long
-    enough to overflow even then is a cover.json problem, not a layout
+    enough to overflow even then is a songbook.yaml problem, not a layout
     one.
     """
     if not rows:
@@ -632,7 +634,7 @@ def _place_link_stack(rows, text_bottom, clearance, floor_pad):
 def make_intro(sb_dir, output, cfg):
     """Intro page: optional title, description, centred link rows.
 
-    Opt-in via an `intro` section in cover.json. The text block sits in
+    Opt-in via an `intro` section in songbook.yaml. The text block sits in
     the upper-middle of the page; the link stack (any custom `links`,
     then the manifest Spotify row) is centred as one group in whatever
     space is left below it, so short and long descriptions both breathe.
@@ -792,7 +794,7 @@ def make_back_cover(sb_dir, output, cfg):
 def generate_cover_pdfs(sb_dir, out_dir=None):
     """Generate the cover, optional intro/chart, and back PDFs.
 
-    The intro page is produced only when cover.json declares an `intro`
+    The intro page is produced only when songbook.yaml declares an `intro`
     section, and the chord-chart page only when the songbook ships a
     chords.png; otherwise the matching returned path is None.
     """

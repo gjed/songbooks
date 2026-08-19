@@ -1,0 +1,37 @@
+# Songbook metadata + print layout. Human-authored.
+# spotify.yaml is machine-written (spotify_playlists.py) and stays separate.
+slug: faccianuvola
+title: faccianuvola
+artist: faccianuvola
+language: it        # primary language — drives the printed intro page (#36)
+notation: common    # chord names used in the .cho files (C D E …)
+
+blurb: Italian indie-pop singer-songwriter faccianuvola
+
+description: >-
+  Songbook for the Italian singer-songwriter and producer **faccianuvola**
+  (Alessandro Feruda, b. 2002) — introspective, atmospheric indie-pop songs
+  from *il dolce ricordo della nostra disperata gioventù* and other releases.
+  Ukulele, English chord notation (matching the artist's own chord sheets).
+
+# Print layout — presence of `cover:` is what enables cover pages.
+cover:
+  title: faccianuvola
+  title_font: Courier-Bold
+  title_size: 30
+  title_color: "#1B1B1B"
+  logo: cover-photo.png
+  logo_width: 480
+  logo_offset: -30
+  subtitle: "songbook  ·  ukulele"
+  subtitle_font: Courier-Bold
+  subtitle_size: 13
+  subtitle_color: "#249FF9"
+
+back:
+  image: back-art.png
+  image_width: 320
+  caption: il dolce ricordo della nostra disperata gioventù
+  caption_font: Courier
+  caption_size: 10
+  caption_color: "#1B1B1B"
