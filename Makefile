@@ -19,9 +19,9 @@ $(PDF_DIR):
 COVER_FILES = 00-cover.cho 01-chord-chart.cho 99-back-cover.cho
 COVER_EXISTS = $(wildcard $(1)/$(2))
 
-# Cover layout inputs: images plus the optional cover.json overlay
+# Cover layout inputs: images plus the songbook.yaml layout sections
 COVER_ASSETS = $(wildcard $(1)/cover-*.png $(1)/cover-*.jpeg $(1)/back-*.png \
-  $(1)/chords.png $(1)/strip-*.png $(1)/cover.json)
+  $(1)/chords.png $(1)/strip-*.png $(1)/songbook.yaml)
 
 # Target per songbook slug: make bricioline, make bricioline-en, etc.
 # Optional per-songbook layout overlay: songbooks/<slug>/layout.json
@@ -32,14 +32,15 @@ $(1): $(PDF_DIR)/$(1).pdf
 CFG_FLAGS_$(1) := --config $(PROJECT_CFG) \
   $$(if $$(wildcard songbooks/$(1)/layout.json),--config songbooks/$(1)/layout.json)
 
-# A songbook gets cover pages when it ships a cover.json layout or the
-# legacy 00-cover.cho marker. The chord-chart page is emitted only when
-# the songbook actually provides a chords.png.
-HAS_COVER_$(1)  := $$(wildcard songbooks/$(1)/cover.json songbooks/$(1)/00-cover.cho)
+# A songbook gets cover pages only when its songbook.yaml declares a
+# `cover:` section — every songbook ships a songbook.yaml, so mere file
+# existence gates nothing. The chord-chart page is emitted only when the
+# songbook actually provides a chords.png.
+HAS_COVER_$(1)  := $$(shell grep -ls '^cover:' songbooks/$(1)/songbook.yaml 2>/dev/null)
 HAS_CHART_$(1)  := $$(wildcard songbooks/$(1)/chords.png)
 # The intro page (album description + Spotify link) exists only when the
-# cover.json declares an "intro" section.
-HAS_INTRO_$(1)  := $$(shell grep -ls '"intro"' songbooks/$(1)/cover.json 2>/dev/null)
+# songbook.yaml declares an `intro:` section.
+HAS_INTRO_$(1)  := $$(shell grep -ls '^intro:' songbooks/$(1)/songbook.yaml 2>/dev/null)
 
 ifeq ($$(strip $$(HAS_COVER_$(1))),)
 # No cover — render everything normally
@@ -89,7 +90,7 @@ guitar-ita guitar-eng: | $(PDF_DIR)
 	  --transcode=$(if $(filter guitar-ita,$@),latin,common) \
 	  $(filter-out songbooks/$(SB)/00-cover.cho songbooks/$(SB)/01-chord-chart.cho songbooks/$(SB)/99-back-cover.cho,$(wildcard songbooks/$(SB)/*.cho)) \
 	  -o $(PDF_DIR)/$(SB)-$@-songs.pdf
-	@if [ -f songbooks/$(SB)/cover.json ] || [ -f songbooks/$(SB)/00-cover.cho ]; then \
+	@if grep -qs '^cover:' songbooks/$(SB)/songbook.yaml; then \
 	  $(MAKE_COVER) songbooks/$(SB) $(PDF_DIR) ; \
 	  parts="$(PDF_DIR)/$(SB)-cover.pdf" ; \
 	  [ -f $(PDF_DIR)/$(SB)-intro.pdf ] && parts="$$parts $(PDF_DIR)/$(SB)-intro.pdf" ; \

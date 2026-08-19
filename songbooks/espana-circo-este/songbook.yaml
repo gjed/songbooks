@@ -1,0 +1,42 @@
+# Songbook metadata + print layout. Human-authored.
+# spotify.yaml is machine-written (spotify_playlists.py) and stays separate.
+slug: espana-circo-este
+title: España Circo Este
+artist: España Circo Este
+language: it        # primary language — drives the printed intro page (#36)
+notation: common    # chord names used in the .cho files (C D E …)
+
+blurb: Italian reggae/indie band, Italian and Spanish lyrics
+
+description: >-
+  Songbook for the Italian band **España Circo Este** (formed 2013, Abruzzo) —
+  reggae, indie rock, punk and Latin American influences with lyrics in
+  Italian and Spanish. Ten songs spanning *La revolución del amor* (2015),
+  *Scienze della maleducazione* (2017), *Machu Picchu* (2020) and
+  *Canzoni per la decrescita felice* (2025).
+
+
+  Ukulele, English chord notation.
+
+# Print layout — presence of `cover:` is what enables cover pages.
+cover:
+  title: null
+  logo: cover-art.png
+  logo_width: 470
+  logo_offset: 20
+  strip_top: null
+  strip_bottom: null
+  subtitle: "songbook  ·  ukulele"
+  subtitle_font: Courier-Bold
+  subtitle_size: 13
+  subtitle_color: "#DB0D72"
+
+back:
+  image: back-art.png
+  image_width: 320
+  caption: "España Circo Este  ·  2015 – 2025"
+  caption_font: Courier
+  caption_size: 10
+  caption_color: "#252120"
+  rules:
+    - { color: "#EAA1AB", y: 30, height: 9 }

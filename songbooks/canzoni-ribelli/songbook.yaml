@@ -1,0 +1,16 @@
+# Songbook metadata. Human-authored.
+# spotify.yaml is machine-written (spotify_playlists.py) and stays separate.
+# No `cover:` / `intro:` sections — this songbook has no cover pages.
+slug: canzoni-ribelli
+title: Canzoni Ribelli
+language: it        # primary language — drives the printed intro page (#36)
+notation: latin     # chord names used in the .cho files (DO RE MI …)
+
+blurb: Italian rebel and protest songs
+
+description: >-
+  Italian partisan and protest songs — anthems of resistance and struggle,
+  passed down through generations of communal singing. Opens with *Fischia il
+  vento*, written in 1943 by partisan commander Felice Cascione to the melody
+  of the Russian song "Katyusha"; it became one of the best-known anthems of
+  the Italian Resistance. Ukulele, Italian chord notation.

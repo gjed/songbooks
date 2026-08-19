@@ -1,0 +1,14 @@
+# Songbook metadata. Human-authored.
+# spotify.yaml is machine-written (spotify_playlists.py) and stays separate.
+# No `cover:` / `intro:` sections — this songbook has no cover pages.
+slug: good-songs
+title: Good Songs
+language: en        # primary language — drives the printed intro page (#36)
+notation: common    # chord names used in the .cho files (C D E …)
+
+blurb: A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …)
+
+description: >-
+  A mixed bag of favourites for group singalongs, spanning English and
+  Italian — Ed Sheeran, Leonard Cohen, Anna Kendrick, Negrita, and more.
+  Ukulele, Italian chord notation.
