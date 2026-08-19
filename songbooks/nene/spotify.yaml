@@ -21,7 +21,8 @@
 # Regenerate with: make spotify-resolve
 $schema_version: 1
 playlist_name: Nené
-playlist_id: null
+playlist_id: 7HZjY2MJCXpjMEasPJinwR
 tracks:
   01-come-vuoi-tu: spotify:track:2ObchMLJWJ5JUX73jJsn6l
   02-roma: spotify:track:641HWJZJC5Lu5JyGoPXYQg
+mode: playlist
