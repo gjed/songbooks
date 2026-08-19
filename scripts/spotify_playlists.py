@@ -589,10 +589,13 @@ class Spotify:
             path = page.get("next")
             params = None
 
-    def create_playlist(self, user_id: str, name: str, description: str) -> str:
+    def create_playlist(self, name: str, description: str) -> str:
+        # POST /users/{id}/playlists was removed for Development Mode apps
+        # in Spotify's February 2026 API migration; /me/playlists is the
+        # only endpoint that still works and needs no user id at all.
         created = self.request(
             "POST",
-            f"/users/{urllib.parse.quote(user_id)}/playlists",
+            "/me/playlists",
             body={"name": name, "public": True, "description": description},
         )
         playlist_id = created.get("id")
@@ -613,12 +616,17 @@ class Spotify:
         path: str | None = f"/playlists/{playlist_id}/items"
         params: dict[str, Any] | None = {
             "limit": 100,
-            "fields": "next,items(track(uri))",
+            # Spotify's February 2026 migration renamed the nested track
+            # object from "track" to "item" in the /items response (and
+            # repurposed "track" itself into a boolean type-flag). The old
+            # "items(track(uri))" field selector silently matches nothing
+            # under the new shape and returns empty {} items.
+            "fields": "next,items(item(uri))",
         }
         while path:
             page = self.request("GET", path, params=params)
-            for item in page.get("items") or []:
-                track = (item or {}).get("track") or {}
+            for entry in page.get("items") or []:
+                track = (entry or {}).get("item") or {}
                 if track.get("uri"):
                     uris.append(str(track["uri"]))
             path = page.get("next")
@@ -1215,7 +1223,6 @@ def write_playlist_ids(
     if not pending:
         return
 
-    user_id = str(client.me().get("id", ""))
     existing = {
         str(playlist.get("name", "")): str(playlist.get("id"))
         for playlist in client.my_playlists()
@@ -1229,7 +1236,7 @@ def write_playlist_ids(
             print(f"  adopted existing playlist {name!r} ({playlist_id})")
         else:
             playlist_id = client.create_playlist(
-                user_id, name, description_for(len(book.songs))
+                name, description_for(len(book.songs))
             )
             print(f"  created playlist {name!r} ({playlist_id})")
         entry["playlist_id"] = playlist_id
@@ -1334,8 +1341,7 @@ def cmd_sync(args: argparse.Namespace) -> int:
             if playlist_id:
                 print(f"{slug}: found existing playlist {name!r} ({playlist_id})")
             else:
-                user_id = str(client.me().get("id"))
-                playlist_id = client.create_playlist(user_id, name, description)
+                playlist_id = client.create_playlist(name, description)
                 by_name[name] = playlist_id
                 print(f"{slug}: created playlist {name!r} ({playlist_id})")
             print(
