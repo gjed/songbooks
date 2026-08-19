@@ -89,7 +89,9 @@ PSEUDO_SONGS = {"00-cover.cho", "01-chord-chart.cho", "99-back-cover.cho"}
 
 API_BASE = "https://api.spotify.com/v1"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
-SCOPES = "playlist-modify-public playlist-modify-private"
+# playlist-read-private is required by the exact-name lookup (GET
+# /me/playlists) that sync uses to avoid creating duplicate playlists.
+SCOPES = "playlist-read-private playlist-modify-public playlist-modify-private"
 
 SEARCH_LIMIT = 10  # Spotify caps /search at 10 results per request.
 BATCH_SIZE = 100  # Spotify caps playlist item writes at 100 URIs.
