@@ -79,7 +79,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SONGBOOKS_DIR = REPO_ROOT / "songbooks"
 MANIFEST_NAME = "spotify.yaml"  # one manifest per songbook folder
 TOKEN_CACHE = REPO_ROOT / ".spotify-token-cache.json"
-README_PATH = REPO_ROOT / "README.md"
+METADATA_NAME = "songbook.yaml"  # human-authored metadata per songbook
 
 REPO_URL = "https://github.com/gjed/songbooks"
 SCHEMA_VERSION = 1
@@ -124,7 +124,6 @@ class Songbook:
 
 
 HEADER_RE = re.compile(r"^\{(?P<key>[a-z_]+):\s*(?P<value>.*?)\s*\}\s*$")
-README_ROW_RE = re.compile(r"\[([^\]]+)\]\(songbooks/([^/)]+)/?\)")
 
 
 def parse_headers(path: Path) -> dict[str, str]:
@@ -140,16 +139,17 @@ def parse_headers(path: Path) -> dict[str, str]:
     return headers
 
 
-def read_display_names() -> dict[str, str]:
-    """Map songbook slug to display name using the README table."""
-    names: dict[str, str] = {}
-    if not README_PATH.exists():
-        return names
-    for label, slug in README_ROW_RE.findall(
-        README_PATH.read_text(encoding="utf-8")
-    ):
-        names.setdefault(slug, label.strip())
-    return names
+def read_display_name(folder: Path) -> str | None:
+    """Return the songbook's title from its songbook.yaml, or None."""
+    path = folder / METADATA_NAME
+    if not path.exists():
+        return None
+    try:
+        meta = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        return None
+    title = meta.get("title") if isinstance(meta, dict) else None
+    return title.strip() if isinstance(title, str) and title.strip() else None
 
 
 def scan_songbooks(only: str | None = None) -> list[Songbook]:
@@ -160,14 +160,14 @@ def scan_songbooks(only: str | None = None) -> list[Songbook]:
     title or artist cannot be matched against Spotify, so it is skipped with a
     warning rather than silently pinned as unresolvable.
     """
-    display_names = read_display_names()
     books: list[Songbook] = []
 
     for folder in sorted(p for p in SONGBOOKS_DIR.iterdir() if p.is_dir()):
         slug = folder.name
         if only and slug != only:
             continue
-        book = Songbook(slug=slug, display_name=display_names.get(slug, slug))
+        book = Songbook(slug=slug,
+                        display_name=read_display_name(folder) or slug)
         for cho in sorted(folder.glob("*.cho")):
             headers = parse_headers(cho)
             title = headers.get("title", "").strip()
