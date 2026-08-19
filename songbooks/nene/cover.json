@@ -17,7 +17,8 @@
     "title_color": "#1B1B1B",
     "description": "I Nené sono una giovane band veronese, composta da quattro musicisti under 25 uniti dalla passione per la musica.",
     "description_color": "#1B1B1B",
-    "spotify": false,
+    "spotify_color": "#1B1B1B",
+    "spotify_label": "Ascolta la playlist su Spotify",
     "links": [
       {
         "label": "Ascolta l'artista su Spotify",
