@@ -124,6 +124,24 @@ several rows on one page scale their QR codes down together to fit. On
 the back page, declaring `links` moves the whole group from its historic
 bottom-right corner to the centred stack; with no `links` the corner
 layout is untouched.
+
+Any string in these sections may be written as a *locale map* instead --
+a mapping keyed only by known locales -- and the songbook's top-level
+`language:` decides which entry reaches the page:
+
+  language: it
+
+  intro:
+    description:
+      it: [Bricioline e' l'album dei Queen of Saba...]
+      en: [Bricioline is the album by Queen of Saba...]
+
+Resolution happens once, in load_config, so every drawing helper below
+only ever sees plain strings. A print run is monolingual: the other
+locales exist for the README and the site, never for the PDF. Maps are
+recognised by their keys, so ordinary nested objects (`rules` entries,
+`links` entries) pass through untouched; a missing translation falls
+back to English rather than printing nothing.
 """
 
 import os
@@ -139,6 +157,8 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
+
+from songbook_meta import language_of, load_metadata, localize
 
 
 PAGE_W, PAGE_H = A4  # 595.27 x 841.89 pt
@@ -183,7 +203,8 @@ DEFAULTS = {
         "description_width": 380,
         "description_y": None,
         "spotify": True,
-        "spotify_label": "Open with Spotify",
+        "spotify_label": {"it": "Ascolta su Spotify",
+                          "en": "Open with Spotify"},
         "spotify_font": "Courier-Bold",
         "spotify_url_font": "Courier",
         "spotify_size": 10,
@@ -210,7 +231,8 @@ DEFAULTS = {
         "description_width": 360,
         "description_y": None,
         "spotify": True,
-        "spotify_label": "Listen on Spotify",
+        "spotify_label": {"it": "Ascolta su Spotify",
+                          "en": "Listen on Spotify"},
         "spotify_font": "Courier-Bold",
         "spotify_url_font": "Courier",
         "spotify_size": 9,
@@ -231,13 +253,13 @@ def load_config(sb_dir):
     Each merged section carries a `_declared` flag telling whether the
     songbook actually spelled that section out, so opt-in pages (the
     intro) can distinguish "absent" from "present but all defaults".
+
+    Locale maps are resolved here, against the songbook's `language:`,
+    so every downstream drawing helper only ever sees plain strings.
     """
     cfg = {section: dict(values) for section, values in DEFAULTS.items()}
-    user = {}
-    path = os.path.join(sb_dir, "songbook.yaml")
-    if os.path.exists(path):
-        with open(path, encoding="utf-8") as fh:
-            user = yaml.safe_load(fh) or {}
+    user = load_metadata(sb_dir)
+    language = language_of(user)
     for section, conf in cfg.items():
         section_cfg = user.get(section)
         if isinstance(section_cfg, dict):
@@ -245,6 +267,9 @@ def load_config(sb_dir):
             conf.update(section_cfg)
         else:
             conf["_declared"] = False
+        declared = conf.pop("_declared")
+        cfg[section] = localize(conf, language)
+        cfg[section]["_declared"] = declared
     return cfg
 
 

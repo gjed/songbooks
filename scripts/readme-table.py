@@ -8,6 +8,10 @@ table between the `<!-- songbooks:begin -->` / `<!-- songbooks:end -->`
 markers in README.md. Rows are ordered by slug. Each row uses the
 songbook's `title` and one-line `blurb`.
 
+The root README is English regardless of what a songbook prints, so
+locale maps are resolved against `en` here -- not against the songbook's
+own `language:`.
+
 --check exits 1 (without writing) when the README is out of date —
 useful as a CI guard.
 """
@@ -15,23 +19,24 @@ useful as a CI guard.
 import sys
 from pathlib import Path
 
-import yaml
+from songbook_meta import METADATA_NAME, load_metadata, localize
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 README = REPO_ROOT / "README.md"
 SONGBOOKS = REPO_ROOT / "songbooks"
 BEGIN = "<!-- songbooks:begin -->"
 END = "<!-- songbooks:end -->"
+README_LOCALE = "en"
 
 
 def rows():
     for folder in sorted(p for p in SONGBOOKS.iterdir() if p.is_dir()):
-        path = folder / "songbook.yaml"
-        if not path.exists():
+        if not (folder / METADATA_NAME).exists():
             continue
-        meta = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-        title = str(meta.get("title") or folder.name).strip()
-        blurb = str(meta.get("blurb") or "").strip()
+        meta = load_metadata(folder)
+        title = localize(meta.get("title"), README_LOCALE) or folder.name
+        blurb = localize(meta.get("blurb"), README_LOCALE) or ""
+        title, blurb = str(title).strip(), str(blurb).strip()
         yield f"[{title}](songbooks/{folder.name}/)", blurb
 
 
