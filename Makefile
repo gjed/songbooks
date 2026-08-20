@@ -6,6 +6,9 @@ PDFS         := $(foreach sb,$(SONGBOOKS),$(PDF_DIR)/$(sb).pdf)
 GS           := gs
 PYTHON       := python3
 MAKE_COVER   := $(PYTHON) scripts/make-cover.py
+# Cover generation sources: the entry point plus the shared metadata reader
+# it imports, so a change to either rebuilds every cover page.
+COVER_SCRIPTS := scripts/make-cover.py scripts/songbook_meta.py
 SPOTIFY      := $(PYTHON) scripts/spotify_playlists.py
 
 .PHONY: all clean $(SONGBOOKS)
@@ -59,7 +62,7 @@ SONGS_PDF_$(1)  := $$(if $$(SONG_ONLY_$(1)),$(PDF_DIR)/$(1)-songs.pdf)
 PARTS_$(1)      := $$(COVER_PDF_$(1)) $$(INTRO_PDF_$(1)) $$(CHART_PDF_$(1)) $$(SONGS_PDF_$(1)) $$(BACK_PDF_$(1))
 
 # Generate cover (and intro/chart, when present) and back PDFs via Python
-$$(COVER_PDF_$(1)) $$(INTRO_PDF_$(1)) $$(CHART_PDF_$(1)) $$(BACK_PDF_$(1)) &: scripts/make-cover.py $$(call COVER_ASSETS,songbooks/$(1)) | $(PDF_DIR)
+$$(COVER_PDF_$(1)) $$(INTRO_PDF_$(1)) $$(CHART_PDF_$(1)) $$(BACK_PDF_$(1)) &: $(COVER_SCRIPTS) $$(call COVER_ASSETS,songbooks/$(1)) | $(PDF_DIR)
 	$(MAKE_COVER) songbooks/$(1) $(PDF_DIR)
 
 # Songs rendered via ChordPro (2-column)
