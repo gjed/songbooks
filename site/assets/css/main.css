@@ -1,0 +1,506 @@
+/* Songbooks — print-culture editorial. One stylesheet, no external requests.
+   Typography leans on system serif for display (Iowan/Palatino/Georgia) and
+   system mono for labels, echoing the Courier used on the printed covers. */
+
+:root {
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+    ui-serif, Georgia, "Times New Roman", serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas,
+    "Courier New", monospace;
+
+  --paper: #faf7f1;
+  --paper-2: #fffdf9;
+  --ink: #17150f;
+  --ink-2: #4a4539;
+  --ink-3: #7c745f;
+  --rule: #ddd6c6;
+  --rule-soft: #ebe5d8;
+
+  /* Neutral fallback for coverless songbooks. */
+  --accent: #8d8676;
+  --accent-ink: #ffffff;
+
+  --measure: 68ch;
+  --page: 74rem;
+  --r: 3px;
+  --shadow: 0 1px 2px rgb(23 21 15 / 8%), 0 8px 24px -12px rgb(23 21 15 / 22%);
+  --shadow-lift: 0 2px 4px rgb(23 21 15 / 10%), 0 18px 40px -16px rgb(23 21 15 / 30%);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  padding: 0 clamp(1.125rem, 5vw, 3rem);
+  background: var(--paper);
+  /* Faint horizon wash so the page reads as paper, not a flat panel. */
+  background-image: radial-gradient(120% 60% at 50% -10%, #fffefb 0%, transparent 70%);
+  color: var(--ink);
+  font: 400 clamp(1rem, 0.97rem + 0.16vw, 1.075rem)/1.65 var(--sans);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+
+a:hover { text-decoration-color: var(--accent); }
+
+:where(a, button, summary, details, [tabindex]):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: var(--r);
+}
+
+.u-sr,
+.skip {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip:focus {
+  position: fixed;
+  inset: 0.75rem auto auto 0.75rem;
+  width: auto; height: auto;
+  margin: 0; padding: 0.55rem 0.9rem;
+  clip-path: none;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--r);
+  z-index: 10;
+}
+
+/* ── masthead ─────────────────────────────────────────────────────── */
+
+.masthead {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 1.6rem 0 1.25rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.masthead__brand {
+  font: 600 1.0625rem/1 var(--mono);
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  text-decoration: none;
+}
+
+.masthead__brand::before {
+  content: "❦";
+  margin-right: 0.5ch;
+  color: var(--ink-3);
+}
+
+.langs { display: flex; gap: 0.15rem; align-items: center; }
+
+.langs__item {
+  font: 500 0.75rem/1 var(--mono);
+  letter-spacing: 0.09em;
+  padding: 0.4rem 0.5rem;
+  color: var(--ink-3);
+  text-decoration: none;
+  border-radius: var(--r);
+}
+
+.langs__item:hover { color: var(--ink); background: #0000000a; }
+
+.langs__item--on {
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--ink);
+}
+
+/* ── hero ─────────────────────────────────────────────────────────── */
+
+main { max-width: var(--page); margin: 0 auto; }
+
+.hero { padding: clamp(3rem, 9vw, 6.5rem) 0 clamp(2rem, 5vw, 3.5rem); max-width: var(--measure); }
+
+.hero--sub { padding-bottom: clamp(1.5rem, 4vw, 2.5rem); }
+
+.hero__title {
+  margin: 0;
+  font: 400 clamp(2.75rem, 1.4rem + 6vw, 5.5rem)/0.95 var(--serif);
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+}
+
+.hero__tagline {
+  margin: 1.1rem 0 0;
+  max-width: 36ch;
+  color: var(--ink-2);
+  font-size: 1.0625rem;
+  text-wrap: pretty;
+}
+
+.empty { color: var(--ink-3); font-style: italic; }
+
+/* ── card grid ────────────────────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: clamp(1.75rem, 4vw, 3.25rem) clamp(1.5rem, 3vw, 2.5rem);
+  padding-bottom: 4rem;
+}
+
+.card { display: flex; flex-direction: column; min-width: 0; }
+
+.card__hit {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* The cover is the hero: portrait A4, thin plate, soft drop. */
+.card__frame {
+  display: block;
+  position: relative;
+  aspect-ratio: 595 / 842;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: box-shadow 240ms ease, transform 240ms ease;
+}
+
+/* Accent reads as a printed edge along the top of the plate. */
+.card__frame::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--accent);
+}
+
+.card__img { width: 100%; height: 100%; object-fit: cover; }
+
+.card__frame--empty {
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--accent) 12%, var(--paper-2)), var(--paper-2));
+}
+
+.card__initial {
+  font: 400 clamp(3rem, 12vw, 5rem)/1 var(--serif);
+  color: color-mix(in oklab, var(--accent) 55%, var(--ink));
+  opacity: 0.5;
+}
+
+.card__hit:hover .card__frame {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lift);
+}
+
+.card__body { display: block; }
+
+.card__title {
+  margin: 0;
+  font: 400 1.375rem/1.15 var(--serif);
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.card__hit:hover .card__title { text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 0.2em; }
+
+.card__blurb {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.card__meta {
+  display: block;
+  margin-top: 0.55rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--rule-soft);
+  color: var(--ink-3);
+  font: 400 0.75rem/1.4 var(--mono);
+  letter-spacing: 0.04em;
+}
+
+.card__btn { margin-top: 0.9rem; align-self: start; }
+
+/* ── buttons ──────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5ch;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--r);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font: 500 0.8125rem/1.2 var(--mono);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  transition: filter 160ms ease, transform 160ms ease;
+}
+
+.btn:hover { filter: brightness(1.08) saturate(1.06); transform: translateY(-1px); }
+
+.btn:active { transform: none; }
+
+.btn--lg { padding: 0.7rem 1.35rem; font-size: 0.875rem; }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--rule);
+}
+
+.btn--ghost:hover { border-color: var(--ink-3); filter: none; }
+
+.icon { flex: none; }
+
+/* ── songbook page ────────────────────────────────────────────────── */
+
+.crumb {
+  margin: 1.5rem 0 0;
+  font: 400 0.75rem/1 var(--mono);
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+}
+
+.crumb a { text-decoration-color: var(--rule); }
+
+.book { padding-bottom: 5rem; }
+
+.book__head {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: clamp(1.75rem, 5vw, 4rem);
+  align-items: start;
+  padding: clamp(2rem, 6vw, 4rem) 0 clamp(2rem, 5vw, 3.25rem);
+}
+
+.book__cover {
+  margin: 0;
+  position: relative;
+  aspect-ratio: 595 / 842;
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  background: var(--paper-2);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.book__cover::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: var(--accent);
+}
+
+.book__cover img { width: 100%; height: 100%; object-fit: cover; }
+
+.book__intro { max-width: var(--measure); }
+
+.book__title {
+  margin: 0;
+  font: 400 clamp(2.25rem, 1.3rem + 3.6vw, 3.75rem)/1 var(--serif);
+  letter-spacing: -0.024em;
+  text-wrap: balance;
+}
+
+.book__artist {
+  margin: 0.6rem 0 0;
+  color: var(--ink-2);
+  font: 400 1rem/1.4 var(--mono);
+  letter-spacing: 0.02em;
+}
+
+.prose { margin-top: 1.5rem; color: var(--ink-2); }
+
+.prose p { margin: 0 0 1em; text-wrap: pretty; }
+
+.prose p:last-child { margin-bottom: 0; }
+
+.prose em { color: var(--ink); }
+
+.book__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.book__version {
+  margin: 1rem 0 0;
+  color: var(--ink-3);
+  font: 400 0.75rem/1 var(--mono);
+  letter-spacing: 0.05em;
+}
+
+/* ── section headings, tracklist ──────────────────────────────────── */
+
+.h-rule {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75ch;
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--accent);
+  font: 400 0.8125rem/1 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.h-rule__count {
+  margin-left: auto;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.book__songs,
+.book__links { max-width: var(--measure); margin-top: clamp(2rem, 5vw, 3rem); }
+
+.note { margin: 0; color: var(--ink-2); font-style: italic; }
+
+.tracks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: t;
+}
+
+.tracks__item {
+  counter-increment: t;
+  display: grid;
+  grid-template-columns: 2.5ch 1fr;
+  gap: 0.75ch;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.tracks__item::before {
+  content: counter(t, decimal-leading-zero);
+  color: var(--ink-3);
+  font: 400 0.8125rem/1.6 var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.tracks__title { text-wrap: pretty; }
+
+.tracks__by { color: var(--ink-3); }
+
+.fold__summary {
+  cursor: pointer;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--r);
+  background: var(--paper-2);
+  font: 500 0.8125rem/1.2 var(--mono);
+  letter-spacing: 0.03em;
+  list-style-position: inside;
+}
+
+.fold__summary:hover { border-color: var(--ink-3); }
+
+.fold[open] .fold__summary { margin-bottom: 1rem; }
+
+.linklist { margin: 0; padding: 0; list-style: none; }
+
+.linklist li { padding: 0.4rem 0; border-bottom: 1px solid var(--rule-soft); }
+
+.linklist a { text-decoration-color: var(--accent); }
+
+/* ── footer ───────────────────────────────────────────────────────── */
+
+.footer {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 2rem 0 3rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+}
+
+.footer__line { margin: 0; display: flex; flex-wrap: wrap; gap: 0.6ch; align-items: baseline; }
+
+.footer__line a { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.03em; }
+
+.footer__version { font: 400 0.75rem/1 var(--mono); letter-spacing: 0.05em; }
+
+.footer__note { margin: 0.6rem 0 0; max-width: 60ch; }
+
+/* ── responsive ───────────────────────────────────────────────────── */
+
+@media (max-width: 46rem) {
+  .grid { grid-template-columns: 1fr; }
+
+  .card__frame { max-width: 20rem; }
+
+  .book__head { grid-template-columns: 1fr; }
+
+  .book__cover { max-width: 15rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  .card__hit:hover .card__frame { transform: none; }
+}
+
+/* ── dark ─────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14130f;
+    --paper-2: #1c1a15;
+    --ink: #f3efe4;
+    --ink-2: #c1baa8;
+    --ink-3: #918a78;
+    --rule: #35322a;
+    --rule-soft: #262319;
+    --accent: #9a9382;
+    --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 10px 28px -14px rgb(0 0 0 / 70%);
+    --shadow-lift: 0 2px 6px rgb(0 0 0 / 50%), 0 20px 44px -18px rgb(0 0 0 / 80%);
+  }
+
+  body { background-image: radial-gradient(120% 60% at 50% -10%, #1e1c16 0%, transparent 70%); }
+
+  :where(a, button, summary, details, [tabindex]):focus-visible { outline-color: var(--ink); }
+
+  .langs__item--on { box-shadow: inset 0 -2px 0 var(--ink); }
+
+  .langs__item:hover { background: #ffffff12; }
+
+  /* Arbitrary cover accents can be dark; lift them so buttons stay legible. */
+  .btn {
+    background: color-mix(in oklab, var(--accent) 78%, #ffffff 22%);
+    border-color: color-mix(in oklab, var(--accent) 78%, #ffffff 22%);
+    color: #14130f;
+  }
+
+  .btn--ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
+
+  .skip { background: var(--ink); color: var(--paper); }
+}

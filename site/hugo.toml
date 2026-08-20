@@ -1,0 +1,47 @@
+baseURL = "https://gjed.github.io/songbooks/"
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = true
+enableRobotsTXT = true
+enableEmoji = false
+
+# Machine-generated content only (scripts/site-data.py). Nothing here is
+# hand-authored, so there are no taxonomies, no feeds, no term pages.
+disableKinds = ["rss", "taxonomy", "term"]
+
+# All user-visible chrome lives in i18n/*.toml. These titles are only ever
+# used as a fallback by Hugo internals.
+[languages]
+  [languages.en]
+    locale = "en"
+    label = "English"
+    direction = "ltr"
+    title = "Songbooks"
+    weight = 1
+  [languages.it]
+    locale = "it"
+    label = "Italiano"
+    direction = "ltr"
+    title = "Canzonieri"
+    weight = 2
+
+[params]
+  repo = "https://github.com/gjed/songbooks"
+  # Fallback release label. The generator normally puts `version:` in each
+  # page's front matter; the footer picks that up automatically.
+  version = ""
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = false
+  [markup.goldmark.parser]
+    wrapStandAloneImageWithinParagraph = false
+    [markup.goldmark.parser.attribute]
+      block = true
+
+[minify]
+  [minify.tdewolff.html]
+    keepQuotes = true
+
+[caches]
+  [caches.images]
+    maxAge = "720h"

@@ -1,0 +1,15 @@
+{{- /* Version comes from the page front matter; home/list pages borrow it from
+       any songbook page, since the whole site ships from one release. */ -}}
+{{- $version := .Params.version | default .Site.Params.version -}}
+{{- if not $version -}}
+  {{- range first 1 (where .Site.RegularPages "Section" "songbooks") -}}
+    {{- $version = .Params.version -}}
+  {{- end -}}
+{{- end -}}
+<footer class="footer">
+  <p class="footer__line">
+    <a href="{{ .Site.Params.repo }}" rel="noopener">{{ i18n "footer_source" }}</a>
+    {{- with $version }}<span class="footer__sep" aria-hidden="true">·</span><span class="footer__version">{{ . }}</span>{{ end }}
+  </p>
+  <p class="footer__note">{{ i18n "footer_rights" }}</p>
+</footer>

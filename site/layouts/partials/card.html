@@ -1,0 +1,40 @@
+{{- /* One songbook card. Accent (when present) is injected as a CSS custom
+       property so arbitrary cover colours only ever drive rules, borders and
+       button backgrounds — never text on white. */ -}}
+{{- $accent := .Params.accent -}}
+{{- $thumb := .Params.thumb -}}
+{{- $pdf := .Params.pdf -}}
+<article class="card{{ if not $accent }} card--plain{{ end }}{{ if not $thumb }} card--textonly{{ end }}"
+  {{- with $accent }} style="--accent: {{ . }}; --accent-ink: {{ partial "accent-ink.html" . }};"{{ end }}>
+  <a class="card__hit" href="{{ .RelPermalink }}">
+    {{- if $thumb }}
+    <span class="card__frame">
+      <img class="card__img" src="{{ $thumb | relURL }}" alt="{{ i18n "cover_alt" .Title }}"
+           width="595" height="842" loading="lazy" decoding="async">
+    </span>
+    {{- else }}
+    <span class="card__frame card__frame--empty" aria-hidden="true">
+      <span class="card__initial">{{ substr .Title 0 1 | upper }}</span>
+    </span>
+    {{- end }}
+    <span class="card__body">
+      <h2 class="card__title">{{ .Title }}</h2>
+      {{- with .Params.blurb }}
+      <span class="card__blurb">{{ . }}</span>
+      {{- end }}
+      <span class="card__meta">
+        {{- if .Params.chartOnly -}}
+          {{ i18n "chart_only" }}
+        {{- else -}}
+          {{ with .Params.songCount }}{{ i18n "song_count" . }}{{ end }}
+        {{- end -}}
+      </span>
+    </span>
+  </a>
+  {{- with $pdf }}
+  <a class="btn card__btn" href="{{ . | relURL }}" download>
+    {{ i18n "download_pdf" }}
+    <span class="u-sr">— {{ i18n "download_pdf_for" $.Title }}</span>
+  </a>
+  {{- end }}
+</article>

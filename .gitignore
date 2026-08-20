@@ -10,3 +10,14 @@ raw*.txt
 
 # Local Spotify app credentials (never commit)
 .env
+
+# Python bytecode cache
+__pycache__/
+
+# Generated Hugo site (built from songbooks/)
+site/content/
+site/static/pdf/
+site/static/thumbs/
+site/public/
+site/resources/
+.hugo_build.lock

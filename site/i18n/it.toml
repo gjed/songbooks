@@ -1,0 +1,66 @@
+# Ogni stringa visibile sul sito. I template non contengono testo fisso.
+
+[site_title]
+other = "Canzonieri"
+
+[site_tagline]
+other = "Canzonieri stampabili per ukulele, una canzone per pagina."
+
+[skip_to_content]
+other = "Vai al contenuto"
+
+[home_link]
+other = "Tutti i canzonieri"
+
+[back_to_all]
+other = "Torna a tutti i canzonieri"
+
+[songbooks_heading]
+other = "La raccolta"
+
+[download_pdf]
+other = "Scarica il PDF"
+
+[download_pdf_for]
+other = "Scarica il PDF di {{ . }}"
+
+[song_count]
+one = "{{ . }} canzone"
+other = "{{ . }} canzoni"
+
+[tracklist]
+other = "Tracce"
+
+[tracklist_toggle]
+one = "Mostra {{ . }} canzone"
+other = "Mostra tutte le {{ . }} canzoni"
+
+[chart_only]
+other = "Solo giro di accordi — senza testi."
+
+[listen_spotify]
+other = "Ascolta su Spotify"
+
+[links_heading]
+other = "Link"
+
+[version_label]
+other = "Versione"
+
+[cover_alt]
+other = "Copertina del canzoniere {{ . }}"
+
+[no_cover]
+other = "Senza copertina"
+
+[language_switcher_label]
+other = "Lingua"
+
+[footer_source]
+other = "Codice su GitHub"
+
+[footer_rights]
+other = "Testi, musica e accordi restano di proprietà dei rispettivi artisti."
+
+[empty_collection]
+other = "Nessun canzoniere pubblicato."

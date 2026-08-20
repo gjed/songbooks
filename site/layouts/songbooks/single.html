@@ -1,0 +1,66 @@
+{{ define "main" }}
+{{- $accent := .Params.accent -}}
+{{- $tracks := .Params.tracks | default slice -}}
+{{- $n := len $tracks -}}
+<article class="book{{ if not $accent }} book--plain{{ end }}"
+  {{- with $accent }} style="--accent: {{ . }}; --accent-ink: {{ partial "accent-ink.html" . }};"{{ end }}>
+
+  <p class="crumb"><a href="{{ "" | relLangURL }}">{{ i18n "back_to_all" }}</a></p>
+
+  <div class="book__head">
+    {{- with .Params.thumb }}
+    <figure class="book__cover">
+      <img src="{{ . | relURL }}" alt="{{ i18n "cover_alt" $.Title }}"
+           width="595" height="842" decoding="async">
+    </figure>
+    {{- end }}
+    <div class="book__intro">
+      <h1 class="book__title">{{ .Title }}</h1>
+      {{- with .Params.artist }}<p class="book__artist">{{ . }}</p>{{ end }}
+      {{- with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+
+      <div class="book__actions">
+        {{- with .Params.pdf }}
+        <a class="btn btn--lg" href="{{ . | relURL }}" download>{{ i18n "download_pdf" }}</a>
+        {{- end }}
+        {{- with .Params.spotify }}
+        <a class="btn btn--ghost" href="{{ . }}" rel="noopener">
+          {{ partial "icon-spotify.html" . }}{{ i18n "listen_spotify" }}
+        </a>
+        {{- end }}
+      </div>
+
+      {{- with .Params.version }}
+      <p class="book__version">{{ i18n "version_label" }} {{ . }}</p>
+      {{- end }}
+    </div>
+  </div>
+
+  <section class="book__songs">
+    {{- if .Params.chartOnly }}
+    <p class="note">{{ i18n "chart_only" }}</p>
+    {{- else if $tracks }}
+    <h2 class="h-rule">{{ i18n "tracklist" }} <span class="h-rule__count">{{ i18n "song_count" $n }}</span></h2>
+      {{- if gt $n 20 }}
+    <details class="fold">
+      <summary class="fold__summary">{{ i18n "tracklist_toggle" $n }}</summary>
+      {{ partial "tracks.html" (dict "tracks" $tracks "artist" .Params.artist) }}
+    </details>
+      {{- else }}
+    {{ partial "tracks.html" (dict "tracks" $tracks "artist" .Params.artist) }}
+      {{- end }}
+    {{- end }}
+  </section>
+
+  {{- with .Params.links }}
+  <section class="book__links">
+    <h2 class="h-rule">{{ i18n "links_heading" }}</h2>
+    <ul class="linklist">
+      {{- range . }}
+      <li><a href="{{ .url }}" rel="noopener">{{ .label }}</a></li>
+      {{- end }}
+    </ul>
+  </section>
+  {{- end }}
+</article>
+{{ end }}

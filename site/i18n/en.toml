@@ -1,0 +1,66 @@
+# Every user-visible string on the site. Templates hardcode nothing.
+
+[site_title]
+other = "Songbooks"
+
+[site_tagline]
+other = "Printable songbooks for ukulele, one song per page."
+
+[skip_to_content]
+other = "Skip to content"
+
+[home_link]
+other = "All songbooks"
+
+[back_to_all]
+other = "Back to all songbooks"
+
+[songbooks_heading]
+other = "The collection"
+
+[download_pdf]
+other = "Download PDF"
+
+[download_pdf_for]
+other = "Download the {{ . }} PDF"
+
+[song_count]
+one = "{{ . }} song"
+other = "{{ . }} songs"
+
+[tracklist]
+other = "Tracklist"
+
+[tracklist_toggle]
+one = "Show the {{ . }} song"
+other = "Show all {{ . }} songs"
+
+[chart_only]
+other = "Chord chart only — no lyrics."
+
+[listen_spotify]
+other = "Listen on Spotify"
+
+[links_heading]
+other = "Links"
+
+[version_label]
+other = "Release"
+
+[cover_alt]
+other = "Cover of the {{ . }} songbook"
+
+[no_cover]
+other = "No cover"
+
+[language_switcher_label]
+other = "Language"
+
+[footer_source]
+other = "Source on GitHub"
+
+[footer_rights]
+other = "Lyrics, music and chords remain the property of their respective artists."
+
+[empty_collection]
+other = "No songbooks published yet."

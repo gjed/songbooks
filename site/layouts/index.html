@@ -1,0 +1,17 @@
+{{ define "main" }}
+{{- $books := where .Site.RegularPages "Section" "songbooks" -}}
+<div class="hero">
+  <h1 class="hero__title">{{ i18n "site_title" }}</h1>
+  <p class="hero__tagline">{{ i18n "site_tagline" }}</p>
+</div>
+{{- if $books }}
+<h2 class="u-sr">{{ i18n "songbooks_heading" }}</h2>
+<div class="grid">
+  {{- range $books }}
+  {{ partial "card.html" . }}
+  {{- end }}
+</div>
+{{- else }}
+<p class="empty">{{ i18n "empty_collection" }}</p>
+{{- end }}
+{{ end }}
