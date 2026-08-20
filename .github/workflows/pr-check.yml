@@ -6,6 +6,7 @@ on:
       - "songbooks/**"
       - "chordpro-ukulele.json"
       - "scripts/make-cover.py"
+      - "scripts/songbook_meta.py"
       - "Makefile"
       - ".github/workflows/pr-check.yml"
       - "scripts/spotify_playlists.py"
@@ -49,7 +50,7 @@ jobs:
 
           # A change to the build machinery (or to this workflow) affects
           # every songbook, so compile the lot.
-          if echo "$CHANGED" | grep -qE '^(Makefile|scripts/make-cover\.py|chordpro-ukulele\.json|\.github/workflows/pr-check\.yml)$'; then
+          if echo "$CHANGED" | grep -qE '^(Makefile|scripts/make-cover\.py|scripts/songbook_meta\.py|chordpro-ukulele\.json|\.github/workflows/pr-check\.yml)$'; then
             echo "Build machinery changed — compiling all songbooks."
             echo "slugs=all" >> "$GITHUB_OUTPUT"
             exit 0
