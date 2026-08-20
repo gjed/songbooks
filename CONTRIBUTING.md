@@ -33,13 +33,16 @@ It is the single source for the songbook's identity and prose:
 slug: bricioline          # matches the folder name
 title: Bricioline         # display name (README table, Spotify playlists)
 artist: Queen of Saba     # optional — single-artist songbooks only
-language: it              # primary language of the songs
+language: it              # primary language — picks the printed locale
 notation: common          # chord names in the .cho files: common | latin
 
 blurb: Queen of Saba — Italian children's music   # one line, README table
 
-description: >-           # longer prose, markdown allowed
-  Songbook for *Bricioline (Canzoni per chi cresce)* …
+description:              # longer prose, markdown allowed
+  it: >-
+    Songbook di *Bricioline (Canzoni per chi cresce)* …
+  en: >-
+    Songbook for *Bricioline (Canzoni per chi cresce)* …
 ```
 
 The songbook table in the root `README.md` is generated from these
@@ -54,6 +57,37 @@ Never edit the table by hand.
 The optional `cover:`, `intro:`, and `back:` sections of the same file
 drive the printed cover pages (next section). `spotify.yaml` stays a
 separate file because it is machine-written: `spotify_playlists.py resolve` rewrites it wholesale.
+
+### Bilingual strings
+
+Any string in `songbook.yaml` may be written as a **locale map** — a
+mapping whose keys are locale codes (`it`, `en`) — instead of a plain
+string:
+
+```yaml
+blurb:
+  it: Queen of Saba — musica italiana per bambini
+  en: Queen of Saba — Italian children's music
+```
+
+Which one is used depends on the consumer:
+
+| Consumer                      | Locale                         |
+| ----------------------------- | ------------------------------ |
+| Printed PDF (`make-cover.py`) | the songbook's own `language:` |
+| Root `README.md` table        | always `en`                    |
+
+A print run is monolingual — the other locales exist for the README and
+the website, and never reach the page. A missing translation falls back
+to `en` rather than printing nothing, so a half-translated songbook
+still builds.
+
+Locale maps are recognised by their keys, so ordinary nested objects
+(`rules:` entries, `links:` entries) are left alone. Only a mapping whose
+keys are *all* known locales is treated as translatable — a typo like
+`{en: …, de: …}` is passed through untouched instead of being silently
+half-resolved. Both readers share one implementation in
+`scripts/songbook_meta.py`.
 
 ## Covers
 
@@ -117,6 +151,10 @@ Notes:
 - `description` is a string or a list of strings (one per paragraph),
   wrapped to `description_width` points and centred. `description_y` is
   the first baseline; by default the block sits just below the back image.
+- Any string here may be a locale map (see "Bilingual strings" above);
+  the printed page uses the songbook's `language:`. `spotify_label`
+  defaults to a translated string, so an Italian songbook prints an
+  Italian label without spelling one out.
 - The Spotify block is automatic: when the songbook has a resolved
   playlist or album link in its `spotify.yaml`, the back page draws
   a label + clickable URL next to a vector QR code of the same link. An
@@ -167,7 +205,8 @@ Notes:
 
 1. Create `songbooks/<songbook-slug>/`
 1. Add `songbook.yaml` with at least `slug`, `title`, `language`,
-   `notation`, `blurb`, and `description`
+   `notation`, `blurb`, and `description` (`description` as an `it`/`en`
+   locale map — see "Bilingual strings" above)
 1. Add songs following the conventions above
 1. Regenerate the root README table: `python3 scripts/readme-table.py`
 
@@ -178,7 +217,8 @@ Requirements:
 - [ChordPro](https://www.chordpro.org/chordpro/chordpro-installation/) ≥ 6
 - GNU Make
 - Ghostscript (`gs`) — only for songbooks with cover pages
-- Python 3 with `Pillow` and `reportlab` — only for cover generation
+- Python 3 with `Pillow`, `reportlab`, and `PyYAML` — only for cover
+  generation
 
 Build:
 
