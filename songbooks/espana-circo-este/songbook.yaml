@@ -8,15 +8,25 @@ notation: common    # chord names used in the .cho files (C D E …)
 
 blurb: Italian reggae/indie band, Italian and Spanish lyrics
 
-description: >-
-  Songbook for the Italian band **España Circo Este** (formed 2013, Abruzzo) —
-  reggae, indie rock, punk and Latin American influences with lyrics in
-  Italian and Spanish. Ten songs spanning *La revolución del amor* (2015),
-  *Scienze della maleducazione* (2017), *Machu Picchu* (2020) and
-  *Canzoni per la decrescita felice* (2025).
+description:
+  it: >-
+    Songbook della band italiana **España Circo Este** (nata nel 2013 in
+    Abruzzo) — reggae, indie rock, punk e influenze latinoamericane, con testi
+    in italiano e spagnolo. Dieci canzoni da *La revolución del amor* (2015),
+    *Scienze della maleducazione* (2017), *Machu Picchu* (2020) e *Canzoni per
+    la decrescita felice* (2025).
 
 
-  Ukulele, English chord notation.
+    Ukulele, accordi in notazione inglese.
+  en: >-
+    Songbook for the Italian band **España Circo Este** (formed 2013, Abruzzo) —
+    reggae, indie rock, punk and Latin American influences with lyrics in
+    Italian and Spanish. Ten songs spanning *La revolución del amor* (2015),
+    *Scienze della maleducazione* (2017), *Machu Picchu* (2020) and
+    *Canzoni per la decrescita felice* (2025).
+
+
+    Ukulele, English chord notation.
 
 # Print layout — presence of `cover:` is what enables cover pages.
 cover:

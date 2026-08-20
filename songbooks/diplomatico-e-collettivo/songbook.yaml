@@ -8,10 +8,15 @@ notation: common    # chord names used in the .cho files (C D E …)
 
 blurb: È tutto un falso, Ho visto il mondo, Troppe Parole
 
-description: >-
-  Songs from the Venice-based Italian indie band Diplomatico e il Collettivo
-  Ninco Nanco (active since 2018), drawn from their albums *È tutto un falso*,
-  *Ho visto il mondo*, and *Troppe Parole*. Ukulele, Italian chord notation.
+description:
+  it: >-
+    Canzoni di Diplomatico e il Collettivo Ninco Nanco, band indie italiana di
+    Venezia attiva dal 2018, tratte dagli album *È tutto un falso*, *Ho visto
+    il mondo* e *Troppe Parole*. Ukulele, accordi in notazione inglese.
+  en: >-
+    Songs from the Venice-based Italian indie band Diplomatico e il Collettivo
+    Ninco Nanco (active since 2018), drawn from their albums *È tutto un falso*,
+    *Ho visto il mondo*, and *Troppe Parole*. Ukulele, English chord notation.
 
 # Print layout — presence of `cover:` is what enables cover pages.
 cover:

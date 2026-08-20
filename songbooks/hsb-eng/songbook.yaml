@@ -9,10 +9,15 @@ notation: common    # chord names used in the .cho files (C D E …)
 
 blurb: 100+ English songs, with cover and chord chart
 
-description: >-
-  100+ English songs for the Hike Song Book (HSB) — folk, pop, and campfire
-  classics for group singing on the trail. Includes cover and ukulele chord
-  chart.
+description:
+  it: >-
+    Più di 100 canzoni in inglese per l'Hike Song Book (HSB) — folk, pop e
+    classici da falò, da cantare in gruppo in cammino. Include copertina e
+    tabella degli accordi per ukulele.
+  en: >-
+    100+ English songs for the Hike Song Book (HSB) — folk, pop, and campfire
+    classics for group singing on the trail. Includes cover and ukulele chord
+    chart.
 
 # Print layout — presence of `cover:` is what enables cover pages.
 cover:

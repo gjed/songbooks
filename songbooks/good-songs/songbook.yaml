@@ -8,7 +8,12 @@ notation: common    # chord names used in the .cho files (C D E …)
 
 blurb: A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …)
 
-description: >-
-  A mixed bag of favourites for group singalongs, spanning English and
-  Italian — Ed Sheeran, Leonard Cohen, Anna Kendrick, Negrita, and more.
-  Ukulele, Italian chord notation.
+description:
+  it: >-
+    Una raccolta mista di preferite da cantare in gruppo, tra inglese e
+    italiano — Ed Sheeran, Leonard Cohen, Anna Kendrick, Negrita e altri.
+    Ukulele, accordi in notazione inglese.
+  en: >-
+    A mixed bag of favourites for group singalongs, spanning English and
+    Italian — Ed Sheeran, Leonard Cohen, Anna Kendrick, Negrita, and more.
+    Ukulele, English chord notation.

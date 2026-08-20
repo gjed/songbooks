@@ -8,11 +8,17 @@ notation: common    # chord names used in the .cho files (C D E …)
 
 blurb: Italian indie-pop singer-songwriter faccianuvola
 
-description: >-
-  Songbook for the Italian singer-songwriter and producer **faccianuvola**
-  (Alessandro Feruda, b. 2002) — introspective, atmospheric indie-pop songs
-  from *il dolce ricordo della nostra disperata gioventù* and other releases.
-  Ukulele, English chord notation (matching the artist's own chord sheets).
+description:
+  it: >-
+    Songbook del cantautore e producer italiano **faccianuvola** (Alessandro
+    Feruda, 2002) — canzoni indie-pop intime e atmosferiche, da *il dolce
+    ricordo della nostra disperata gioventù* e altre uscite. Ukulele, accordi
+    in notazione inglese (come negli spartiti dell'artista).
+  en: >-
+    Songbook for the Italian singer-songwriter and producer **faccianuvola**
+    (Alessandro Feruda, b. 2002) — introspective, atmospheric indie-pop songs
+    from *il dolce ricordo della nostra disperata gioventù* and other releases.
+    Ukulele, English chord notation (matching the artist's own chord sheets).
 
 # Print layout — presence of `cover:` is what enables cover pages.
 cover:
