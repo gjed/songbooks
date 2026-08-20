@@ -10,7 +10,7 @@ blurb: Italian reggae/indie band, Italian and Spanish lyrics
 
 description:
   it: >-
-    Songbook della band italiana **España Circo Este** (nata nel 2013 in
+    Canzoniere della band italiana **España Circo Este** (nata nel 2013 in
     Abruzzo) — reggae, indie rock, punk e influenze latinoamericane, con testi
     in italiano e spagnolo. Dieci canzoni da *La revolución del amor* (2015),
     *Scienze della maleducazione* (2017), *Machu Picchu* (2020) e *Canzoni per
@@ -36,7 +36,7 @@ cover:
   logo_offset: 20
   strip_top: null
   strip_bottom: null
-  subtitle: "songbook  ·  ukulele"
+  subtitle: "canzoniere  ·  ukulele"
   subtitle_font: Courier-Bold
   subtitle_size: 13
   subtitle_color: "#DB0D72"

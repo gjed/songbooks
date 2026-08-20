@@ -10,7 +10,7 @@ blurb: Queen of Saba — Italian children's music
 
 description:
   it: >-
-    Songbook di *Bricioline (Canzoni per chi cresce)* dei Queen of Saba, band
+    Canzoniere di *Bricioline (Canzoni per chi cresce)* dei Queen of Saba, band
     indie italiana di Venezia. Brani fantasiosi e giocosi, pensati per cantare
     insieme ai più piccoli. Ukulele, accordi in notazione inglese.
   en: >-
@@ -27,7 +27,7 @@ cover:
   logo_offset: 20
   strip_top: null
   strip_bottom: null
-  subtitle: "songbook  ·  ukulele"
+  subtitle: "canzoniere  ·  ukulele"
   subtitle_font: Courier-Bold
   subtitle_size: 13
   subtitle_color: "#3F7779"
