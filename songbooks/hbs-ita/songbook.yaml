@@ -9,9 +9,14 @@ notation: latin     # chord names used in the .cho files (DO RE MI …)
 
 blurb: Italian songs, with cover and chord chart
 
-description: >-
-  Italian songs for the Hike Song Book (HBS), for group singing on the trail
-  or around the fire. Includes cover and ukulele chord chart.
+description:
+  it: >-
+    Canzoni italiane per l'Hike Song Book (HBS), da cantare in gruppo in
+    cammino o attorno al fuoco. Include copertina e tabella degli accordi
+    per ukulele.
+  en: >-
+    Italian songs for the Hike Song Book (HBS), for group singing on the trail
+    or around the fire. Includes cover and ukulele chord chart.
 
 # Print layout — presence of `cover:` is what enables cover pages.
 cover:

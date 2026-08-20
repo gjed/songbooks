@@ -8,9 +8,13 @@ notation: common    # chord names used in the .cho files (C D E …)
 
 blurb: Homemade Italian singles, phone-recorded
 
-description: >-
-  Songbook for **Nené** — homemade singles written and recorded on a
-  phone, in Italian. Ukulele, English chord notation.
+description:
+  it: >-
+    Songbook dei **Nené** — singoli fatti in casa, scritti e registrati al
+    telefono, in italiano. Ukulele, accordi in notazione inglese.
+  en: >-
+    Songbook for **Nené** — homemade singles written and recorded on a
+    phone, in Italian. Ukulele, English chord notation.
 
 # Print layout — presence of `cover:` is what enables cover pages.
 cover:
@@ -30,14 +34,23 @@ cover:
 intro:
   title: Nené
   title_color: "#1B1B1B"
-  description: >-
-    I Nené sono una giovane band veronese, composta da quattro musicisti
-    under 25 uniti dalla passione per la musica.
+  # Printed page: only the locale matching `language:` above is rendered.
+  description:
+    it: >-
+      I Nené sono una giovane band veronese, composta da quattro musicisti
+      under 25 uniti dalla passione per la musica.
+    en: >-
+      Nené are a young band from Verona, four musicians under 25 brought
+      together by a shared love of music.
   description_color: "#1B1B1B"
   spotify_color: "#1B1B1B"
-  spotify_label: Ascolta la playlist su Spotify
+  spotify_label:
+    it: Ascolta la playlist su Spotify
+    en: Listen to the playlist on Spotify
   links:
-    - label: Ascolta l'artista su Spotify
+    - label:
+        it: Ascolta l'artista su Spotify
+        en: Listen to the artist on Spotify
       url: https://open.spotify.com/artist/6FM21G1vZSSyhmbcu3WHyG?si=SfF39HzGQsSqB1BHu7zoVg
       color: "#1B1B1B"
 

@@ -8,11 +8,16 @@ notation: common    # chord names used in the .cho files (C D E …)
 
 blurb: Queen of Saba — Italian children's music
 
-description: >-
-  Songbook for *Bricioline (Canzoni per chi cresce)* — "songs for those who
-  grow up" — by the Venice-based Italian indie band Queen of Saba. Whimsical,
-  imaginative pieces built for singing together with the very young. Ukulele,
-  Italian chord notation.
+description:
+  it: >-
+    Songbook di *Bricioline (Canzoni per chi cresce)* dei Queen of Saba, band
+    indie italiana di Venezia. Brani fantasiosi e giocosi, pensati per cantare
+    insieme ai più piccoli. Ukulele, accordi in notazione inglese.
+  en: >-
+    Songbook for *Bricioline (Canzoni per chi cresce)* — "songs for those who
+    grow up" — by the Venice-based Italian indie band Queen of Saba. Whimsical,
+    imaginative pieces built for singing together with the very young. Ukulele,
+    English chord notation.
 
 # Print layout — presence of `cover:` is what enables cover pages.
 cover:
@@ -38,28 +43,47 @@ cover:
 intro:
   title: bricioline
   title_color: "#3F7779"
+  # Printed page: only the locale matching `language:` above is rendered.
   description:
-    - >-
-      Bricioline è l'album dei Queen of Saba, il duo veneto di Fabio Santi e
-      Lorenzo Battistel. Fiati, ukulele e cori costruiscono un immaginario
-      fiabesco in cui mondo adulto e infantile si intrecciano: l'infanzia come
-      terra sconfinata, dove niente è rigido e definito e la gioia non è ancora
-      soffocata dalle logiche del mondo dei grandi.
-    - >-
-      Tra smorfie allo specchio, limoni con la scorza, rizomi e rifugi degli
-      animali, le canzoni celebrano la cura, il consenso e la famiglia che ci
-      scegliamo — briciole lasciate lungo il sentiero per ricordare dove
-      tornare, e dove una mano stringerà la tua.
-    - Un'utopia gentile che può diventare realtà.
+    it:
+      - >-
+        Bricioline è l'album dei Queen of Saba, il duo veneto di Fabio Santi e
+        Lorenzo Battistel. Fiati, ukulele e cori costruiscono un immaginario
+        fiabesco in cui mondo adulto e infantile si intrecciano: l'infanzia come
+        terra sconfinata, dove niente è rigido e definito e la gioia non è ancora
+        soffocata dalle logiche del mondo dei grandi.
+      - >-
+        Tra smorfie allo specchio, limoni con la scorza, rizomi e rifugi degli
+        animali, le canzoni celebrano la cura, il consenso e la famiglia che ci
+        scegliamo — briciole lasciate lungo il sentiero per ricordare dove
+        tornare, e dove una mano stringerà la tua.
+      - Un'utopia gentile che può diventare realtà.
+    en:
+      - >-
+        Bricioline is the album by Queen of Saba, the duo from the Veneto made
+        up of Fabio Santi and Lorenzo Battistel. Horns, ukulele and choirs build
+        a fairy-tale world where grown-up and childhood life intertwine:
+        childhood as boundless country, where nothing is rigid or settled and joy
+        has not yet been smothered by the logic of the adult world.
+      - >-
+        Among faces pulled in the mirror, lemons eaten with the peel, rhizomes
+        and animal dens, these songs celebrate care, consent and the family we
+        choose for ourselves — crumbs dropped along the path to remember the way
+        back, and where a hand will hold yours.
+      - A gentle utopia that could yet come true.
   description_color: "#3F7779"
   spotify_color: "#3F7779"
   spotify_qr_color: "#3F7779"
   links:
-    - label: Compra l'album
+    - label:
+        it: Compra l'album
+        en: Buy the album
       url: https://queenofsaba.bandcamp.com/album/bricioline-canzoni-per-chi-cresce
       color: "#3F7779"
       qr_color: "#3F7779"
-    - label: Supporta gli artisti
+    - label:
+        it: Supporta gli artisti
+        en: Support the artists
       url: https://queenofsaba.bandcamp.com/music
       color: "#3F7779"
       qr_color: "#3F7779"
