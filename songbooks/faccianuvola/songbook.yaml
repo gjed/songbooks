@@ -10,7 +10,7 @@ blurb: Italian indie-pop singer-songwriter faccianuvola
 
 description:
   it: >-
-    Songbook del cantautore e producer italiano **faccianuvola** (Alessandro
+    Canzoniere del cantautore e producer italiano **faccianuvola** (Alessandro
     Feruda, 2002) — canzoni indie-pop intime e atmosferiche, da *il dolce
     ricordo della nostra disperata gioventù* e altre uscite. Ukulele, accordi
     in notazione inglese (come negli spartiti dell'artista).
@@ -29,7 +29,7 @@ cover:
   logo: cover-photo.png
   logo_width: 480
   logo_offset: -30
-  subtitle: "songbook  ·  ukulele"
+  subtitle: "canzoniere  ·  ukulele"
   subtitle_font: Courier-Bold
   subtitle_size: 13
   subtitle_color: "#249FF9"

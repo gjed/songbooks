@@ -10,7 +10,7 @@ blurb: Homemade Italian singles, phone-recorded
 
 description:
   it: >-
-    Songbook dei **Nené** — singoli fatti in casa, scritti e registrati al
+    Canzoniere dei **Nené** — singoli fatti in casa, scritti e registrati al
     telefono, in italiano. Ukulele, accordi in notazione inglese.
   en: >-
     Songbook for **Nené** — homemade singles written and recorded on a
@@ -25,7 +25,7 @@ cover:
   logo: cover-nene.png
   logo_width: 480
   logo_offset: -30
-  subtitle: "songbook  ·  ukulele"
+  subtitle: "canzoniere  ·  ukulele"
   subtitle_font: Courier-Bold
   subtitle_size: 13
   subtitle_color: "#1B1B1B"
