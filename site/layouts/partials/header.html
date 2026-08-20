@@ -1,0 +1,13 @@
+<header class="masthead">
+  <a class="masthead__brand" href="{{ "" | relLangURL }}">{{ i18n "site_title" }}</a>
+  <nav class="langs" aria-label="{{ i18n "language_switcher_label" }}">
+    {{- $current := . -}}
+    {{- range .AllTranslations }}
+      {{- if eq .Language.Lang $current.Language.Lang }}
+    <span class="langs__item langs__item--on" aria-current="true">{{ .Language.Lang | upper }}</span>
+      {{- else }}
+    <a class="langs__item" href="{{ .RelPermalink }}" lang="{{ .Language.Locale }}" hreflang="{{ .Language.Locale }}">{{ .Language.Lang | upper }}</a>
+      {{- end }}
+    {{- end }}
+  </nav>
+</header>

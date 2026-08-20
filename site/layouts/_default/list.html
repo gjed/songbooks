@@ -1,0 +1,15 @@
+{{ define "main" }}
+<div class="hero hero--sub">
+  <h1 class="hero__title">{{ .Title | default (i18n "songbooks_heading") }}</h1>
+  {{- with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+</div>
+{{- with .Pages }}
+<div class="grid">
+  {{- range . }}
+  {{ partial "card.html" . }}
+  {{- end }}
+</div>
+{{- else }}
+<p class="empty">{{ i18n "empty_collection" }}</p>
+{{- end }}
+{{ end }}

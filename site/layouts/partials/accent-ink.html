@@ -1,0 +1,17 @@
+{{- /* Returns readable ink for text placed ON the accent colour.
+       Cover accents are arbitrary, so we measure perceived brightness and
+       pick near-black or white instead of guessing. Input: "#rrggbb". */ -}}
+{{- $hex := . | lower | strings.TrimPrefix "#" -}}
+{{- $d := dict "0" 0 "1" 1 "2" 2 "3" 3 "4" 4 "5" 5 "6" 6 "7" 7 "8" 8 "9" 9 "a" 10 "b" 11 "c" 12 "d" 13 "e" 14 "f" 15 -}}
+{{- $ink := "#ffffff" -}}
+{{- if eq (len $hex) 6 -}}
+  {{- $v := slice -}}
+  {{- range $i := slice 0 2 4 -}}
+    {{- $hi := index $d (substr $hex $i 1) | default 0 -}}
+    {{- $lo := index $d (substr $hex (add $i 1) 1) | default 0 -}}
+    {{- $v = $v | append (add (mul 16 $hi) $lo) -}}
+  {{- end -}}
+  {{- $lum := div (add (add (mul 299 (index $v 0)) (mul 587 (index $v 1))) (mul 114 (index $v 2))) 255000.0 -}}
+  {{- if gt $lum 0.62 -}}{{- $ink = "#15130f" -}}{{- end -}}
+{{- end -}}
+{{- $ink -}}

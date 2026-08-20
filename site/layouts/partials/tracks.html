@@ -1,0 +1,9 @@
+{{- /* dict: tracks (slice), artist (songbook artist, may be empty) */ -}}
+<ol class="tracks">
+  {{- range .tracks }}
+  <li class="tracks__item">
+    <span class="tracks__title">{{ .title }}</span>
+    {{- with .artist }}<span class="tracks__by"> — {{ . }}</span>{{ end }}
+  </li>
+  {{- end }}
+</ol>

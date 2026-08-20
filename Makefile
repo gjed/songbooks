@@ -5,11 +5,13 @@ PDF_DIR      := pdf
 PDFS         := $(foreach sb,$(SONGBOOKS),$(PDF_DIR)/$(sb).pdf)
 GS           := gs
 PYTHON       := python3
+HUGO         ?= hugo
 MAKE_COVER   := $(PYTHON) scripts/make-cover.py
 # Cover generation sources: the entry point plus the shared metadata reader
 # it imports, so a change to either rebuilds every cover page.
 COVER_SCRIPTS := scripts/make-cover.py scripts/songbook_meta.py
 SPOTIFY      := $(PYTHON) scripts/spotify_playlists.py
+SITE_DATA    := $(PYTHON) scripts/site-data.py
 
 .PHONY: all clean $(SONGBOOKS)
 
@@ -126,3 +128,14 @@ spotify-sync:
 
 spotify-sync-apply:
 	$(SPOTIFY) sync --apply $(if $(SB),--songbook $(SB))
+
+# Hugo site generation
+.PHONY: site site-serve
+
+site: all
+	$(SITE_DATA)
+	$(HUGO) --source site --minify
+
+site-serve: all
+	$(SITE_DATA)
+	$(HUGO) server --source site

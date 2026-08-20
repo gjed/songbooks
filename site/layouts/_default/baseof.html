@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Locale }}" dir="{{ .Site.Language.Direction | default "ltr" }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ if .IsHome }}{{ i18n "site_title" }}{{ else }}{{ .Title }} — {{ i18n "site_title" }}{{ end }}</title>
+  <meta name="description" content="{{ with .Params.blurb }}{{ . }}{{ else }}{{ i18n "site_tagline" }}{{ end }}">
+  {{ with .OutputFormats.Get "html" }}<link rel="canonical" href="{{ .Permalink }}">{{ end }}
+  {{ range .Translations }}
+  <link rel="alternate" hreflang="{{ .Site.Language.Locale }}" href="{{ .Permalink }}">
+  {{- end }}
+  {{ partial "head-css.html" . }}
+</head>
+<body>
+  <a class="skip" href="#main">{{ i18n "skip_to_content" }}</a>
+  {{ partial "header.html" . }}
+  <main id="main">
+    {{ block "main" . }}{{ end }}
+  </main>
+  {{ partial "footer.html" . }}
+</body>
+</html>
