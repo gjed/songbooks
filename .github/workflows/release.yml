@@ -14,6 +14,9 @@ jobs:
   release:
     name: Semantic release
     runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.release.outputs.new_release_published }}
+      tag: ${{ steps.release.outputs.new_release_git_tag }}
 
     steps:
       - uses: actions/checkout@v7
@@ -68,6 +71,33 @@ jobs:
             echo "No resolved Spotify links yet — release notes unchanged."
           fi
 
+      - name: Install Hugo
+        if: steps.release.outputs.new_release_published == 'true'
+        run: |
+          set -euo pipefail
+          HUGO_VERSION="0.165.0"
+          curl -fsSL -o hugo.tar.gz \
+            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
+          tar -xzf hugo.tar.gz
+          sudo mv hugo /usr/local/bin/
+          hugo version
+
+      - name: Generate site data
+        if: steps.release.outputs.new_release_published == 'true'
+        run: |
+          python3 scripts/site-data.py --version "${{ steps.release.outputs.new_release_git_tag }}"
+
+      - name: Build Hugo site
+        if: steps.release.outputs.new_release_published == 'true'
+        run: |
+          hugo --source site --minify
+
+      - name: Upload site artifact
+        if: steps.release.outputs.new_release_published == 'true'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site/public
+
       - name: Report release
         run: |
           if [ "${{ steps.release.outputs.new_release_published }}" = "true" ]; then
@@ -75,3 +105,19 @@ jobs:
           else
             echo "No release cut for this push."
           fi
+
+  deploy-site:
+    name: Deploy site to GitHub Pages
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
