@@ -12,6 +12,8 @@ Ready-to-print PDFs are attached to every release:
 Each songbook is a single PDF, one song per page. Download it, print it,
 or open it on a tablet — that's it.
 
+Browse all songbooks online: **[https://gjed.github.io/songbooks/](https://gjed.github.io/songbooks/)**
+
 ## The songbooks
 
 <!-- songbooks:begin -->
