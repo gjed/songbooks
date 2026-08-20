@@ -37,9 +37,10 @@ Band/album metadata lives in each song's headers, never in folder names.
 
 - `make` builds every songbook; `make <slug>` builds one (target name =
   folder name). Output: `pdf/<slug>.pdf`.
-- The Makefile auto-detects cover pages: if `00-cover.cho` exists, covers
-  are rendered by `scripts/make-cover.py` and merged with ghostscript;
-  otherwise all `.cho` files go straight through `chordpro`.
+- The Makefile gates cover pages on the `songbook.yaml` sections: a
+  `cover:` section means `scripts/make-cover.py` renders the cover/back
+  pages and ghostscript merges them, an `intro:` section adds the intro
+  page. With neither, all `.cho` files go straight through `chordpro`.
 - Manual render of a subset:
   `chordpro --config chordpro-ukulele.json songbooks/<slug>/*.cho -o out.pdf`
 
@@ -74,7 +75,9 @@ page needs content fixes or user sign-off, not silent acceptance.
 
 1. `mkdir songbooks/<slug>` (kebab-case).
 1. Add `songbooks/<slug>/songbook.yaml` (metadata: slug, title, language,
-   notation, blurb, description — schema in CONTRIBUTING.md).
+   notation, blurb, description — schema in CONTRIBUTING.md). Prose is
+   written as `it`/`en` locale maps; `language:` selects which locale is
+   printed, the README always uses `en`.
 1. Add songs per `chordpro-song-authoring` conventions, numbered per the
    chosen scheme above.
 1. Optionally declare `cover:` / `intro:` / `back:` sections in
