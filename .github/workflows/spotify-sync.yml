@@ -49,36 +49,36 @@ jobs:
         id: changed
         run: |
           set -euo pipefail
-          
+
           # For workflow_dispatch, sync all songbooks
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "Manual dispatch — syncing all songbooks."
             echo "slugs=all" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          
+
           # For push events, detect changed songbooks
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.sha }}"
-          
+
           # Guard against new branch (before is all-zeros) or shallow/force push
           if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BEFORE" 2>/dev/null; then
             echo "New branch or commit not fetched — syncing all songbooks."
             echo "slugs=all" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          
+
           CHANGED=$(git diff --name-only "$BEFORE..$AFTER")
           echo "Changed files:"
           echo "$CHANGED" | sed 's/^/  /'
-          
+
           # If scripts or workflow changed, sync all songbooks
           if echo "$CHANGED" | grep -qE '^(scripts/spotify_playlists\.py|requirements\.txt|\.github/workflows/spotify-sync\.yml)$'; then
             echo "Script or workflow changed — syncing all songbooks."
             echo "slugs=all" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          
+
           # Extract changed songbook slugs from songbooks/<slug>/* changes
           SLUGS=$(echo "$CHANGED" \
             | grep '^songbooks/' \
@@ -95,12 +95,12 @@ jobs:
           SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
         run: |
           set -euo pipefail
-          
+
           if [ -z "$SLUGS" ]; then
             echo "No songbook content changed — nothing to sync."
             exit 0
           fi
-          
+
           sync_with_error_handling() {
             python3 scripts/spotify_playlists.py sync --apply "$@" || {
               EXIT_CODE=$?
@@ -108,7 +108,7 @@ jobs:
               exit $EXIT_CODE
             }
           }
-          
+
           if [ "$SLUGS" = "all" ]; then
             sync_with_error_handling
           else
