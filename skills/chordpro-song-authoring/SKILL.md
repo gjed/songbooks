@@ -51,6 +51,12 @@ All four headers are required. `{key: ...}` always uses English note names
 - Strip rhythm artifacts from sources: measure bars `|`, standalone beat
   slashes `/`, repeat counts inside chord lines. Keep `(x3)` repeat markers
   at end of lyric lines as plain text.
+- Capo position: use the `{capo: N}` meta directive, placed right after
+  `{key: ...}`, never a `{comment: capotasto N}` (or "capo N") line.
+  `{capo: N}` is metadata only here — it does not transpose chords or
+  print anything inline (project config has `decapo: false`), so any
+  other note about the song (e.g. original key/tuning) stays as its own
+  separate `{comment: ...}` line, not merged with the capo note.
 
 ## Sections
 
@@ -82,6 +88,7 @@ All four headers are required. `{key: ...}` always uses English note names
 | OCR/HTML source looks plausible                               | Verify chord placement against the source alignment; mark uncertainty with a `# TODO` comment line rather than guessing |
 | Second voice as separate verse/lines                          | Render harmony as `first voice (second voice)` on ONE line                                                              |
 | Invent missing lyrics or chords                               | Never. Transcribe only what the source provides                                                                         |
+| Source notes capo as text ("capotasto III")                   | Use `{capo: 3}`, not `{comment: capotasto III}`                                                                         |
 
 ## Steps
 

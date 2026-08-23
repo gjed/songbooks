@@ -38,6 +38,9 @@ Band and album metadata live in each song's ChordPro headers, not in the folder 
 
 - Chorus label: `{comment: RIT}`
 
+- Capo position: `{capo: N}` directive right after `{key: ...}`, never a
+  `{comment: capotasto N}` line
+
 ## Adding a new song
 
 1. Create `songbooks/<songbook>/NN-slug.cho`
