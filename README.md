@@ -18,17 +18,18 @@ Browse all songbooks online: **[https://gjed.github.io/songbooks/](https://gjed.
 
 <!-- songbooks:begin -->
 
-| Songbook                                                                       | What's inside                                            |
-| ------------------------------------------------------------------------------ | -------------------------------------------------------- |
-| [Bricioline](songbooks/bricioline/)                                            | Queen of Saba — Italian children's music                 |
-| [Canzoni Ribelli](songbooks/canzoni-ribelli/)                                  | Italian rebel and protest songs                          |
-| [Diplomatico e il Collettivo Ninco Nanco](songbooks/diplomatico-e-collettivo/) | È tutto un falso, Ho visto il mondo, Troppe Parole       |
-| [España Circo Este](songbooks/espana-circo-este/)                              | Italian reggae/indie band, Italian and Spanish lyrics    |
-| [faccianuvola](songbooks/faccianuvola/)                                        | Italian indie-pop singer-songwriter faccianuvola         |
-| [Good Songs](songbooks/good-songs/)                                            | A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …) |
-| [HBS Songbook — Italiano](songbooks/hbs-ita/)                                  | Italian songs, with cover and chord chart                |
-| [HBS Songbook — English](songbooks/hsb-eng/)                                   | 100+ English songs, with cover and chord chart           |
-| [Nené](songbooks/nene/)                                                        | Homemade Italian singles, phone-recorded                 |
+| Songbook                                                                       | What's inside                                               |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| [Bricioline](songbooks/bricioline/)                                            | Queen of Saba — Italian children's music                    |
+| [Canzoni Ribelli](songbooks/canzoni-ribelli/)                                  | Italian rebel and protest songs                             |
+| [Diplomatico e il Collettivo Ninco Nanco](songbooks/diplomatico-e-collettivo/) | È tutto un falso, Ho visto il mondo, Troppe Parole          |
+| [España Circo Este](songbooks/espana-circo-este/)                              | Italian reggae/indie band, Italian and Spanish lyrics       |
+| [faccianuvola](songbooks/faccianuvola/)                                        | Italian indie-pop singer-songwriter faccianuvola            |
+| [Good Songs](songbooks/good-songs/)                                            | A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …)    |
+| [HBS Songbook — Italiano](songbooks/hbs-ita/)                                  | Italian songs, with cover and chord chart                   |
+| [HBS Songbook — English](songbooks/hsb-eng/)                                   | 100+ English songs, with cover and chord chart              |
+| [Nené](songbooks/nene/)                                                        | Homemade Italian singles, phone-recorded                    |
+| [Wanderwaal](songbooks/wanderwaal/)                                            | Grace VanderWaal — Perfectly Imperfect & Just the Beginning |
 
 <!-- songbooks:end -->
 
