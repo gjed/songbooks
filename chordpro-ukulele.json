@@ -68,6 +68,9 @@
     { "name": "G#m7b5", "base": 1, "frets": [ 1, 2, 2, 2 ], "easy": false },
     { "name": "E/B",    "base": 1, "frets": [ 1, 4, 0, 2 ], "easy": false },
     { "name": "E/G#",   "base": 1, "frets": [ 1, 4, 2, 3 ], "easy": false },
+    { "name": "Em/G",   "base": 1, "frets": [ 0, 4, 0, 2 ], "easy": false },
+    { "name": "D5",     "base": 1, "frets": [ 2, 2, 2, 0 ], "easy": true },
+    { "name": "D#m",    "base": 1, "frets": [ 3, 3, 2, 1 ], "easy": false },
     { "name": "N.C.",   "base": 1, "frets": [ -1, -1, -1, -1 ] }
   ],
 
