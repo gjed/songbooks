@@ -1,0 +1,20 @@
+# Songbook metadata. Human-authored.
+# spotify.yaml is machine-written (spotify_playlists.py) and stays separate.
+# No `cover:` / `intro:` sections — this songbook has no cover pages.
+slug: wanderwaal
+title: Wanderwaal
+artist: Grace VanderWaal
+language: en        # primary language — drives the printed intro page (#36)
+notation: common    # chord names used in the .cho files (C D E …)
+
+blurb: Grace VanderWaal — Perfectly Imperfect & Just the Beginning
+
+description:
+  it: >-
+    Canzoni di Grace VanderWaal dai suoi primi due album, l'EP *Perfectly
+    Imperfect* (2016) e l'album di debutto *Just the Beginning* (2017).
+    Ukulele, accordi in notazione inglese.
+  en: >-
+    Songs by Grace VanderWaal from her first two releases, the EP
+    *Perfectly Imperfect* (2016) and her debut album *Just the Beginning*
+    (2017). Ukulele, English chord notation.

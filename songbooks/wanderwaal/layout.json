@@ -1,0 +1,37 @@
+// Layout overlay for the Wanderwaal songbook.
+// Merged on top of chordpro-ukulele.json by the Makefile.
+{
+  // Single-artist songbook: the stock TOC and outline formats append
+  // " - <artist>" to every entry, identical on all lines.
+  "contents": [
+    {
+      "fields": [ "songindex" ],
+      "label": "Table of Contents",
+      "line": "%{title}",
+      "pageno": "%{page}",
+      "template": "stdtoc"
+    }
+  ],
+
+  "pdf": {
+    // Every song fits on a single page. Reclaimed from margins first
+    // (defaults are 40pt on every side), then line spacing.
+    "marginleft": 25,
+    "marginright": 25,
+    "marginbottom": 25,
+    "margintop": 25,
+    "columnspace": 12,
+    "footspace": 10,
+
+    "spacing": {
+      "lyrics": 1.0,
+      "chords": 1.0,
+      "empty": 0.5
+    },
+
+    "fonts": {
+      "text":  { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf", "size": 9 },
+      "chord": { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf", "size": 9, "color": "blue" }
+    }
+  }
+}
