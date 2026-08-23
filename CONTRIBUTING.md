@@ -190,6 +190,11 @@ Notes:
 
 - Chorus label: `{comment: RIT}`
 
+- Capo position: `{capo: N}` directive right after `{key: ...}`, never a
+  `{comment: capotasto N}` line. It's metadata only (no inline print, no
+  transposition here); an unrelated note (e.g. original key) stays its
+  own separate `{comment: ...}` line.
+
 - Chord diagrams for slash/unusual chords are suppressed via
   `diagrams.suppress` in `chordpro-ukulele.json`.
 
