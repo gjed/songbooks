@@ -2,29 +2,32 @@
 {{- $accent := .Params.accent -}}
 {{- $tracks := .Params.tracks | default slice -}}
 {{- $n := len $tracks -}}
-<article class="book{{ if not $accent }} book--plain{{ end }}"
-  {{- with $accent }} style="--accent: {{ . }}; --accent-ink: {{ partial "accent-ink.html" . }};"{{ end }}>
+{{- $lang := .Params.language -}}
+{{- /* The songbook's own cover colour goes in raw; .has-accent tells
+       main.css to re-derive the theme-aware, contrast-floored accents
+       from it on this element. */ -}}
+<article class="book{{ with $accent }} has-accent{{ end }}"
+  {{- with $accent }} style="--accent-raw: {{ . }};"{{ end }}>
 
-  <p class="crumb"><a href="{{ "" | relLangURL }}">{{ i18n "back_to_all" }}</a></p>
+  <p><a class="book__back" href="{{ "" | relLangURL }}">{{ i18n "back_to_all" }}</a></p>
 
   <div class="book__head">
     {{- with .Params.thumb }}
-    <figure class="book__cover">
-      <img src="{{ . | relURL }}" alt="{{ i18n "cover_alt" $.Title }}"
-           width="595" height="842" decoding="async">
-    </figure>
+    <img class="book__cover" src="{{ . | relURL }}" alt="{{ i18n "cover_alt" $.Title }}"
+         width="595" height="842" loading="lazy" decoding="async">
     {{- end }}
     <div class="book__intro">
       <h1 class="book__title">{{ .Title }}</h1>
       {{- with .Params.artist }}<p class="book__artist">{{ . }}</p>{{ end }}
-      {{- with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+      {{- with .Content }}<div class="book__desc">{{ . }}</div>{{ end }}
 
       <div class="book__actions">
         {{- with .Params.pdf }}
-        <a class="btn btn--lg" href="{{ . | relURL }}" download>{{ i18n "download_pdf" }}</a>
+        <a class="btn-cta" href="{{ . | relURL }}" download>{{ i18n "download_pdf_cta" }}</a>
         {{- end }}
+        {{- with $lang }}<span class="btn-ghost" aria-hidden="false">{{ . | upper }}</span>{{ end }}
         {{- with .Params.spotify }}
-        <a class="btn btn--ghost" href="{{ . }}" rel="noopener">
+        <a class="btn-ghost" href="{{ . }}" rel="noopener">
           {{ partial "icon-spotify.html" . }}{{ i18n "listen_spotify" }}
         </a>
         {{- end }}
@@ -40,7 +43,7 @@
     {{- if .Params.chartOnly }}
     <p class="note">{{ i18n "chart_only" }}</p>
     {{- else if $tracks }}
-    <h2 class="h-rule">{{ i18n "tracklist" }} <span class="h-rule__count">{{ i18n "song_count" $n }}</span></h2>
+    <h2 class="section-head">{{ i18n "tracklist" }} <span>{{ i18n "song_count" $n }}</span></h2>
       {{- if gt $n 20 }}
     <details class="fold">
       <summary class="fold__summary">{{ i18n "tracklist_toggle" $n }}</summary>
@@ -54,7 +57,7 @@
 
   {{- with .Params.links }}
   <section class="book__links">
-    <h2 class="h-rule">{{ i18n "links_heading" }}</h2>
+    <h2 class="section-head">{{ i18n "links_heading" }}</h2>
     <ul class="linklist">
       {{- range . }}
       <li><a href="{{ .url }}" rel="noopener">{{ .label }}</a></li>
