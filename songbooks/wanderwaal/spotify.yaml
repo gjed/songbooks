@@ -1,0 +1,43 @@
+# Spotify manifest for this songbook — the contract between two phases.
+#
+# `resolve` (local, interactive) pins a track/album URI for every song.
+# `sync` (CI, unattended) pushes those URIs and nothing else.
+#
+# `mode`, set by hand:
+#   mode: playlist (default)  curate one track at a time -> a playlist
+#                             this repo owns and pushes to.
+#   mode: album               the songbook IS one official Spotify
+#                             album (one artist, one release). No
+#                             playlist is created; `resolve` just links
+#                             the album once.
+#
+# String values (tracks, spotify_album, playlist_id) are one of three
+# states:
+#   ""                       not yet resolved — a search candidate
+#   spotify:track:<id> / spotify:album:<id>   pinned
+#   null                     deliberately not on Spotify — stop asking
+#
+# Track keys are .cho filename stems, in file order.
+# Regenerate with: make spotify-resolve
+$schema_version: 1
+mode: playlist
+playlist_name: Wanderwaal
+playlist_id: 2B92GRh4FTrbnteG1a0ek4
+tracks:
+  01-i-dont-know-my-name: spotify:track:3935nnx564nHVGHprflgG1
+  02-clay: spotify:track:78BX7MEzHfu2v94eVq1vGJ
+  03-light-the-sky: spotify:track:3r8o1udRdgOd3J0kTk3XWl
+  04-beautiful-thing: spotify:track:4P3LBZjsWULnAS08KebYfW
+  05-gossip-girl: spotify:track:50PzsFjhABlOUVBj87bQhx
+  06-moonlight: spotify:track:4XrvRf68c9H4orZZ9KoldQ
+  07-sick-of-being-told: spotify:track:4nOKwZf1XRw2gI4FGAGhXf
+  08-burned: spotify:track:4mz7WAJCJz7QbXsFA2WoXK
+  09-just-a-crush: spotify:track:0qazt5sXx4rSzxBj7DHOhn
+  10-so-much-more-than-this: spotify:track:599hlIX8JXS7RNYvQ3EPCQ
+  11-escape-my-mind: spotify:track:0O8YMwF6fUty67k61XN9W7
+  12-talk-good: spotify:track:0fXS5YBrQo9jNTNnaRbnqk
+  13-florets: spotify:track:0nHFy6NhdXegDdokhXrTw0
+  14-insane-sometimes: spotify:track:6N4xyXVJ8DMsVhOVxPd7p2
+  15-a-better-life: spotify:track:1rEkvyg3rdnTvmhEASyQmg
+  16-city-song: spotify:track:3BUnW43cyllWNWTPZxfcxZ
+  17-darkness-keeps-chasing-me: spotify:track:3P19NoMAGg72XG22EOf4zm
