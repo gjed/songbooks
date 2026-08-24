@@ -1,9 +1,9 @@
 {{- /* dict: tracks (slice), artist (songbook artist, may be empty) */ -}}
 <ol class="tracks">
-  {{- range .tracks }}
+  {{- range $i, $t := .tracks }}
   <li class="tracks__item">
-    <span class="tracks__title">{{ .title }}</span>
-    {{- with .artist }}<span class="tracks__by"> — {{ . }}</span>{{ end }}
+    <span class="tracks__num">{{ printf "%02d" (add $i 1) }}</span>
+    <span class="tracks__title">{{ $t.title }}{{ with $t.artist }}<span class="tracks__by"> — {{ . }}</span>{{ end }}</span>
   </li>
   {{- end }}
 </ol>

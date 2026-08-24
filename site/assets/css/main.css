@@ -1,66 +1,219 @@
-/* Songbooks — print-culture editorial. One stylesheet, no external requests.
-   Typography leans on system serif for display (Iowan/Palatino/Georgia) and
-   system mono for labels, echoing the Courier used on the printed covers. */
+/* ==========================================================================
+   Canzonieri — typewriter redesign
+   Single hand-maintained stylesheet. Sections below follow the screens in
+   the design handoff 1:1. Border radius is 0 everywhere; shadows are hard
+   offsets only (0 blur), always in --teal. Sizes are literal px per the
+   handoff's fixed type/spacing scale — do not convert to rem.
+   ========================================================================== */
+
+/* ── 1. Tokens ─────────────────────────────────────────────────────────── */
 
 :root {
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
-    ui-serif, Georgia, "Times New Roman", serif;
-  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas,
-    "Courier New", monospace;
+  /* Day (default) */
+  --desk:   #dde2ee;
+  --paper:  #f6f8fc;
+  --card:   #ffffff;
+  --ink:    #1b2338;
+  --ink2:   #5f6884;
+  --rule:   #d3d9e6;
+  --teal:   #0f7f8a;
 
-  --paper: #faf7f1;
-  --paper-2: #fffdf9;
-  --ink: #17150f;
-  --ink-2: #4a4539;
-  --ink-3: #7c745f;
-  --rule: #ddd6c6;
-  --rule-soft: #ebe5d8;
+  /* Masthead slab — identical in both themes */
+  --slab:      #232c42;
+  --slab-ink:  #eef1f7;
+  --slab-ink2: #c2c9da;
+  --slab-mute: #98a3bd;
 
-  /* Neutral fallback for coverless songbooks. */
-  --accent: #8d8676;
-  --accent-ink: #ffffff;
+  --font-display: "Special Elite", "Courier Prime", "Courier New", monospace;
+  --font-text: "Courier Prime", "Courier New", monospace;
 
-  --measure: 68ch;
-  --page: 74rem;
-  --r: 3px;
-  --shadow: 0 1px 2px rgb(23 21 15 / 8%), 0 8px 24px -12px rgb(23 21 15 / 22%);
-  --shadow-lift: 0 2px 4px rgb(23 21 15 / 10%), 0 18px 40px -16px rgb(23 21 15 / 30%);
+  /* Ink placed ON a --teal fill, and teal used ON the always-dark slab.
+     Night teal is light, so white-on-teal would drop to 1.83:1; and day
+     teal on the dark slab is only 2.93:1. Both need a theme-aware value
+     rather than the single flat token the handoff assumed. */
+  --teal-ink:  #ffffff;
+  --teal-slab: #5fd0d8;
+
+  /* Hover lift for accent/teal fills and text. Day darkens, night
+     lightens — a flat brightness(0.9) walks a night accent back toward
+     the dark paper it has to stay legible against. */
+  --hover-lift: 0.9;
 }
 
-*,
-*::before,
-*::after { box-sizing: border-box; }
+:root[data-theme="night"] {
+  --desk:   #161d2e;
+  --paper:  #212a3f;
+  --card:   #28324a;
+  --ink:    #eaeef7;
+  --ink2:   #98a3bd;
+  --rule:   #3a4560;
+  --teal:   #5fd0d8;
+  --teal-ink: #1b2338;
+  --hover-lift: 1.1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="day"]):not([data-theme="night"]) {
+    --desk:   #161d2e;
+    --paper:  #212a3f;
+    --card:   #28324a;
+    --ink:    #eaeef7;
+    --ink2:   #98a3bd;
+    --rule:   #3a4560;
+    --teal:   #5fd0d8;
+    --teal-ink: #1b2338;
+    --hover-lift: 1.1;
+  }
+}
+
+/* ── 1b. Accent system ─────────────────────────────────────────────────────
+
+   Each songbook may declare its own cover colour (`cover.subtitle_color` in
+   songbook.yaml). Those are arbitrary artwork colours picked for a print
+   cover, so NONE of them is guaranteed legible against either paper:
+   nene is #1B1B1B (1.20:1 on night paper — invisible), faccianuvola is
+   #249FF9 (2.67:1 on day paper). The old code injected `--accent` inline,
+   which also meant the night token override could never reach it.
+
+   So templates now inject only the RAW colour as --accent-raw, and every
+   usable accent is DERIVED from it per theme by clamping OKLCH lightness.
+   Clamping l (leaving chroma and hue alone) is what keeps a songbook's
+   colour recognisably itself while forcing it across a contrast floor.
+
+   Three derived accents, because the same colour cannot serve every job:
+     --accent       chrome: rules, borders, underlines, focus ring.  >= 3:1
+     --accent-text  text/fills on paper: badge text, counts, CTA fill. >= 4.5:1
+     --accent-slab  accent on the always-dark #232c42 masthead slab.   >= 4.5:1
+     --accent-ink   ink placed ON an --accent-text fill.               >= 4.5:1
+
+   The lightness bounds are computed, not eyeballed: they are the widest
+   bounds for which EVERY hue/chroma at that lightness still clears the
+   floor against the hardest surface it can land on (day: --card #ffffff;
+   night: --card #28324a, plus the slab and the CTA ink). Verified by
+   sweeping the whole sRGB cube.
+     day   l <= 0.633 (chrome)  l <= 0.536 (text)
+     night l >= 0.623 (chrome)  l >= 0.722 (text)
+
+   Night starts from color-mix(in srgb, raw, #fff 42%) — the handoff's
+   "lightened ~42% toward white". For the default fuchsia that yields
+   #E780B4, i.e. the handoff's literal rgb(233,124,178), so the approved
+   night appearance is preserved exactly.
+
+   Because a day accent is always dark (l <= 0.633) and a night accent is
+   always light (l >= 0.623), --accent-ink is decided by the THEME, not by
+   the raw colour. That is what retired the old accent-ink.html partial.  */
+
+:root { --accent-raw: #d6247e; }
+
+/* Derivation must be re-evaluated on any element that overrides
+   --accent-raw, not just at :root — a custom property computed at :root
+   would keep the root's value. .has-accent is set by the three templates
+   that inject a per-songbook colour. */
+
+/* Tier 1 — no relative-colour-syntax support: no lightness clamp, but the
+   night lift still applies, so nothing is worse than before the fix. */
+:root,
+.has-accent {
+  --accent-mix:  color-mix(in srgb, var(--accent-raw), #ffffff 42%);
+  --accent:      var(--accent-raw);
+  --accent-text: var(--accent-raw);
+  --accent-slab: var(--accent-mix);
+  --accent-ink:  #fff9ec;
+}
+
+/* --accent-slab is deliberately NOT re-declared per theme: the slab is dark
+   in both themes, so its accent is always the night-lifted one set above.
+   Re-declaring it here would win on specificity over the clamped value in
+   the @supports block below and silently drop the clamp. */
+:root[data-theme="night"],
+[data-theme="night"] .has-accent {
+  --accent:      var(--accent-mix);
+  --accent-text: var(--accent-mix);
+  --accent-ink:  #1b2338;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="day"]):not([data-theme="night"]),
+  :root:not([data-theme="day"]):not([data-theme="night"]) .has-accent {
+    --accent:      var(--accent-mix);
+    --accent-text: var(--accent-mix);
+    --accent-ink:  #1b2338;
+  }
+}
+
+/* Tier 2 — the real thing. Guarded so a browser without relative colour
+   syntax keeps the tier-1 values instead of dropping the whole token. */
+@supports (color: oklch(from red min(l, 0.5) c h)) {
+  :root,
+  .has-accent {
+    --accent:      oklch(from var(--accent-raw) min(l, 0.633) c h);
+    --accent-text: oklch(from var(--accent-raw) min(l, 0.536) c h);
+    --accent-slab: oklch(from var(--accent-mix) max(l, 0.722) c h);
+  }
+
+  :root[data-theme="night"],
+  [data-theme="night"] .has-accent {
+    --accent:      oklch(from var(--accent-mix) max(l, 0.623) c h);
+    --accent-text: oklch(from var(--accent-mix) max(l, 0.722) c h);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="day"]):not([data-theme="night"]),
+    :root:not([data-theme="day"]):not([data-theme="night"]) .has-accent {
+      --accent:      oklch(from var(--accent-mix) max(l, 0.623) c h);
+      --accent-text: oklch(from var(--accent-mix) max(l, 0.722) c h);
+    }
+  }
+}
+
+/* ── 2. Reset / base ───────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
 
 html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  padding: 0 clamp(1.125rem, 5vw, 3rem);
-  background: var(--paper);
-  /* Faint horizon wash so the page reads as paper, not a flat panel. */
-  background-image: radial-gradient(120% 60% at 50% -10%, #fffefb 0%, transparent 70%);
+  min-height: 100vh;
+  background: var(--desk);
   color: var(--ink);
-  font: 400 clamp(1rem, 0.97rem + 0.16vw, 1.075rem)/1.65 var(--sans);
-  font-synthesis-weight: none;
+  font: 400 15px/1.5 var(--font-text);
   -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+a { color: inherit; text-decoration: none; }
+
+a:hover { color: var(--accent-text); }
+
+button {
+  font-family: var(--font-text);
+  cursor: pointer;
+}
+
+input {
+  font-family: var(--font-text);
+}
+
+input::placeholder { color: var(--ink2); opacity: 0.75; }
+
+::selection { background: var(--accent-text); color: var(--accent-ink); }
+
+/* height: auto is load-bearing. The cover <img>s carry width/height
+   attributes (595x842) for layout stability; those map to presentational
+   hints, and with BOTH dimensions resolved the `aspect-ratio: 3/4` on
+   .tile__cover / .book__cover is ignored — covers rendered 842px tall.
+   Letting height go auto hands control back to aspect-ratio. */
 img { max-width: 100%; height: auto; display: block; }
 
-a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
-
-a:hover { text-decoration-color: var(--accent); }
-
-:where(a, button, summary, details, [tabindex]):focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
-  border-radius: var(--r);
+:where(a, button, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-.u-sr,
-.skip {
+.u-sr, .skip {
   position: absolute;
   width: 1px; height: 1px;
   margin: -1px; padding: 0;
@@ -71,436 +224,873 @@ a:hover { text-decoration-color: var(--accent); }
 
 .skip:focus {
   position: fixed;
-  inset: 0.75rem auto auto 0.75rem;
+  inset: 12px auto auto 12px;
   width: auto; height: auto;
-  margin: 0; padding: 0.55rem 0.9rem;
+  margin: 0; padding: 9px 14px;
   clip-path: none;
   background: var(--ink);
   color: var(--paper);
-  border-radius: var(--r);
-  z-index: 10;
+  z-index: 50;
 }
 
-/* ── masthead ─────────────────────────────────────────────────────── */
+/* ── 3. Sheet on desk ──────────────────────────────────────────────────── */
+
+.sheet {
+  max-width: 1120px;
+  margin: 26px 16px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  box-shadow: 0 20px 44px rgba(27, 35, 56, 0.22);
+  overflow: hidden;
+}
+
+@media (min-width: 720px) {
+  .sheet { margin: 30px auto; }
+}
+
+/* ── 4. Header ─────────────────────────────────────────────────────────── */
 
 .masthead {
-  max-width: var(--page);
-  margin: 0 auto;
-  padding: 1.6rem 0 1.25rem;
+  background: var(--paper);
+  border-bottom: 1.5px solid var(--ink);
+  padding: 11px 18px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  border-bottom: 1px solid var(--rule);
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .masthead__brand {
-  font: 600 1.0625rem/1 var(--mono);
-  letter-spacing: 0.02em;
-  text-transform: lowercase;
-  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  min-width: 0;
 }
 
-.masthead__brand::before {
-  content: "❦";
-  margin-right: 0.5ch;
-  color: var(--ink-3);
+.masthead__word {
+  font: 400 18px/1 var(--font-display);
+  color: var(--ink);
+  white-space: nowrap;
 }
 
-.langs { display: flex; gap: 0.15rem; align-items: center; }
+.masthead__tag {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--teal);
+  white-space: nowrap;
+}
+
+.masthead__right {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  flex-wrap: wrap;
+}
+
+.masthead__link {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  white-space: nowrap;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.masthead__link:hover { color: var(--accent-text); }
+
+.langs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.langs__sep { color: var(--ink2); opacity: 0.5; }
 
 .langs__item {
-  font: 500 0.75rem/1 var(--mono);
-  letter-spacing: 0.09em;
-  padding: 0.4rem 0.5rem;
-  color: var(--ink-3);
-  text-decoration: none;
-  border-radius: var(--r);
+  color: var(--ink2);
+  text-transform: uppercase;
 }
-
-.langs__item:hover { color: var(--ink); background: #0000000a; }
 
 .langs__item--on {
   color: var(--ink);
-  box-shadow: inset 0 -2px 0 var(--ink);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 1px;
 }
 
-/* ── hero ─────────────────────────────────────────────────────────── */
-
-main { max-width: var(--page); margin: 0 auto; }
-
-.hero { padding: clamp(3rem, 9vw, 6.5rem) 0 clamp(2rem, 5vw, 3.5rem); max-width: var(--measure); }
-
-.hero--sub { padding-bottom: clamp(1.5rem, 4vw, 2.5rem); }
-
-.hero__title {
-  margin: 0;
-  font: 400 clamp(2.75rem, 1.4rem + 6vw, 5.5rem)/0.95 var(--serif);
-  letter-spacing: -0.028em;
-  text-wrap: balance;
+.theme-toggle {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 5px 8px;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink2);
 }
 
-.hero__tagline {
-  margin: 1.1rem 0 0;
-  max-width: 36ch;
-  color: var(--ink-2);
-  font-size: 1.0625rem;
-  text-wrap: pretty;
+.theme-toggle:hover { color: var(--ink); border-color: var(--ink2); }
+
+/* ── 5. Search field & sort chips (shared: home + song index) ────────── */
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1.5px solid var(--ink);
+  background: var(--card);
+  padding: 11px 12px;
 }
 
-.empty { color: var(--ink-3); font-style: italic; }
-
-/* ── card grid ────────────────────────────────────────────────────── */
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-  gap: clamp(1.75rem, 4vw, 3.25rem) clamp(1.5rem, 3vw, 2.5rem);
-  padding-bottom: 4rem;
+.search__slash {
+  font-size: 13px;
+  color: var(--accent-text);
+  flex: none;
 }
 
-.card { display: flex; flex-direction: column; min-width: 0; }
+.search__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--ink);
+}
 
-.card__hit {
+.sort {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.sort__chip {
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 7px 10px;
+  min-height: 30px;
+  background: transparent;
+  border: 1.5px solid var(--rule);
+  color: var(--ink2);
+}
+
+.sort__chip:hover { border-color: var(--ink2); }
+
+.sort__chip[aria-pressed="true"] {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--teal-ink);
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 8px;
+}
+
+.section-head__count { color: var(--accent-text); }
+
+.empty-state {
+  padding: 26px 0;
+  font-size: 14px;
+  color: var(--ink2);
+}
+
+/* ── 6. Home — mobile (typed index, default, <720px) ──────────────────── */
+
+.home-mobile {
+  padding: 24px 18px 34px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  text-decoration: none;
-  color: inherit;
+  gap: 24px;
 }
 
-/* The cover is the hero: portrait A4, thin plate, soft drop. */
-.card__frame {
-  display: block;
-  position: relative;
-  aspect-ratio: 595 / 842;
-  background: var(--paper-2);
-  border: 1px solid var(--rule);
-  border-radius: var(--r);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  transition: box-shadow 240ms ease, transform 240ms ease;
-}
-
-/* Accent reads as a printed edge along the top of the plate. */
-.card__frame::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 4px;
-  background: var(--accent);
-}
-
-.card__img { width: 100%; height: 100%; object-fit: cover; }
-
-.card__frame--empty {
-  display: grid;
-  place-items: center;
-  background:
-    linear-gradient(180deg, color-mix(in oklab, var(--accent) 12%, var(--paper-2)), var(--paper-2));
-}
-
-.card__initial {
-  font: 400 clamp(3rem, 12vw, 5rem)/1 var(--serif);
-  color: color-mix(in oklab, var(--accent) 55%, var(--ink));
-  opacity: 0.5;
-}
-
-.card__hit:hover .card__frame {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lift);
-}
-
-.card__body { display: block; }
-
-.card__title {
+.home-mobile__title {
   margin: 0;
-  font: 400 1.375rem/1.15 var(--serif);
-  letter-spacing: -0.012em;
-  text-wrap: balance;
-}
-
-.card__hit:hover .card__title { text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 0.2em; }
-
-.card__blurb {
-  display: block;
-  margin-top: 0.4rem;
-  color: var(--ink-2);
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  text-wrap: pretty;
-}
-
-.card__meta {
-  display: block;
-  margin-top: 0.55rem;
-  padding-top: 0.55rem;
-  border-top: 1px solid var(--rule-soft);
-  color: var(--ink-3);
-  font: 400 0.75rem/1.4 var(--mono);
-  letter-spacing: 0.04em;
-}
-
-.card__btn { margin-top: 0.9rem; align-self: start; }
-
-/* ── buttons ──────────────────────────────────────────────────────── */
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5ch;
-  padding: 0.5rem 0.95rem;
-  border: 1px solid var(--accent);
-  border-radius: var(--r);
-  background: var(--accent);
-  color: var(--accent-ink);
-  font: 500 0.8125rem/1.2 var(--mono);
-  letter-spacing: 0.03em;
-  text-decoration: none;
-  transition: filter 160ms ease, transform 160ms ease;
-}
-
-.btn:hover { filter: brightness(1.08) saturate(1.06); transform: translateY(-1px); }
-
-.btn:active { transform: none; }
-
-.btn--lg { padding: 0.7rem 1.35rem; font-size: 0.875rem; }
-
-.btn--ghost {
-  background: transparent;
+  font: 400 31px/1.08 var(--font-display);
   color: var(--ink);
-  border-color: var(--rule);
 }
 
-.btn--ghost:hover { border-color: var(--ink-3); filter: none; }
-
-.icon { flex: none; }
-
-/* ── songbook page ────────────────────────────────────────────────── */
-
-.crumb {
-  margin: 1.5rem 0 0;
-  font: 400 0.75rem/1 var(--mono);
-  letter-spacing: 0.05em;
-  color: var(--ink-3);
+.home-mobile__sub {
+  margin: 9px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink2);
 }
 
-.crumb a { text-decoration-color: var(--rule); }
-
-.book { padding-bottom: 5rem; }
-
-.book__head {
-  display: grid;
-  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
-  gap: clamp(1.75rem, 5vw, 4rem);
-  align-items: start;
-  padding: clamp(2rem, 6vw, 4rem) 0 clamp(2rem, 5vw, 3.25rem);
+.home-mobile__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
 }
 
-.book__cover {
-  margin: 0;
+.rows { display: flex; flex-direction: column; }
+
+.row {
   position: relative;
-  aspect-ratio: 595 / 842;
-  border: 1px solid var(--rule);
-  border-radius: var(--r);
-  background: var(--paper-2);
-  box-shadow: var(--shadow);
-  overflow: hidden;
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  gap: 13px;
+  align-items: start;
+  padding: 15px 0;
+  border-bottom: 1px dotted var(--rule);
+  min-height: 44px;
 }
 
-.book__cover::after {
-  content: "";
+.row:last-child { border-bottom: none; }
+
+/* Whole-row link: a transparent overlay so the entire row is tappable
+   without nesting the PDF badge's <a> inside another <a>. Interactive
+   children (the PDF badge) sit above it via z-index + pointer-events. */
+.row__hit {
   position: absolute;
-  inset: 0 0 auto;
-  height: 5px;
-  background: var(--accent);
+  inset: 0;
+  z-index: 1;
 }
 
-.book__cover img { width: 100%; height: 100%; object-fit: cover; }
-
-.book__intro { max-width: var(--measure); }
-
-.book__title {
-  margin: 0;
-  font: 400 clamp(2.25rem, 1.3rem + 3.6vw, 3.75rem)/1 var(--serif);
-  letter-spacing: -0.024em;
-  text-wrap: balance;
+.row__cover {
+  width: 46px;
+  height: 62px;
+  object-fit: cover;
+  border: 1px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--teal);
 }
 
-.book__artist {
-  margin: 0.6rem 0 0;
-  color: var(--ink-2);
-  font: 400 1rem/1.4 var(--mono);
-  letter-spacing: 0.02em;
-}
-
-.prose { margin-top: 1.5rem; color: var(--ink-2); }
-
-.prose p { margin: 0 0 1em; text-wrap: pretty; }
-
-.prose p:last-child { margin-bottom: 0; }
-
-.prose em { color: var(--ink); }
-
-.book__actions {
+.row__cover--empty {
+  background: var(--card);
+  color: var(--ink2);
+  font: 400 22px/1 var(--font-display);
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 2rem;
+  align-items: center;
+  justify-content: center;
 }
 
-.book__version {
-  margin: 1rem 0 0;
-  color: var(--ink-3);
-  font: 400 0.75rem/1 var(--mono);
-  letter-spacing: 0.05em;
-}
-
-/* ── section headings, tracklist ──────────────────────────────────── */
-
-.h-rule {
+.row__body {
   display: flex;
-  align-items: baseline;
-  gap: 0.75ch;
-  margin: 0 0 1.25rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--accent);
-  font: 400 0.8125rem/1 var(--mono);
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.row__title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.22;
+  color: var(--ink);
+}
+
+.row__desc {
+  font-size: 12.5px;
+  line-height: 1.42;
+  color: var(--ink2);
+}
+
+.row__meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-top: 3px;
+  font-size: 10.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-.h-rule__count {
-  margin-left: auto;
-  color: var(--ink-3);
-  letter-spacing: 0.04em;
-  text-transform: none;
+.row__lang { color: var(--teal); }
+
+.row__count {
+  font-size: 11.5px;
+  color: var(--ink2);
+  white-space: nowrap;
+  padding-top: 2px;
+  text-align: right;
 }
 
-.book__songs,
-.book__links { max-width: var(--measure); margin-top: clamp(2rem, 5vw, 3rem); }
+/* PDF badge — used on home rows, home grid cards, songbook CTA context.
+   Positioned above the row/tile whole-row overlay link so it stays its
+   own separate hit target instead of nesting an <a> inside an <a>. */
+.pdf-badge {
+  position: relative;
+  z-index: 2;
+  background: var(--accent-text);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent-text);
+  padding: 3px 6px;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+}
 
-.note { margin: 0; color: var(--ink-2); font-style: italic; }
+.pdf-badge:hover { color: var(--accent-ink); filter: brightness(var(--hover-lift)); }
+
+.home-footer {
+  border-top: 1.5px solid var(--ink);
+  padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--ink2);
+  margin: 0 18px 20px;
+}
+
+/* ── 7. Home — desktop (cover grid, >=720px) ───────────────────────────── */
+
+.home-desktop { display: none; }
+
+.masthead-slab {
+  background: var(--slab);
+  padding: 46px 52px 44px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.masthead-slab__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 620px;
+}
+
+.masthead-slab__kicker {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--teal-slab);
+}
+
+.masthead-slab__title {
+  margin: 0;
+  font: 400 56px/1.02 var(--font-display);
+  color: var(--slab-ink);
+}
+
+.masthead-slab__sub {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--slab-ink2);
+  max-width: 52ch;
+}
+
+.masthead-slab__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+/* Base .stamp is the home masthead one: it sits on the always-dark slab,
+   so it needs the slab-safe accent in BOTH themes (day #d6247e on #232c42
+   is only 2.92:1). The 404 stamp sits on --paper and overrides below. */
+.stamp {
+  border: 2px solid var(--accent-slab);
+  color: var(--accent-slab);
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 7px 11px;
+  transform: rotate(-2deg);
+  white-space: nowrap;
+}
+
+.masthead-slab__version {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--slab-mute);
+}
+
+.controls-row {
+  padding: 26px 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.controls-row .search { width: 320px; padding: 10px 13px; }
+
+.controls-row__right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.controls-row__count {
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+.cover-grid {
+  padding: 36px 52px 44px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 34px 30px;
+}
+
+.tile { position: relative; display: flex; flex-direction: column; gap: 11px; min-width: 0; }
+
+.tile__hit { position: absolute; inset: 0; z-index: 1; }
+
+.tile__cover {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border: 1.5px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--teal);
+  background: var(--card);
+}
+
+.tile__cover--empty {
+  color: var(--ink2);
+  font: 400 clamp(2rem, 8vw, 3.5rem)/1 var(--font-display);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tile__title {
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.22;
+  color: var(--ink);
+}
+
+.tile__desc {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink2);
+}
+
+.tile__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 2px;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.tile__count { color: var(--ink2); }
+
+.desktop-empty { padding: 0 52px 44px; font-size: 15px; color: var(--ink2); }
+
+.desktop-footer {
+  border-top: 1.5px solid var(--ink);
+  margin: 0 52px;
+  padding: 16px 0 28px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink2);
+}
+
+@media (min-width: 720px) {
+  .home-mobile { display: none; }
+  .home-desktop { display: flex; flex-direction: column; }
+}
+
+/* ── 8. Buttons shared across pages ───────────────────────────────────── */
+
+/* Accent FILL with text on top, so the fill uses the 4.5:1 accent and the
+   label uses --accent-ink (theme-decided; see the accent system note). */
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5ch;
+  background: var(--accent-text);
+  color: var(--accent-ink);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 11px 16px;
+  min-height: 44px;
+  border: none;
+}
+
+.btn-cta:hover { color: var(--accent-ink); filter: brightness(var(--hover-lift)); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6ch;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal);
+  border: 1px solid var(--teal);
+  padding: 9px 11px;
+  min-height: 44px;
+}
+
+.btn-ghost:hover { color: var(--teal); filter: brightness(var(--hover-lift)); }
+
+.btn-ghost .icon { flex: none; width: 14px; height: 14px; }
+
+/* ── 9. Songbook page ──────────────────────────────────────────────────── */
+
+.book {
+  padding: 24px 18px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.book__back {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.book__back:hover { color: var(--accent-text); }
+
+.book__head {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.book__cover {
+  width: 188px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border: 1.5px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--teal);
+}
+
+.book__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.book__title {
+  margin: 0;
+  font: 400 30px/1.08 var(--font-display);
+  color: var(--ink);
+}
+
+.book__artist {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink2);
+}
+
+.book__desc {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink2);
+}
+
+.book__desc p { margin: 0 0 1em; }
+.book__desc p:last-child { margin-bottom: 0; }
+.book__desc em { color: var(--ink); }
+
+.book__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.book__version {
+  margin: 0;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--ink2);
+}
+
+.book__songs, .book__links { display: flex; flex-direction: column; }
 
 .tracks {
   margin: 0;
   padding: 0;
   list-style: none;
-  counter-reset: t;
 }
 
 .tracks__item {
-  counter-increment: t;
   display: grid;
-  grid-template-columns: 2.5ch 1fr;
-  gap: 0.75ch;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--rule-soft);
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: baseline;
+  padding: 13px 0;
+  border-bottom: 1px dotted var(--rule);
 }
 
-.tracks__item::before {
-  content: counter(t, decimal-leading-zero);
-  color: var(--ink-3);
-  font: 400 0.8125rem/1.6 var(--mono);
+.tracks__item:last-child { border-bottom: none; }
+
+.tracks__num {
+  font-size: 12px;
+  color: var(--teal);
   font-variant-numeric: tabular-nums;
 }
 
-.tracks__title { text-wrap: pretty; }
+.tracks__title {
+  font-size: 15.5px;
+  line-height: 1.35;
+  color: var(--ink);
+}
 
-.tracks__by { color: var(--ink-3); }
+.tracks__by { color: var(--ink2); }
 
 .fold__summary {
   cursor: pointer;
-  padding: 0.6rem 0.9rem;
-  border: 1px solid var(--rule);
-  border-radius: var(--r);
-  background: var(--paper-2);
-  font: 500 0.8125rem/1.2 var(--mono);
-  letter-spacing: 0.03em;
-  list-style-position: inside;
+  padding: 9px 11px;
+  border: 1.5px solid var(--rule);
+  background: var(--card);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink2);
 }
 
-.fold__summary:hover { border-color: var(--ink-3); }
+.fold__summary:hover { border-color: var(--ink2); color: var(--ink); }
 
-.fold[open] .fold__summary { margin-bottom: 1rem; }
+.fold[open] .fold__summary { margin-bottom: 11px; }
 
-.linklist { margin: 0; padding: 0; list-style: none; }
+.note {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink2);
+  font-style: italic;
+}
 
-.linklist li { padding: 0.4rem 0; border-bottom: 1px solid var(--rule-soft); }
+.linklist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
 
-.linklist a { text-decoration-color: var(--accent); }
+.linklist li { padding: 9px 0; border-bottom: 1px dotted var(--rule); }
 
-/* ── footer ───────────────────────────────────────────────────────── */
+.linklist li:last-child { border-bottom: none; }
+
+.linklist a {
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink2);
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.2em;
+}
+
+.linklist a:hover { color: var(--accent-text); text-decoration-color: var(--accent); }
+
+@media (min-width: 720px) {
+  .book { padding: 38px 52px 46px; gap: 30px; }
+  .book__head { display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: start; }
+  .book__cover { width: 300px; box-shadow: 6px 6px 0 var(--teal); }
+  .book__title { font-size: 44px; }
+}
+
+/* ── 10. Song index ────────────────────────────────────────────────────── */
+
+.song-index {
+  padding: 24px 18px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.song-index__intro { display: flex; flex-direction: column; gap: 9px; }
+
+.song-index__title {
+  margin: 0;
+  font: 400 30px/1.08 var(--font-display);
+  color: var(--ink);
+}
+
+.song-index__sub {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink2);
+}
+
+.song-rows { display: flex; flex-direction: column; }
+
+.song-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px dotted var(--rule);
+  min-height: 44px;
+}
+
+.song-row:last-child { border-bottom: none; }
+
+.song-row__title {
+  font-size: 15.5px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+/* No `white-space: nowrap` here: the longest songbook name ("Diplomatico e
+   il Collettivo Ninco Nanco") is 296px, which pushed the whole song index
+   60px past a 375px viewport and gave the page a horizontal scrollbar.
+   Wrapping costs nothing on desktop, where there is room to stay on one
+   line anyway. */
+.song-row__book {
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--teal);
+  text-align: right;
+  text-wrap: balance;
+}
+
+@media (min-width: 720px) {
+  .song-index { padding: 38px 52px 46px; gap: 30px; }
+  .song-index__title { font-size: 44px; }
+  .song-index__sub { font-size: 14.5px; line-height: 1.6; }
+}
+
+/* ── 10b. Generic section list ──────────────────────────────────────────
+   Used only by _default/list.html (the machine-generated songbooks/_index
+   section page, not linked from any nav). It previously borrowed
+   .song-index/.song-index__title, which was a semantic mismatch — this is
+   a list of songbooks, not of songs. Same page scaffold values as the
+   other inner pages, no new tokens. */
+
+.page-list {
+  padding: 24px 18px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-list__intro { display: flex; flex-direction: column; gap: 9px; }
+
+.page-title {
+  margin: 0;
+  font: 400 30px/1.08 var(--font-display);
+  color: var(--ink);
+}
+
+@media (min-width: 720px) {
+  .page-list { padding: 38px 52px 46px; gap: 30px; }
+  .page-title { font-size: 44px; }
+}
+
+/* ── 11. 404 ────────────────────────────────────────────────────────────── */
+
+.error-page {
+  padding: 76px 34px 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  text-align: center;
+}
+
+.error-page__title {
+  margin: 0;
+  font: 400 40px/1.1 var(--font-display);
+  color: var(--ink);
+}
+
+.error-page__body {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink2);
+  max-width: 36ch;
+}
+
+/* This stamp is on --paper, not the slab — back to the paper-safe accent. */
+.error-page .stamp {
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-size: 13px;
+  letter-spacing: 0.26em;
+  padding: 9px 14px;
+  transform: rotate(-2.5deg);
+}
+
+.btn-teal {
+  background: var(--teal);
+  color: var(--teal-ink);
+  border: none;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 13px 20px;
+  min-height: 44px;
+}
+
+.btn-teal:hover { color: var(--teal-ink); filter: brightness(var(--hover-lift)); }
+
+/* ── 12. Footer ─────────────────────────────────────────────────────────
+   Mobile everywhere, and desktop on non-home pages: "Codice su GitHub"
+   left, version right. Desktop home adds the rights sentence inline
+   before the version, per the handoff. */
 
 .footer {
-  max-width: var(--page);
-  margin: 0 auto;
-  padding: 2rem 0 3rem;
-  border-top: 1px solid var(--rule);
-  color: var(--ink-3);
-  font-size: 0.8125rem;
+  border-top: 1.5px solid var(--ink);
+  padding: 12px 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--ink2);
 }
 
-.footer__line { margin: 0; display: flex; flex-wrap: wrap; gap: 0.6ch; align-items: baseline; }
+.footer__meta { display: flex; gap: 0.6ch; align-items: baseline; }
 
-.footer__line a { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.03em; }
+.footer__rights { display: none; }
 
-.footer__version { font: 400 0.75rem/1 var(--mono); letter-spacing: 0.05em; }
-
-.footer__note { margin: 0.6rem 0 0; max-width: 60ch; }
-
-/* ── responsive ───────────────────────────────────────────────────── */
-
-@media (max-width: 46rem) {
-  .grid { grid-template-columns: 1fr; }
-
-  .card__frame { max-width: 20rem; }
-
-  .book__head { grid-template-columns: 1fr; }
-
-  .book__cover { max-width: 15rem; }
+@media (min-width: 720px) {
+  .footer { padding: 16px 52px 28px; font-size: 11px; }
+  .footer--home .footer__rights {
+    display: inline;
+  }
+  .footer--home .footer__rights::after { content: " · "; }
 }
+
+/* ── 13. Motion / accessibility ────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
-  .card__hit:hover .card__frame { transform: none; }
-}
-
-/* ── dark ─────────────────────────────────────────────────────────── */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #14130f;
-    --paper-2: #1c1a15;
-    --ink: #f3efe4;
-    --ink-2: #c1baa8;
-    --ink-3: #918a78;
-    --rule: #35322a;
-    --rule-soft: #262319;
-    --accent: #9a9382;
-    --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 10px 28px -14px rgb(0 0 0 / 70%);
-    --shadow-lift: 0 2px 6px rgb(0 0 0 / 50%), 0 20px 44px -18px rgb(0 0 0 / 80%);
-  }
-
-  body { background-image: radial-gradient(120% 60% at 50% -10%, #1e1c16 0%, transparent 70%); }
-
-  :where(a, button, summary, details, [tabindex]):focus-visible { outline-color: var(--ink); }
-
-  .langs__item--on { box-shadow: inset 0 -2px 0 var(--ink); }
-
-  .langs__item:hover { background: #ffffff12; }
-
-  /* Arbitrary cover accents can be dark; lift them so buttons stay legible. */
-  .btn {
-    background: color-mix(in oklab, var(--accent) 78%, #ffffff 22%);
-    border-color: color-mix(in oklab, var(--accent) 78%, #ffffff 22%);
-    color: #14130f;
-  }
-
-  .btn--ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
-
-  .skip { background: var(--ink); color: var(--paper); }
 }

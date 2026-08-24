@@ -1,0 +1,36 @@
+{{- /* Desktop cover-grid tile — same page/data as card.html's mobile row,
+       different markup shape per the handoff's two distinct home layouts.
+       Both are rendered for every songbook; CSS media queries pick which
+       one is visible so JS-off users still get the right layout at their
+       viewport width with zero markup difference between JS-on/JS-off. */ -}}
+{{- $accent := .Params.accent -}}
+{{- $thumb := .Params.thumb -}}
+{{- $pdf := .Params.pdf -}}
+{{- $lang := .Params.language | default "" -}}
+{{- $count := .Params.songCount | default 0 -}}
+{{- $countLabel := "" -}}
+{{- if .Params.chartOnly -}}
+  {{- $countLabel = i18n "chords_only_label" -}}
+{{- else -}}
+  {{- $countLabel = i18n "song_count" $count -}}
+{{- end -}}
+<div class="tile{{ with $accent }} has-accent{{ end }}" data-title="{{ .Title }}" data-desc="{{ .Params.blurb }}" data-count="{{ $count }}" data-lang="{{ $lang }}"
+  {{- with $accent }} style="--accent-raw: {{ . }};"{{ end }}>
+  <a class="tile__hit" href="{{ .RelPermalink }}" aria-label="{{ .Title }}"></a>
+  {{- if $thumb }}
+  <img class="tile__cover" src="{{ $thumb | relURL }}" alt="{{ i18n "cover_alt" .Title }}"
+       width="595" height="842" loading="lazy" decoding="async">
+  {{- else }}
+  <span class="tile__cover tile__cover--empty" aria-hidden="true">{{ substr .Title 0 1 | upper }}</span>
+  {{- end }}
+  <span class="tile__title">{{ .Title }}</span>
+  {{- with .Params.blurb }}
+  <span class="tile__desc">{{ . }}</span>
+  {{- end }}
+  <span class="tile__meta">
+    {{- with $pdf }}
+    <a class="pdf-badge" href="{{ . | relURL }}" download>{{ i18n "pdf_badge" }}<span class="u-sr"> — {{ i18n "download_pdf_for" $.Title }}</span></a>
+    {{- end }}
+    <span class="tile__count">{{ $countLabel }}</span>
+  </span>
+</div>

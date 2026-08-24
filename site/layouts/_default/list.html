@@ -1,15 +1,22 @@
 {{ define "main" }}
-<div class="hero hero--sub">
-  <h1 class="hero__title">{{ .Title | default (i18n "songbooks_heading") }}</h1>
-  {{- with .Content }}<div class="prose">{{ . }}</div>{{ end }}
-</div>
-{{- with .Pages }}
-<div class="grid">
-  {{- range . }}
-  {{ partial "card.html" . }}
+{{- /* Generic section list (currently only songbooks/_index.<lang>.md,
+       machine-generated, not linked from any nav — home covers that
+       job). Kept minimal and on-token so it never looks broken if
+       something links to it directly. */ -}}
+{{- $sorted := sort .Pages "Title" -}}
+<div class="page-list">
+  <div class="page-list__intro">
+    <h1 class="page-title">{{ .Title | default (i18n "songbooks_heading") }}</h1>
+    {{- with .Content }}<div class="book__desc">{{ . }}</div>{{ end }}
+  </div>
+  {{- if $sorted }}
+  <div class="cover-grid">
+    {{- range $sorted }}
+    {{ partial "card-tile.html" . }}
+    {{- end }}
+  </div>
+  {{- else }}
+  <p class="empty-state">{{ i18n "empty_collection" }}</p>
   {{- end }}
 </div>
-{{- else }}
-<p class="empty">{{ i18n "empty_collection" }}</p>
-{{- end }}
 {{ end }}

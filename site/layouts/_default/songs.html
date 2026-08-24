@@ -1,0 +1,43 @@
+{{ define "main" }}
+{{- $books := where .Site.RegularPages "Section" "songbooks" -}}
+{{- $entries := slice -}}
+{{- range $books -}}
+  {{- $book := . -}}
+  {{- range $book.Params.tracks -}}
+    {{- $entries = $entries | append (dict "title" .title "book" $book.Title "url" $book.RelPermalink) -}}
+  {{- end -}}
+{{- end -}}
+{{- $entries = sort $entries "title" -}}
+{{- $n := len $entries -}}
+
+<div class="song-index">
+  <div class="song-index__intro">
+    <h1 class="song-index__title">{{ i18n "song_index_title" }}</h1>
+    <p class="song-index__sub">{{ i18n "song_index_sub" }}</p>
+  </div>
+
+  <div class="search">
+    <span class="search__slash" aria-hidden="true">/</span>
+    <label class="u-sr" for="song-search">{{ i18n "search_label_songs" }}</label>
+    <input class="search__input" type="search" id="song-search" data-role="song-search"
+      placeholder="{{ i18n "search_placeholder_songs" }}" autocomplete="off">
+  </div>
+
+  <div>
+    <div class="section-head">
+      <span>{{ i18n "songs_heading" }}</span>
+      <span class="section-head__count" data-role="song-result-count"
+        data-tmpl-one="{{ i18n "song_count_tmpl" 1 }}" data-tmpl-other="{{ i18n "song_count_tmpl" 2 }}">{{ i18n "song_count" $n }}</span>
+    </div>
+    <div class="song-rows" data-role="song-rows">
+      {{- range $entries }}
+      <a class="song-row" data-title="{{ .title }}" href="{{ .url }}">
+        <span class="song-row__title">{{ .title }}</span>
+        <span class="song-row__book">{{ .book }}</span>
+      </a>
+      {{- end }}
+    </div>
+    <p class="empty-state" data-role="song-empty" hidden>{{ i18n "empty_search_songs" }}</p>
+  </div>
+</div>
+{{ end }}

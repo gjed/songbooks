@@ -1,17 +1,79 @@
 {{ define "main" }}
 {{- $books := where .Site.RegularPages "Section" "songbooks" -}}
-<div class="hero">
-  <h1 class="hero__title">{{ i18n "site_title" }}</h1>
-  <p class="hero__tagline">{{ i18n "site_tagline" }}</p>
+{{- $sorted := sort $books "Title" -}}
+{{- $n := len $sorted -}}
+
+<div class="home-mobile">
+  <div>
+    <h1 class="home-mobile__title">{{ i18n "home_title_l1" }}<br>{{ i18n "home_title_l2" }}</h1>
+    <p class="home-mobile__sub">{{ i18n "home_sub_mobile" }}</p>
+  </div>
+
+  <div class="home-mobile__controls">
+    <div class="search">
+      <span class="search__slash" aria-hidden="true">/</span>
+      <label class="u-sr" for="book-search-m">{{ i18n "search_label_books" }}</label>
+      <input class="search__input" type="search" id="book-search-m" data-role="book-search"
+        placeholder="{{ i18n "search_placeholder_books" }}" autocomplete="off">
+    </div>
+    <div class="sort" role="group" aria-label="{{ i18n "sort_label" }}">
+      <button type="button" class="sort__chip" data-role="sort-chip" data-sort="alpha" aria-pressed="true">{{ i18n "sort_alpha" }}</button>
+      <button type="button" class="sort__chip" data-role="sort-chip" data-sort="count" aria-pressed="false">{{ i18n "sort_song_count" }}</button>
+      <button type="button" class="sort__chip" data-role="sort-chip" data-sort="lang" aria-pressed="false">{{ i18n "sort_language" }}</button>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-head">
+      <span>{{ i18n "songbooks_heading" }}</span>
+      <span class="section-head__count" data-role="book-result-count"
+        data-tmpl-one="{{ i18n "result_count_books_tmpl" 1 }}" data-tmpl-other="{{ i18n "result_count_books_tmpl" 2 }}">{{ i18n "result_count_books" $n }}</span>
+    </div>
+    <div class="rows" data-role="book-rows">
+      {{- range $sorted }}
+      {{ partial "card.html" . }}
+      {{- end }}
+    </div>
+    <p class="empty-state" data-role="book-empty" hidden>{{ i18n "empty_search_books" }}</p>
+  </div>
 </div>
-{{- if $books }}
-<h2 class="u-sr">{{ i18n "songbooks_heading" }}</h2>
-<div class="grid">
-  {{- range $books }}
-  {{ partial "card.html" . }}
-  {{- end }}
+
+<div class="home-desktop">
+  <div class="masthead-slab">
+    <div class="masthead-slab__intro">
+      <span class="masthead-slab__kicker">{{ i18n "home_kicker" }}</span>
+      <h1 class="masthead-slab__title">{{ i18n "home_title_l1" }}<br>{{ i18n "home_title_l2" }}</h1>
+      <p class="masthead-slab__sub">{{ i18n "home_sub_desktop" }}</p>
+    </div>
+    <div class="masthead-slab__aside">
+      <span class="stamp">{{ i18n "songbook_total" $n }}</span>
+      <span class="masthead-slab__version">{{ with (index $sorted 0) }}{{ .Params.version }}{{ end }}</span>
+    </div>
+  </div>
+
+  <div class="controls-row">
+    <div class="search">
+      <span class="search__slash" aria-hidden="true">/</span>
+      <label class="u-sr" for="book-search-d">{{ i18n "search_label_books" }}</label>
+      <input class="search__input" type="search" id="book-search-d" data-role="book-search"
+        placeholder="{{ i18n "search_placeholder_books" }}" autocomplete="off">
+    </div>
+    <div class="controls-row__right">
+      <span class="controls-row__count" data-role="book-result-count"
+        data-tmpl-one="{{ i18n "result_count_books_tmpl" 1 }}" data-tmpl-other="{{ i18n "result_count_books_tmpl" 2 }}">{{ i18n "result_count_books" $n }}</span>
+      <div class="sort" role="group" aria-label="{{ i18n "sort_label" }}">
+        <button type="button" class="sort__chip" data-role="sort-chip" data-sort="alpha" aria-pressed="true">{{ i18n "sort_alpha" }}</button>
+        <button type="button" class="sort__chip" data-role="sort-chip" data-sort="count" aria-pressed="false">{{ i18n "sort_song_count" }}</button>
+        <button type="button" class="sort__chip" data-role="sort-chip" data-sort="lang" aria-pressed="false">{{ i18n "sort_language" }}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-grid" data-role="book-tiles">
+    {{- range $sorted }}
+    {{ partial "card-tile.html" . }}
+    {{- end }}
+  </div>
+  <p class="desktop-empty" data-role="book-empty" hidden>{{ i18n "empty_search_books" }}</p>
 </div>
-{{- else }}
-<p class="empty">{{ i18n "empty_collection" }}</p>
-{{- end }}
 {{ end }}

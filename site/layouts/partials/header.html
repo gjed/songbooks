@@ -1,13 +1,23 @@
 <header class="masthead">
-  <a class="masthead__brand" href="{{ "" | relLangURL }}">{{ i18n "site_title" }}</a>
-  <nav class="langs" aria-label="{{ i18n "language_switcher_label" }}">
-    {{- $current := . -}}
-    {{- range .AllTranslations }}
-      {{- if eq .Language.Lang $current.Language.Lang }}
-    <span class="langs__item langs__item--on" aria-current="true">{{ .Language.Lang | upper }}</span>
-      {{- else }}
-    <a class="langs__item" href="{{ .RelPermalink }}" lang="{{ .Language.Locale }}" hreflang="{{ .Language.Locale }}">{{ .Language.Lang | upper }}</a>
+  <a class="masthead__brand" href="{{ "" | relLangURL }}">
+    <span class="masthead__word">{{ i18n "site_title" }}</span>
+    <span class="masthead__tag">{{ i18n "wordmark_tag" }}</span>
+  </a>
+  <div class="masthead__right">
+    <a class="masthead__link" href="{{ "songs" | relLangURL }}">{{ i18n "song_index_link" }}</a>
+    <nav class="langs" aria-label="{{ i18n "language_switcher_label" }}">
+      {{- $current := . -}}
+      {{- range $i, $t := .AllTranslations }}
+        {{- if gt $i 0 }}<span class="langs__sep" aria-hidden="true">/</span>{{ end }}
+        {{- if eq $t.Language.Lang $current.Language.Lang }}
+      <span class="langs__item langs__item--on" aria-current="true">{{ $t.Language.Lang | upper }}</span>
+        {{- else }}
+      <a class="langs__item" href="{{ $t.RelPermalink }}" lang="{{ $t.Language.Locale }}" hreflang="{{ $t.Language.Locale }}">{{ $t.Language.Lang | upper }}</a>
+        {{- end }}
       {{- end }}
-    {{- end }}
-  </nav>
+    </nav>
+    <button type="button" class="theme-toggle" data-role="theme-toggle"
+      data-label-night="{{ i18n "theme_toggle_to_night" }}" data-label-day="{{ i18n "theme_toggle_to_day" }}"
+      aria-pressed="false">{{ i18n "theme_toggle_to_night" }}</button>
+  </div>
 </header>

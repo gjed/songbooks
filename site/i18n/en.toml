@@ -1,25 +1,81 @@
 # Every user-visible string on the site. Templates hardcode nothing.
+# Text is stored in natural case: typographic transforms (uppercase,
+# letter-spacing) are the stylesheet's job.
 
 [site_title]
 other = "Songbooks"
 
 [site_tagline]
-other = "Printable songbooks for ukulele, one song per page."
+other = "Printable ukulele songbooks, one song per page."
 
 [skip_to_content]
 other = "Skip to content"
 
-[home_link]
-other = "All songbooks"
+[wordmark_tag]
+other = "ukulele"
 
-[back_to_all]
-other = "Back to all songbooks"
+# --- Home ---------------------------------------------------------------
+
+[home_title_l1]
+other = "Songbooks"
+
+[home_title_l2]
+other = "for ukulele"
+
+[home_sub_mobile]
+other = "Printable songbooks, one song per page. Chords in English notation."
+
+[home_sub_desktop]
+other = "Printable songbooks, one song per page. Chords in English notation, ready to take anywhere."
+
+[home_kicker]
+other = "The collection · ukulele"
 
 [songbooks_heading]
 other = "The collection"
 
-[download_pdf]
-other = "Download PDF"
+[songbook_total]
+one = "{{ . }} songbook"
+other = "{{ . }} songbooks"
+
+[search_label_books]
+other = "Search for a songbook"
+
+[search_placeholder_books]
+other = "search a songbook"
+
+[sort_label]
+other = "Sort by"
+
+[sort_alpha]
+other = "A–Z"
+
+[sort_song_count]
+other = "songs"
+
+[sort_language]
+other = "language"
+
+[result_count_books]
+one = "{{ . }} title"
+other = "{{ . }} titles"
+
+# JS-side count template (result count re-rendered live after search/sort;
+# "#" is a literal placeholder the script substitutes, not Hugo interpolation).
+[result_count_books_tmpl]
+one = "# title"
+other = "# titles"
+
+[empty_search_books]
+other = "No songbook matches your search."
+
+# --- PDF / actions --------------------------------------------------------
+
+[pdf_badge]
+other = "PDF ↓"
+
+[download_pdf_cta]
+other = "Download the PDF ↓"
 
 [download_pdf_for]
 other = "Download the {{ . }} PDF"
@@ -28,8 +84,20 @@ other = "Download the {{ . }} PDF"
 one = "{{ . }} song"
 other = "{{ . }} songs"
 
+[song_count_tmpl]
+one = "# song"
+other = "# songs"
+
+[chords_only_label]
+other = "chords"
+
+# --- Songbook page ---------------------------------------------------------
+
+[back_to_all]
+other = "← All songbooks"
+
 [tracklist]
-other = "Tracklist"
+other = "Tracks"
 
 [tracklist_toggle]
 one = "Show the {{ . }} song"
@@ -50,11 +118,39 @@ other = "Release"
 [cover_alt]
 other = "Cover of the {{ . }} songbook"
 
-[no_cover]
-other = "No cover"
-
 [language_switcher_label]
 other = "Language"
+
+[song_index_link]
+other = "Song index"
+
+[theme_toggle_to_night]
+other = "Night"
+
+[theme_toggle_to_day]
+other = "Day"
+
+# --- Song index -------------------------------------------------------------
+
+[song_index_title]
+other = "Song index"
+
+[song_index_sub]
+other = "Every song in the collection, with the songbook it lives in."
+
+[search_label_songs]
+other = "Search for a song"
+
+[search_placeholder_songs]
+other = "search a song"
+
+[songs_heading]
+other = "Songs"
+
+[empty_search_songs]
+other = "No song found."
+
+# --- Footer --------------------------------------------------------------
 
 [footer_source]
 other = "Source on GitHub"
@@ -64,3 +160,20 @@ other = "Lyrics, music and chords remain the property of their respective artist
 
 [empty_collection]
 other = "No songbooks published yet."
+
+# --- 404 -------------------------------------------------------------------
+
+[error_stamp]
+other = "Key jammed"
+
+[error_title_l1]
+other = "Page not"
+
+[error_title_l2]
+other = "found"
+
+[error_body]
+other = "The sheet slipped out of the carriage. Head back to the collection and try again."
+
+[error_button]
+other = "Back to the collection"

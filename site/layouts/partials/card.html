@@ -1,40 +1,41 @@
-{{- /* One songbook card. Accent (when present) is injected as a CSS custom
-       property so arbitrary cover colours only ever drive rules, borders and
-       button backgrounds — never text on white. */ -}}
+{{- /* One songbook, rendered twice by the caller (mobile row markup here,
+       desktop tile markup in card-tile.html) — see index.html. A songbook's
+       own cover colour is injected RAW as --accent-raw and .has-accent makes
+       main.css re-derive the theme-aware, contrast-floored accents from it;
+       without it the root default (fuchsia) applies. Data attributes carry the values the home page's JS
+       needs for live search/sort; without JS the row still renders fully,
+       already A–Z-sorted server-side. */ -}}
 {{- $accent := .Params.accent -}}
 {{- $thumb := .Params.thumb -}}
 {{- $pdf := .Params.pdf -}}
-<article class="card{{ if not $accent }} card--plain{{ end }}{{ if not $thumb }} card--textonly{{ end }}"
-  {{- with $accent }} style="--accent: {{ . }}; --accent-ink: {{ partial "accent-ink.html" . }};"{{ end }}>
-  <a class="card__hit" href="{{ .RelPermalink }}">
-    {{- if $thumb }}
-    <span class="card__frame">
-      <img class="card__img" src="{{ $thumb | relURL }}" alt="{{ i18n "cover_alt" .Title }}"
-           width="595" height="842" loading="lazy" decoding="async">
-    </span>
-    {{- else }}
-    <span class="card__frame card__frame--empty" aria-hidden="true">
-      <span class="card__initial">{{ substr .Title 0 1 | upper }}</span>
-    </span>
-    {{- end }}
-    <span class="card__body">
-      <h2 class="card__title">{{ .Title }}</h2>
-      {{- with .Params.blurb }}
-      <span class="card__blurb">{{ . }}</span>
-      {{- end }}
-      <span class="card__meta">
-        {{- if .Params.chartOnly -}}
-          {{ i18n "chart_only" }}
-        {{- else -}}
-          {{ with .Params.songCount }}{{ i18n "song_count" . }}{{ end }}
-        {{- end -}}
-      </span>
-    </span>
-  </a>
-  {{- with $pdf }}
-  <a class="btn card__btn" href="{{ . | relURL }}" download>
-    {{ i18n "download_pdf" }}
-    <span class="u-sr">— {{ i18n "download_pdf_for" $.Title }}</span>
-  </a>
+{{- $lang := .Params.language | default "" -}}
+{{- $count := .Params.songCount | default 0 -}}
+{{- $countLabel := "" -}}
+{{- if .Params.chartOnly -}}
+  {{- $countLabel = i18n "chords_only_label" -}}
+{{- else -}}
+  {{- $countLabel = i18n "song_count" $count -}}
+{{- end -}}
+<div class="row{{ with $accent }} has-accent{{ end }}" data-title="{{ .Title }}" data-desc="{{ .Params.blurb }}" data-count="{{ $count }}" data-lang="{{ $lang }}"
+  {{- with $accent }} style="--accent-raw: {{ . }};"{{ end }}>
+  <a class="row__hit" href="{{ .RelPermalink }}" aria-label="{{ .Title }}"></a>
+  {{- if $thumb }}
+  <img class="row__cover" src="{{ $thumb | relURL }}" alt="{{ i18n "cover_alt" .Title }}"
+       width="46" height="62" loading="lazy" decoding="async">
+  {{- else }}
+  <span class="row__cover row__cover--empty" aria-hidden="true">{{ substr .Title 0 1 | upper }}</span>
   {{- end }}
-</article>
+  <span class="row__body">
+    <span class="row__title">{{ .Title }}</span>
+    {{- with .Params.blurb }}
+    <span class="row__desc">{{ . }}</span>
+    {{- end }}
+    <span class="row__meta">
+      {{- with $pdf }}
+      <a class="pdf-badge" href="{{ . | relURL }}" download>{{ i18n "pdf_badge" }}<span class="u-sr"> — {{ i18n "download_pdf_for" $.Title }}</span></a>
+      {{- end }}
+      {{- with $lang }}<span class="row__lang">{{ . | upper }}</span>{{ end }}
+    </span>
+  </span>
+  <span class="row__count">{{ $countLabel }}</span>
+</div>
