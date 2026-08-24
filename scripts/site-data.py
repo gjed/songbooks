@@ -176,6 +176,7 @@ def generate_songbook_content(
     front_matter: dict[str, Any] = {
         "title": localized.get("title") or slug.replace("-", " ").title(),
         "slug": slug,
+        "language": language_of(meta),
     }
     
     # Optional fields
@@ -279,6 +280,13 @@ def main() -> int:
             shutil.rmtree(d)
         d.mkdir(parents=True, exist_ok=True)
     
+    # Clean up old song index files
+    site_content_dir = site_dir / "content"
+    for lang in LOCALES:
+        old_index = site_content_dir / f"songs.{lang}.md"
+        if old_index.exists():
+            old_index.unlink()
+    
     # Create _index files for the section
     for lang in LOCALES:
         index_path = site_dir / "content" / "songbooks" / f"_index.{lang}.md"
@@ -286,6 +294,8 @@ def main() -> int:
     
     # Scan songbooks
     errors = False
+    total_songs = 0
+    total_songbooks = 0
     
     for songbook_dir in sorted(SONGBOOKS_DIR.iterdir()):
         if not songbook_dir.is_dir():
@@ -341,11 +351,39 @@ def main() -> int:
             output_path = content_dir / f"{slug}.{lang}.md"
             output_path.write_text(content, encoding="utf-8")
         
+        # Track counts
+        total_songs += song_count
+        total_songbooks += 1
+        
         # Status line
         thumb_status = "thumb ok" if thumb_ok else "thumb skip"
         spotify_manifest = load_spotify_manifest(slug)
         spotify_status = "spotify yes" if has_spotify_link(spotify_manifest) else "spotify no"
         print(f"{slug}: {song_count} songs, {thumb_status}, {spotify_status}")
+    
+    # Generate song index pages for each locale
+    for lang in LOCALES:
+        song_index_front_matter: dict[str, Any] = {
+            "title": "",
+            "layout": "songs",
+            "version": args.version,
+        }
+        
+        fm_yaml = yaml.safe_dump(
+            song_index_front_matter,
+            allow_unicode=True,
+            sort_keys=False,
+            default_flow_style=False,
+        )
+        
+        song_index_content = f"---\n{fm_yaml}---\n"
+        
+        song_index_path = site_content_dir / f"songs.{lang}.md"
+        song_index_path.write_text(song_index_content, encoding="utf-8")
+    
+    # Status line for song index
+    locales_str = ", ".join(LOCALES)
+    print(f"song index: {total_songs} songs across {total_songbooks} songbooks ({locales_str})")
     
     return 1 if errors else 0
 
