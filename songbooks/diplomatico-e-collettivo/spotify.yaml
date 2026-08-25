@@ -21,28 +21,29 @@
 # Regenerate with: make spotify-resolve
 $schema_version: 1
 playlist_name: Diplomatico e il Collettivo Ninco Nanco
-playlist_id: null
+playlist_id: 08oWFC3mZmqxRa3KCOdKAZ
 tracks:
-  01-diplomatico: ''
-  02-radicale: ''
-  03-due-mari: ''
-  04-il-premio-di-oscar: ''
-  05-puntini: ''
-  06-tabacco: ''
-  07-venerdi: ''
-  08-la-vecchia-citta-sul-mare: ''
-  09-sophie: ''
-  10-ine: ''
-  11-cest-la-vie: ''
-  12-una-bellissima-festa: ''
-  13-adios-amigo: ''
-  14-straniera: ''
-  15-bla-bla: ''
-  16-lindifferenza: ''
-  17-raton: ''
-  18-muri-di-citta: ''
-  19-comico: ''
-  20-miranda: ''
-  21-buendia: ''
-  22-bocca-dargento: ''
-  23-america: ''
+  01-diplomatico: spotify:track:7c9ealy4lrTtZiD7CvfErd
+  02-radicale: spotify:track:78ODN2zNW9aqgwxIFve21Q
+  03-due-mari: spotify:track:5SrQTg6INDEEQltpVhBUOl
+  04-il-premio-di-oscar: spotify:track:4IZjFErPpJWc4yDZr56im3
+  05-puntini: spotify:track:33KzMWyobWQji1gq5PWBed
+  06-tabacco: spotify:track:6HEtgJsZ0gcYzf1LTMVkcm
+  07-venerdi: spotify:track:7r6VCBTLRRkei5LKjSU4cf
+  08-la-vecchia-citta-sul-mare: spotify:track:05Iggyjoqofa2FYbm3Q4F9
+  09-sophie: spotify:track:34b7Ocz9wzZOTfqSMHUhEz
+  10-ine: spotify:track:2uunAQXqGUDtUiRubeuK5d
+  11-cest-la-vie: spotify:track:62NiuIzesP2WORHgH9Qr9H
+  12-una-bellissima-festa: spotify:track:5bBkQldpzrn07wZxFngp2Q
+  13-adios-amigo: spotify:track:1LUyD85I471JSBwIHyUTwn
+  14-straniera: spotify:track:3zkzGB1ei8TKc5L2FLQM4O
+  15-bla-bla: spotify:track:75pBPEfdrHiOUdFqmYrx0x
+  16-lindifferenza: spotify:track:1Hwlw1VrRqk7VNHDSALyx8
+  17-raton: spotify:track:0pULa3Qvr0duOR37zYScjF
+  18-muri-di-citta: spotify:track:6QBebggzu5XAv8f9AoK3cc
+  19-comico: spotify:track:33kRWFDWylRR7CY01KVFMt
+  20-miranda: spotify:track:6mLZDvI1RXdhMMleqehOGn
+  21-buendia: spotify:track:2zoLVY1vx7gBoIRhv1dgrh
+  22-bocca-dargento: spotify:track:6jdXO1CpKJqn5erQrFQo5n
+  23-america: spotify:track:4bZSSa9dPsvzuyXAbQXbpy
+mode: playlist
