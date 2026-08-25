@@ -1,0 +1,684 @@
+/* ==========================================================================
+   chordpro.css — the ChordPro fragment, themed for the typewriter redesign.
+
+   Loaded ONLY on song pages (see partials/head-css.html). Every rule is
+   scoped under `.chordpro`, the wrapper that _default/song.html puts the
+   fragment inside. It adds no :root tokens and no fonts: all colour comes
+   from main.css (--paper/--card/--ink/--ink2/--rule/--teal/--accent*) and
+   all type from --font-text, so per-songbook accents and both themes carry
+   over for free. Radius stays 0 and shadows stay hard-offset, per main.css.
+
+   ── The alignment machinery: do not "clean this up" ──────────────────────
+   ChordPro places chords with TABLE COLUMNS, not absolute positioning:
+
+       <table class="songline">
+         <tr class="chords"><td>C </td><td>Am </td></tr>
+         <tr class="lyrics"><td>questa matt</td><td>ina,</td></tr>
+       </table>
+
+   One table = one lyric line. The chord in column N sits above the lyric
+   fragment in column N, and the lyric is split MID-WORD at each chord
+   ("questa matt" + "ina,"). So border-collapse: collapse, border-spacing: 0,
+   zero cell padding and `white-space: pre` are load-bearing, not cosmetic —
+   any gap or wrap pulls words apart and slides lyrics out from under their
+   chords. A monospace chord row is part of the same contract; luckily the
+   whole site is already monospace.
+   ======================================================================== */
+
+/* ── 0. Song page chrome ─────────────────────────────────────────────────
+   Header, picker and prev/next steppers for _default/song.html.
+
+   These are page chrome, not ChordPro markup, so by rights they belong in
+   main.css — but main.css is out of scope for this change and no second
+   chrome stylesheet is available, and this file is loaded on exactly the
+   pages that need them (song pages only). Keeping them here costs nothing:
+   no other page downloads this file. Move them into main.css §9-ish when
+   the read view stops being a spike.
+
+   Values are lifted from main.css's existing scale rather than invented:
+   the page scaffold is .book's (24px/18px → 38px/52px at 720px), the title
+   is .book__title's 30/44px display face, and the small-caps chrome is the
+   10.5px / 0.14em uppercase pattern used by .tracks__num and .row__meta. */
+
+.song-page {
+  padding: 24px 18px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  /* .sheet is shrink-to-fit (a centred flex item of body capped at 1120px),
+     so every page's sheet is exactly as wide as its widest content — the
+     song index already renders a ~716px sheet. That means the song page has
+     to state its own measure, and once the sections are `contain:
+     inline-size` there is nothing else to state it: the sheet collapsed to
+     the width of the title, about 466px.
+
+     820px is chosen, not inherited. It is a reading page, and at the body's
+     15px monospace that is roughly 90 characters of lyric before a section
+     needs to scroll — comfortably past the corpus median (29) and the 86
+     of its longest line — while staying well short of the 1120px the
+     songbook page uses, which would be a poor measure for text.
+
+     The viewport term is not belt-and-braces, it is required. body is
+     `flex-direction: column`, so .sheet's width is a CROSS-axis size —
+     flex-shrink does not apply to it, and a flat `width: 820px` here made
+     the sheet overflow a 768px viewport instead of shrinking. `max-width:
+     100%` cannot help either: the sheet is shrink-to-fit, so a percentage
+     resolves against a width this rule is itself deciding. Measuring the
+     viewport directly is the only non-circular option; 32px is .sheet's
+     own `margin: 26px 16px` in main.css — keep the two in step. */
+  width: min(820px, calc(100vw - 32px));
+}
+
+.song-page__head { display: flex; flex-direction: column; gap: 9px; }
+
+.song-page__kicker {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.7ch;
+  flex-wrap: wrap;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+.song-page__book { color: var(--teal); }
+.song-page__sep { opacity: 0.5; }
+.song-page__pos { font-variant-numeric: tabular-nums; }
+
+.song-page__title {
+  margin: 0;
+  font: 400 30px/1.08 var(--font-display);
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.song-page__artist {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink2);
+}
+
+.song-page__missing { padding: 20px 0; }
+
+/* The bar above the lyrics: jump-anywhere picker on the left, step controls
+   on the right. They share a row on desktop and stack on the narrowest
+   phones, where the picker wants the full width. */
+.song-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--accent);
+}
+
+/* ── the picker ───────────────────────────────────────────────────────────
+   A native <details> disclosure over a list of links. No JS, no combobox
+   ARIA to get wrong, and it degrades to a plain list with CSS off. The
+   panel is capped in height and scrolls, which is what makes 105 entries
+   (hsb-eng) usable rather than a page-length wall; the current song is
+   marked so you can see where you are in the run. */
+
+.song-picker { position: relative; min-width: 0; }
+
+.song-picker__summary {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8ch;
+  padding: 9px 11px;
+  min-height: 44px;
+  border: 1.5px solid var(--rule);
+  background: var(--card);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  list-style: none;
+}
+
+.song-picker__summary::-webkit-details-marker { display: none; }
+
+.song-picker__summary:hover { border-color: var(--ink2); color: var(--ink); }
+
+/* Typed caret rather than a triangle glyph — it flips on open. */
+.song-picker__summary::after {
+  content: "▾";
+  font-size: 9px;
+  color: var(--ink2);
+}
+
+.song-picker[open] .song-picker__summary {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.song-picker[open] .song-picker__summary::after { content: "▴"; }
+
+/* Floated over the lyrics rather than pushing them down: at 105 entries an
+   in-flow panel would shove the song a screen and a half off the fold. */
+.song-picker__panel {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 6px);
+  left: 0;
+  /* Wider than the trigger so titles are not cramped, but never wider than
+     the page column it floats over. */
+  width: max(280px, 100%);
+  max-width: calc(100vw - 48px);
+  max-height: 60vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--teal);
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+
+.song-picker__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.song-picker__item + .song-picker__item { border-top: 1px dotted var(--rule); }
+
+.song-picker__link {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 10px;
+  align-items: baseline;
+  padding: 11px 13px;
+  min-height: 44px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.song-picker__link:hover { background: var(--paper); color: var(--accent-text); }
+
+.song-picker__num {
+  font-size: 11.5px;
+  color: var(--teal);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The current song: accent bar in the number gutter, so you can find your
+   place in a 105-item list by scanning one edge. */
+.song-picker__item.is-current .song-picker__link {
+  background: var(--paper);
+  box-shadow: inset 3px 0 0 var(--accent);
+  font-weight: 700;
+}
+
+.song-picker__item.is-current .song-picker__num { color: var(--accent-text); }
+
+/* ── prev / next ─────────────────────────────────────────────────────── */
+
+.song-steps { display: flex; align-items: stretch; gap: 8px; }
+
+.song-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8ch;
+  padding: 9px 11px;
+  min-height: 44px;
+  border: 1px solid var(--teal);
+  color: var(--teal);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.song-step:hover { color: var(--teal); filter: brightness(var(--hover-lift)); }
+
+.song-step__arrow {
+  flex: none;
+  letter-spacing: 0;
+  font-size: 13px;
+}
+
+.song-step__text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+/* At the foot of the page the steppers are the main way onward, so they go
+   wide, split the row, and name their destination. */
+.song-steps--bottom {
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 1.5px solid var(--ink);
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* align-items: flex-start pins the arrow to the first line of the title
+   rather than letting `center` (inherited from .song-step) float it into
+   the middle of a two-line destination name. */
+.song-steps--bottom .song-step {
+  padding: 13px 15px;
+  max-width: 24em;
+  align-items: flex-start;
+  gap: 1.2ch;
+}
+
+/* A lone "next" (the first song) must sit on the right where the next
+   control always is, not slide left into the previous one's slot. */
+.song-steps--bottom .song-step--next:only-child { margin-left: auto; }
+
+.song-steps--bottom .song-step__kind {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--ink2);
+}
+
+.song-steps--bottom .song-step__title {
+  font-size: 14.5px;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.song-steps--bottom .song-step--next { text-align: right; }
+.song-steps--bottom .song-step--next .song-step__text { align-items: flex-end; }
+
+@media (max-width: 460px) {
+  .song-picker { width: 100%; }
+  .song-picker__summary { width: 100%; justify-content: space-between; }
+  .song-steps--top { width: 100%; }
+  .song-steps--top .song-step { flex: 1; justify-content: center; }
+  .song-steps--bottom .song-step { flex: 1; }
+}
+
+@media (min-width: 720px) {
+  /* Desktop: the picker stops being a dropdown and becomes a persistent
+     sidebar, so the page becomes a two-column grid instead of a single
+     flex column. Named areas rather than source order, because the picker
+     has to move from "above everything" (mobile) to "beside everything"
+     (desktop) — a reorder that plain grid-column/row placement on a flex
+     base could not express as cleanly.
+
+     .song-picker has to be this grid's direct child to land in "side" —
+     see the comment above <details class="song-picker"> in song.html for
+     why it is a sibling of .song-bar rather than nested inside it. */
+  .song-page {
+    padding: 38px 52px 46px;
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    column-gap: 40px;
+    row-gap: 30px;
+    grid-template-areas:
+      "back back"
+      "head head"
+      "side bar"
+      "side lyrics"
+      "side foot";
+    align-items: start;
+
+    /* Wider than the single-column reading measure on purpose: room for a
+       250px sidebar + 40px gap + an ~820px reading column (250+40+820=1110),
+       the same measure the single-column rule targets, capped by .sheet's
+       own 1120px ceiling in main.css so the two never fight. */
+    width: min(1110px, calc(100vw - 32px));
+  }
+
+  .song-page__back { grid-area: back; }
+  .song-page__head { grid-area: head; }
+  .song-picker { grid-area: side; }
+  .song-bar { grid-area: bar; }
+  .chordpro,
+  .song-page__missing { grid-area: lyrics; }
+  .song-page > .song-steps--bottom { grid-area: foot; }
+
+  .song-page__title { font-size: 44px; }
+
+  /* The <details> element stays in the markup — a disclosure is still the
+     right fallback if this rule fails to load — but on a screen wide
+     enough to show it beside the lyrics there is no reason to make anyone
+     click first.
+
+     Overriding `display` on the panel is NOT enough, and cost real time to
+     find: current Chrome/Firefox implement a closed <details> by wrapping
+     its non-summary children in an internal ::details-content box and
+     giving THAT box `content-visibility: hidden` — which hides the box's
+     painted contents regardless of what `display` the children themselves
+     compute to. `display: block !important` on .song-picker__panel had no
+     visible effect because the box one level up was still content-hidden.
+     The fix is to un-hide that pseudo-element directly. */
+  .song-picker::details-content { content-visibility: visible; }
+
+  .song-picker__summary { display: none; }
+
+  .song-picker__panel {
+    display: block;
+    /* Sticky, not fixed: it should travel with the page and stop tracking
+       once .song-page itself scrolls out, not hover independently of the
+       document the way a fixed sidebar would. */
+    position: sticky;
+    top: 38px;                    /* matches .song-page's own top padding */
+    width: 100%;
+    max-width: none;
+    /* Bounded and independently scrollable — required at 105 entries
+       (hsb-eng): without this the sidebar would grow to fit every title
+       and drag the whole page down to that height instead of scrolling
+       in place next to a normal-length song. */
+    max-height: calc(100vh - 76px);
+    /* The floating-dropdown shadow reads as "temporary overlay"; a sidebar
+       that is always there should look load-bearing instead, so it drops
+       the hard offset shadow for a plain rule, matching .fold__summary's
+       quieter card treatment elsewhere on the site. */
+    box-shadow: none;
+    border-color: var(--rule);
+  }
+}
+
+/* ── the ChordPro fragment ─────────────────────────────────────────────── */
+
+.chordpro {
+  /* Chord ink. --accent-text is already floored at 4.5:1 against the paper
+     in both themes by main.css, so it can be used raw for text here. */
+  --cp-chord: var(--accent-text);
+
+  /* Chorus tint. Mixed off --card (not --paper) so the block reads as a
+     slightly raised sheet in both themes without a new token. */
+  --cp-chorus: color-mix(in oklab, var(--accent) 8%, var(--card));
+
+  /* The scroll-shadow "cover" colour. Must stay OPAQUE — a transparent
+     cover cannot mask the shadow beneath it. Sections that paint a fill
+     must repoint this to match that fill. */
+  --cp-fill: transparent;
+  --cp-surface: var(--paper);
+  --cp-shade: rgba(27, 35, 56, 0.22);
+
+  --cp-gutter: 13px;
+
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+/* ChordPro injects a <style> element with @page rules inside each .song.
+   If the fragment ever carries it through, it must not render as text. */
+.chordpro style { display: none; }
+
+/* The fragment repeats the song title (and subtitles) that the page header
+   already shows as its <h1>. Hide the duplicate rather than restyling it —
+   two titles is worse than none. */
+.chordpro .song > .title,
+.chordpro .song > .subtitle { display: none; }
+
+/* ── sections ────────────────────────────────────────────────────────────
+   verse / chorus / bridge / tab are ALSO the horizontal scroll containers.
+   Per section, never per line: a scroller on each <table class="songline">
+   would let consecutive lines drift out of phase, which is disorienting
+   when you are actually playing. Scoped to the section, every line in a
+   verse moves together and relative alignment survives. */
+
+.chordpro .verse,
+.chordpro .chorus,
+.chordpro .bridge,
+.chordpro .tab {
+  /* ChordPro emits a chords row for EVERY line, including unchorded ones,
+     so the gap inside a verse is already ~2em; the gap BETWEEN verses has
+     to clear that or stanzas blur into one another. */
+  margin: 22px 0 0;
+  padding: 8px var(--cp-gutter);
+  border-left: 3px solid var(--rule);
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+
+  /* LOAD-BEARING, and the least obvious rule in this file. `overflow-x:
+     auto` alone does NOT stop a block from reporting its contents'
+     min-content width upward — it only gives the block a scrollbar once
+     something else has decided how wide it is. The songline tables are
+     `width: max-content`, so without this their intrinsic width propagated
+     all the way up through .chordpro, .song-page and main to .sheet (a
+     flex item of body, default min-width: auto) and inflated the entire
+     page sheet past the viewport: a 390px phone rendered a 569px sheet and
+     scrolled the DOCUMENT sideways instead of the section. `contain:
+     inline-size` makes each section an independent inline-size formatting
+     context, so it stops reporting its contents' width, sizes to the
+     column it is given, and the overflow lands on the section scroller —
+     which is the whole point of scoping the scroller here.
+     (min-width: 0 does not help: these are blocks, not flex items.) */
+  contain: inline-size;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+
+  /* Scrolling shadows, horizontal variant. Layers 1–2 are surface-coloured
+     covers pinned to the CONTENT box (background-attachment: local) so they
+     travel with the lyrics; layers 3–4 are shadows pinned to the CONTAINER
+     (scroll). At rest the cover hides the shadow; scroll and the cover
+     slides off, revealing "there is more line over here". An overflow hint
+     that appears only when there IS overflow, with no JS. */
+  background-color: var(--cp-fill);
+  background-image:
+    linear-gradient(to right, var(--cp-surface) 45%, transparent),
+    linear-gradient(to left, var(--cp-surface) 45%, transparent),
+    radial-gradient(farthest-side at 0 50%, var(--cp-shade), transparent),
+    radial-gradient(farthest-side at 100% 50%, var(--cp-shade), transparent);
+  background-position: 0 0, 100% 0, 0 0, 100% 0;
+  background-size: 26px 100%, 26px 100%, 10px 100%, 10px 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}
+
+.chordpro .verse:first-child,
+.chordpro .chorus:first-child,
+.chordpro .bridge:first-child,
+.chordpro .tab:first-child { margin-top: 0; }
+
+/* Blink/WebKit still ignores scrollbar-width on some platforms; slim the
+   scrollbars there too, or twenty sections add twenty grey slabs. */
+.chordpro .verse::-webkit-scrollbar,
+.chordpro .chorus::-webkit-scrollbar,
+.chordpro .bridge::-webkit-scrollbar,
+.chordpro .tab::-webkit-scrollbar { height: 4px; }
+
+.chordpro .verse::-webkit-scrollbar-track,
+.chordpro .chorus::-webkit-scrollbar-track,
+.chordpro .bridge::-webkit-scrollbar-track,
+.chordpro .tab::-webkit-scrollbar-track { background: transparent; }
+
+.chordpro .verse::-webkit-scrollbar-thumb,
+.chordpro .chorus::-webkit-scrollbar-thumb,
+.chordpro .bridge::-webkit-scrollbar-thumb,
+.chordpro .tab::-webkit-scrollbar-thumb { background: var(--rule); }
+
+/* Chorus — the emphasised block by songbook convention. Accent rule, a
+   faint tint, and the hard 3px offset shadow the redesign uses for every
+   raised sheet (covers, tiles). It is the only tinted block on the page. */
+.chordpro .chorus {
+  --cp-fill: var(--cp-chorus);
+  --cp-surface: var(--cp-chorus);
+  border-left-color: var(--accent);
+  box-shadow: 3px 3px 0 var(--rule);
+}
+
+/* Bridge — present but quieter than the chorus: a dashed rule and italic
+   lyrics, no fill, so the chorus keeps the only paint on the page. */
+.chordpro .bridge {
+  border-left-style: dashed;
+  border-left-color: var(--ink2);
+}
+
+.chordpro .bridge .lyrics td { font-style: italic; }
+
+/* ── section labels: {comment: RIT}, {label: …} ───────────────────────── */
+
+.chordpro .comment,
+.chordpro .label {
+  margin: 0 0 6px;
+  color: var(--cp-chord);
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* A {label: …} outside a section is a standalone marker; give it the same
+   accent underline the redesign uses for .section-head. */
+.chordpro .song > .label {
+  margin: 26px 0 0;
+  padding-bottom: 7px;
+  border-bottom: 2px solid var(--accent);
+}
+
+/* ── songline table: the alignment machinery ──────────────────────────── */
+
+.chordpro .songline {
+  /* Zero gap between cells. Non-negotiable — see the header note. */
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  /* Never shrink to fit the container: shrinking wraps a cell and slides
+     the lyric out from under its chord. Overflow instead, and let the
+     section scroller above deal with it. */
+  width: max-content;
+  max-width: none;
+  table-layout: auto;
+
+  margin: 0 0 4px;
+}
+
+.chordpro .songline:last-child { margin-bottom: 0; }
+
+.chordpro .songline td {
+  padding: 0;              /* see border-collapse note */
+  border: 0;
+  /* Preserves the trailing space ChordPro puts on chord cells ("Am ") and
+     inside lyric fragments, and stops the wrap that would break columns. */
+  white-space: pre;
+  text-align: left;
+}
+
+/* Chord row. Same typeface as the lyrics — the site is monospace
+   throughout — so the separation is carried by weight, colour, size and
+   letter-spacing instead. You can scan the chord line without reading it. */
+.chordpro .songline .chords td {
+  vertical-align: bottom;  /* chords hug the lyric line beneath them */
+  color: var(--cp-chord);
+  font-size: 12px;
+  font-weight: 700;
+  /* Tight leading is deliberate. ChordPro emits a chords row for every
+     line, even unchorded ones (a lone &nbsp; cell), and there is no
+     selector for "row whose cells are all whitespace" — that row always
+     claims a line box. Tight leading bounds the cost and keeps chorded and
+     unchorded lines on the same rhythm instead of jumping. */
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.chordpro .songline .lyrics td { vertical-align: top; }
+
+/* ChordPro marks a fragment whose source began with whitespace as
+   class="indent". Re-inject that space with padding — margins do not apply
+   to table cells — which offsets the lyric from the chord above it exactly
+   as the original leading space did. */
+.chordpro .songline .lyrics td.indent { padding-left: 1ch; }
+
+/* Chord-only lines (intros) have a filled chords row and an empty lyrics
+   row, and vice versa. An empty <td> collapses its row to zero height and
+   swallows the line's rhythm, so give every empty cell something to sit on. */
+.chordpro .songline td:empty::after { content: "\200b"; }
+
+/* ── tab blocks ───────────────────────────────────────────────────────── */
+
+.chordpro .tab {
+  --cp-fill: var(--card);
+  --cp-surface: var(--card);
+  border-left-color: var(--ink2);
+  /* Tabs are whitespace art. Both properties are required. */
+  white-space: pre;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink2);
+  tab-size: 4;
+}
+
+/* ── narrow screens ──────────────────────────────────────────────────────
+   You cannot wrap a chord/lyric pair — the alignment lives in table
+   columns and a <tr> has no wrapping model. So: shrink first, then scroll,
+   never clip silently.
+     1. One notch of type shrink buys back the short lines.
+     2. Sections bleed to the full sheet width, claiming back the page
+        padding before scrolling has to start. Mirrors .book/.song-page's
+        18px inline padding in main.css — keep the two in step.
+     3. The scrolling shadows above surface the affordance if it still
+        overflows. */
+
+@media (max-width: 480px) {
+  .chordpro { font-size: 14.5px; }
+
+  .chordpro .verse,
+  .chordpro .chorus,
+  .chordpro .bridge,
+  .chordpro .tab {
+    margin-inline: -18px;
+    padding-inline: 18px;
+  }
+
+  /* Full-bleed sections would otherwise have nothing to butt against; the
+     hard offset shadow reads as a stray stripe once the block runs to the
+     sheet edge. */
+  .chordpro .chorus { box-shadow: none; }
+}
+
+/* ── themes ──────────────────────────────────────────────────────────────
+   Colour follows main.css automatically — everything here derives from its
+   tokens. The one thing that does not derive is the scroll shadow: a
+   translucent navy is invisible on a dark surface, so it goes to black. */
+
+:root[data-theme="night"] .chordpro { --cp-shade: rgba(0, 0, 0, 0.55); }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="day"]):not([data-theme="night"]) .chordpro {
+    --cp-shade: rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* ── print ───────────────────────────────────────────────────────────────
+   The PDF build already gives one song per page and browser printing
+   should agree. Drop every screen affordance: nothing scrolls on paper, no
+   tints, no shadows. 10pt still fits the corpus's longest line (86 chars)
+   in an A4 text column. */
+
+@media print {
+  .chordpro {
+    font-size: 10pt;
+    line-height: 1.4;
+    color: #000;
+    --cp-chord: #000;
+  }
+
+  .chordpro .verse,
+  .chordpro .chorus,
+  .chordpro .bridge,
+  .chordpro .tab {
+    overflow: visible;
+    margin-inline: 0;
+    padding: 2pt 0 2pt 6pt;
+    background: none;        /* ink-efficient: no tint fills */
+    border-left: 1pt solid #999;
+    box-shadow: none;
+    break-inside: avoid;     /* keep a verse or chorus whole where possible */
+  }
+
+  /* The chorus keeps its emphasis as a heavier rule, not a grey fill. */
+  .chordpro .chorus { border-left: 3pt solid #000; }
+  .chordpro .bridge { border-left-style: dashed; }
+
+  .chordpro .comment,
+  .chordpro .label { color: #000; break-after: avoid; }
+
+  .chordpro .songline { break-inside: avoid; }
+  .chordpro .songline .chords td { font-weight: 700; }
+  .chordpro .tab { color: #000; }
+}
