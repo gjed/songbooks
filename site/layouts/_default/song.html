@@ -1,0 +1,101 @@
+{{ define "main" }}
+{{- $accent := .Params.accent -}}
+{{- $songs := .Params.songs | default slice -}}
+{{- $n := .Params.trackNumber -}}
+{{- $total := .Params.trackTotal | default (len $songs) -}}
+{{- $prev := .Params.prev -}}
+{{- $next := .Params.next -}}
+{{- $bookUrl := .Params.songbookUrl | relLangURL -}}
+{{- $bookTitle := .Params.songbookTitle | default .Params.songbook -}}
+{{- /* Rebuilt rather than read from .Params.url: Hugo consumes front-matter
+       `url` as a page setting, so it is not reliably readable back as a
+       param. The generator's own url shape is this exact printf. */ -}}
+{{- $selfUrl := printf "songbooks/%s/%s/" .Params.songbook .Params.songSlug -}}
+{{- /* Same accent contract as songbooks/single.html: raw colour in, and
+       .has-accent tells main.css to re-derive the contrast-floored,
+       theme-aware accents from it on this element. */ -}}
+<article class="song-page{{ with $accent }} has-accent{{ end }}"
+  {{- with $accent }} style="--accent-raw: {{ . }};"{{ end }}>
+
+  {{- /* Classed (not a bare <p>) so the desktop two-column grid below can
+         address it by name — see chordpro.css §0's >=720px override. */ -}}
+  <p class="song-page__back"><a class="book__back" href="{{ $bookUrl }}">{{ i18n "back_to_songbook" $bookTitle }}</a></p>
+
+  <header class="song-page__head">
+    <p class="song-page__kicker">
+      <span class="song-page__book">{{ $bookTitle }}</span>
+      {{- if and $n $total }}
+      <span class="song-page__sep" aria-hidden="true">·</span>
+      <span class="song-page__pos">{{ i18n "song_position" (dict "n" $n "total" $total) }}</span>
+      {{- end }}
+    </p>
+    <h1 class="song-page__title">{{ .Title }}</h1>
+    {{- with .Params.artist }}<p class="song-page__artist">{{ . }}</p>{{ end }}
+  </header>
+
+  {{- /* The jump-anywhere picker. Below the desktop breakpoint it stays a
+         plain <details> disclosure — no JS, no combobox ARIA to get wrong,
+         degrades to a plain list with CSS off. At >=720px chordpro.css
+         forces the panel open and turns the whole thing into a persistent
+         sidebar (grid-area: side) instead of hiding it behind a click: at
+         that width there is room to show the list AND the lyrics without
+         ever asking the reader to open anything. It is a direct child of
+         .song-page (not nested in .song-bar) specifically so the desktop
+         grid below can place it in its own column — a grid item has to be
+         a direct child of the grid container. */ -}}
+  {{- if $songs }}
+  <details class="song-picker">
+    {{- /* No song count in the summary: the kicker above already says
+           "Song 74 of 105", and repeating the total here read as
+           "ALL SONGS 105 SONGS". The label plus a caret is enough. */ -}}
+    <summary class="song-picker__summary">
+      <span class="song-picker__label">{{ i18n "song_picker_label" }}</span>
+    </summary>
+    <div class="song-picker__panel">
+      <ol class="song-picker__list">
+        {{- range $i, $s := $songs }}
+        {{- $current := eq $s.url $selfUrl }}
+        <li class="song-picker__item{{ if $current }} is-current{{ end }}">
+          <a class="song-picker__link" href="{{ $s.url | relLangURL }}"
+            {{- if $current }} aria-current="page"{{ end }}>
+            <span class="song-picker__num">{{ printf "%02d" (add $i 1) }}</span>
+            <span class="song-picker__title">{{ $s.title }}</span>
+          </a>
+        </li>
+        {{- end }}
+      </ol>
+    </div>
+  </details>
+  {{- end }}
+
+  <nav class="song-bar" aria-label="{{ i18n "song_nav_label" }}">
+    {{ partial "song-steps.html" (dict "prev" $prev "next" $next "place" "top") }}
+  </nav>
+
+  {{- with resources.Get (printf "songs/%s--%s.html" .Params.songbook .Params.songSlug) }}
+  <div class="chordpro">{{ .Content | safeHTML }}</div>
+  {{- else }}
+  <p class="note song-page__missing">{{ i18n "song_render_missing" }}</p>
+  {{- end }}
+
+  {{ partial "song-steps.html" (dict "prev" $prev "next" $next "place" "bottom" "label" (i18n "song_nav_label")) }}
+</article>
+{{- /* Scrolls the picker's current-song row into view on load. Only needed
+       at scale (hsb-eng has 105 songs — song 74 renders off the top of a
+       fixed-height panel/sidebar with no other way to reveal it without a
+       click), so this is the one place on the whole read view that earns
+       its JS: everything else here works from pure HTML/CSS. Deliberately
+       inline and tiny rather than routed through site.js, since it is
+       specific to this one element on this one page template. `auto`
+       scroll behaviour, not `smooth` — an unannounced page-load scroll
+       animation is more disorienting than a jump-cut would be, and it
+       also respects prefers-reduced-motion by construction. */ -}}
+{{- if gt (len $songs) 20 }}
+<script>
+(function () {
+  var current = document.querySelector(".song-picker__item.is-current");
+  if (current) { current.scrollIntoView({ block: "center" }); }
+})();
+</script>
+{{- end }}
+{{ end }}
