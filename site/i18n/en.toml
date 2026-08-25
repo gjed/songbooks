@@ -180,6 +180,9 @@ other = "Back to the collection"
 
 # --- Song page (read online) -----------------------------------------------
 
+[read_online_cta]
+other = "Read the chords →"
+
 [back_to_songbook]
 other = "← {{ . }}"
 

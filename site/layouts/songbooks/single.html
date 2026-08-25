@@ -25,6 +25,14 @@
         {{- with .Params.pdf }}
         <a class="btn-cta" href="{{ . | relURL }}" download>{{ i18n "download_pdf_cta" }}</a>
         {{- end }}
+        {{- /* Read online — the alternate to the PDF, not a rival to it. It
+               opens the FIRST song's page. .Params.read is absent when the
+               songbook has no read view (chartOnly), so the button vanishes
+               with it. .btn-ghost, not .btn-cta: teal outline instead of an
+               accent fill keeps one primary CTA in the row. */ -}}
+        {{- with .Params.read }}
+        <a class="btn-ghost" href="{{ . | relLangURL }}">{{ i18n "read_online_cta" }}</a>
+        {{- end }}
         {{- with $lang }}<span class="btn-ghost" aria-hidden="false">{{ . | upper }}</span>{{ end }}
         {{- with .Params.spotify }}
         <a class="btn-ghost" href="{{ . }}" rel="noopener">
@@ -47,10 +55,10 @@
       {{- if gt $n 20 }}
     <details class="fold">
       <summary class="fold__summary">{{ i18n "tracklist_toggle" $n }}</summary>
-      {{ partial "tracks.html" (dict "tracks" $tracks "artist" .Params.artist) }}
+      {{ partial "tracks.html" (dict "tracks" $tracks "artist" .Params.artist "slug" .Params.slug) }}
     </details>
       {{- else }}
-    {{ partial "tracks.html" (dict "tracks" $tracks "artist" .Params.artist) }}
+    {{ partial "tracks.html" (dict "tracks" $tracks "artist" .Params.artist "slug" .Params.slug) }}
       {{- end }}
     {{- end }}
   </section>
