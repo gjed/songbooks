@@ -84,8 +84,8 @@ Popular choices: [Songbook Pro](https://www.songbookpro.app/) and
 
 Spotted a wrong chord, or want to contribute a song? Wonderful!
 
-- **Easiest**: [open an issue](../../issues/new) describing the song or the
-  fix — no coding required.
+- **Easiest**: [open a fix/add request](../../issues/new?template=01-song-fix.yml)
+  describing the song or the fix — no coding required.
 - **Hands-on**: see [CONTRIBUTING.md](CONTRIBUTING.md) for the file
   conventions, how PDFs get built, and how to open a pull request.
 
@@ -94,8 +94,11 @@ Spotted a wrong chord, or want to contribute a song? Wonderful!
 This repository does not claim any rights over the songs themselves. All
 lyrics, music, and chords remain the property of their respective artists,
 songwriters, and publishers. This project only repackages and organizes
-publicly available songs and chords into printable songbooks for personal,
-non-commercial use (rehearsals, sing-alongs, and the like).
+songs and chords found publicly online, or given directly by the artists,
+into printable songbooks for personal, non-commercial use (rehearsals,
+sing-alongs, and the like). See the [credits and rights
+page](https://gjed.github.io/songbooks/en/credits/) for the full statement.
 
-If you are a rights holder and want a song removed, please
-[open an issue](../../issues/new).
+If you are a rights holder and want a song or songbook removed, please
+[open a removal request](../../issues/new?template=02-removal.yml) — it will
+be honoured.
