@@ -177,3 +177,26 @@ other = "Il foglio è uscito dal carrello. Torna alla raccolta e riprova."
 
 [error_button]
 other = "Torna alla raccolta"
+
+# --- Pagina canzone (leggi online) ----------------------------------------
+
+[back_to_songbook]
+other = "← {{ . }}"
+
+[song_position]
+other = "Canzone {{ .n }} di {{ .total }}"
+
+[song_nav_label]
+other = "Canzoni di questo canzoniere"
+
+[song_picker_label]
+other = "Tutte le canzoni"
+
+[song_prev]
+other = "Precedente"
+
+[song_next]
+other = "Successiva"
+
+[song_render_missing]
+other = "Gli accordi di questa canzone non sono ancora online. Nel PDF ci sono."

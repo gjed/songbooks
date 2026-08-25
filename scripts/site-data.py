@@ -38,6 +38,20 @@ SONGBOOKS_DIR = REPO_ROOT / "songbooks"
 HEADER_RE = re.compile(r"^\{(?P<key>[a-z_]+):\s*(?P<value>.*?)\s*\}\s*$")
 PSEUDO_SONGS = {"00-cover.cho", "01-chord-chart.cho", "99-back-cover.cho"}
 
+# ChordPro's HTML backend emits a standalone document per song; the site only
+# wants the body, minus the <style> block (it carries @page print rules).
+BODY_RE = re.compile(r"<body[^>]*>(?P<body>.*)</body>", re.DOTALL | re.IGNORECASE)
+STYLE_RE = re.compile(r"<style[^>]*>.*?</style>", re.DOTALL | re.IGNORECASE)
+
+# Cell text, captured so significant whitespace can be protected (see
+# protect_cell_whitespace).
+CELL_RE = re.compile(r"(<td[^>]*>)([^<]*)(</td>)", re.IGNORECASE)
+# A space run Hugo's HTML minifier would destroy: leading, trailing, or 2+.
+FRAGILE_SPACES_RE = re.compile(r"^ +| +$|  +")
+
+# Leading track number on a .cho filename, dropped from the public URL.
+TRACK_NUM_RE = re.compile(r"^\d+[-_]")
+
 
 def parse_headers(path: Path) -> dict[str, str]:
     """Return the ChordPro directive headers of a .cho file."""
@@ -87,7 +101,9 @@ def parse_tracklist(slug: str) -> tuple[list[dict[str, str]], int, bool]:
     """Parse tracklist from .cho files in a songbook.
     
     Returns (tracks, song_count, chart_only).
-    - tracks: list of {title, artist} dicts for non-special .cho files
+    - tracks: list of {title, artist, slug, source} dicts for non-special .cho
+      files, in track order; `slug` is the song's URL segment and `source` its
+      .cho stem, which is how the rendered HTML is looked up
     - song_count: number of real songs (non-special .cho files)
     - chart_only: True if all .cho files are special pages (00-, 01-, 99-)
     """
@@ -103,13 +119,85 @@ def parse_tracklist(slug: str) -> tuple[list[dict[str, str]], int, bool]:
         artist = headers.get("artist", "").strip()
         
         if title and artist:
-            tracks.append({"title": title, "artist": artist})
+            tracks.append({
+                "title": title,
+                "artist": artist,
+                "slug": song_url_slug(cho.name),
+                "source": cho.stem,
+            })
     
     # Check if all .cho files are special pages
     all_cho_files = list(songbook_dir.glob("*.cho"))
     chart_only = len(all_cho_files) > 0 and len(tracks) == 0
     
     return tracks, len(tracks), chart_only
+
+
+def song_url_slug(cho_name: str) -> str:
+    """Public URL slug for a song, from its .cho filename.
+
+    Drops the leading track number so URLs read as titles rather than
+    positions ("01-come-una-foglia.cho" -> "come-una-foglia"). Ordering is
+    carried by front matter weight instead.
+    """
+    return TRACK_NUM_RE.sub("", Path(cho_name).stem)
+
+
+def protect_cell_whitespace(html: str) -> str:
+    """Make whitespace inside <td> cells survive Hugo's HTML minifier.
+
+    ChordPro splits a lyric line into adjacent <td> cells at each chord
+    boundary, and the space that separates two words often lands at the END of
+    a cell ("<td>la punta </td><td>del mio naso</td>"). Hugo's minifier trims
+    leading and trailing whitespace inside inline elements, which silently
+    glues the words together ("la puntadel"). Chord cells lose their trailing
+    space the same way, shifting chords left of their syllable.
+
+    CSS cannot compensate — `white-space: pre` styles whitespace that is still
+    in the document, and by then the minifier has removed it. Nor can `&#32;`:
+    the minifier decodes numeric entities for ordinary space and trims the
+    result. Verified against Hugo 0.165 that only no-break space survives, so
+    fragile runs (leading, trailing, or 2+ spaces) become `&#160;`. Single
+    interior spaces are left alone — they are never trimmed, and keeping them
+    readable matters more.
+
+    No-break space is safe here specifically because the songline table sets
+    `white-space: pre` and `width: max-content`, so nothing wraps anyway.
+    """
+    def fix(match: re.Match[str]) -> str:
+        open_tag, text, close_tag = match.group(1), match.group(2), match.group(3)
+        if not text or "&#160;" in text:
+            return match.group(0)
+        protected = FRAGILE_SPACES_RE.sub(
+            lambda m: "&#160;" * len(m.group(0)), text
+        )
+        return f"{open_tag}{protected}{close_tag}"
+
+    return CELL_RE.sub(fix, html)
+
+
+def extract_song_fragment(html_path: Path) -> str | None:
+    """Return one rendered song as an embeddable HTML fragment.
+
+    Returns None when the render is missing or has no body, so a songbook with
+    an incomplete render degrades to "no read view" instead of a broken page.
+    """
+    if not html_path.exists():
+        return None
+
+    try:
+        content = html_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        print(f"warning: {html_path.name}: unreadable — {exc}", file=sys.stderr)
+        return None
+
+    match = BODY_RE.search(content)
+    if not match:
+        return None
+
+    body = STYLE_RE.sub("", match["body"])
+    body = protect_cell_whitespace(body)
+    return body.strip() or None
 
 
 def load_spotify_manifest(slug: str) -> dict[str, Any]:
@@ -168,6 +256,7 @@ def generate_songbook_content(
     pdf_exists: bool,
     version: str,
     lang: str,
+    read_url: str | None = None,
 ) -> str:
     """Generate Hugo markdown content for one songbook in one language."""
     localized = localize(meta, lang)
@@ -197,6 +286,10 @@ def generate_songbook_content(
     # PDF
     if pdf_exists:
         front_matter["pdf"] = f"pdf/{slug}.pdf"
+    
+    # Online read view — points at the first song, and gates the View button
+    if read_url:
+        front_matter["read"] = read_url
     
     # Song count and chart-only flag
     front_matter["songCount"] = song_count
@@ -245,6 +338,68 @@ def generate_songbook_content(
     return f"---\n{fm_yaml}---\n{body}\n"
 
 
+def generate_song_content(
+    slug: str,
+    book_title: str,
+    accent: str | None,
+    track: dict[str, str],
+    index: int,
+    tracks: list[dict[str, str]],
+    lang: str,
+) -> str:
+    """Generate the Hugo page for a single song's chords-and-lyrics view.
+
+    Song pages live in their own `songpages` section so the songbook keeps its
+    regular-page kind (the home, section and song-index layouts all select on
+    `where .Site.RegularPages "Section" "songbooks"`). An explicit `url` then
+    places them under the songbook path, which Hugo could not do structurally
+    without turning each songbook into a section.
+
+    Prev/next and the full sibling list are resolved here rather than in the
+    template, because Hugo cannot order these pages by track number once the
+    numeric filename prefix has been dropped from the URL.
+    """
+    siblings = [
+        {"title": t["title"], "url": f"songbooks/{slug}/{t['slug']}/"}
+        for t in tracks
+    ]
+
+    front_matter: dict[str, Any] = {
+        "title": track["title"],
+        "url": f"songbooks/{slug}/{track['slug']}/",
+        "layout": "song",
+        "songbook": slug,
+        "songbookTitle": book_title,
+        "songbookUrl": f"songbooks/{slug}/",
+        "songSlug": track["slug"],
+        "weight": index + 1,
+        "trackNumber": index + 1,
+        "trackTotal": len(tracks),
+        "songs": siblings,
+        # Kept out of every listing: these pages are reached from the songbook
+        # or by prev/next, never from a collection.
+        "build": {"list": "never"},
+    }
+
+    if track.get("artist"):
+        front_matter["artist"] = track["artist"]
+    if accent:
+        front_matter["accent"] = accent
+    if index > 0:
+        front_matter["prev"] = siblings[index - 1]
+    if index + 1 < len(tracks):
+        front_matter["next"] = siblings[index + 1]
+
+    fm_yaml = yaml.safe_dump(
+        front_matter,
+        allow_unicode=True,
+        sort_keys=False,
+        default_flow_style=False,
+    )
+
+    return f"---\n{fm_yaml}---\n"
+
+
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
@@ -265,17 +420,26 @@ def main() -> int:
         default="site",
         help="Site directory (default: site)",
     )
+    parser.add_argument(
+        "--html-dir",
+        default="html",
+        help="ChordPro HTML render directory (default: html)",
+    )
     args = parser.parse_args()
     
     pdf_dir = REPO_ROOT / args.pdf_dir
     site_dir = REPO_ROOT / args.site_dir
+    html_dir = REPO_ROOT / args.html_dir
     
     # Recreate generated directories
     content_dir = site_dir / "content" / "songbooks"
+    songpages_dir = site_dir / "content" / "songpages"
     static_pdf_dir = site_dir / "static" / "pdf"
     static_thumbs_dir = site_dir / "static" / "thumbs"
+    assets_songs_dir = site_dir / "assets" / "songs"
     
-    for d in [content_dir, static_pdf_dir, static_thumbs_dir]:
+    for d in [content_dir, songpages_dir, static_pdf_dir, static_thumbs_dir,
+              assets_songs_dir]:
         if d.exists():
             shutil.rmtree(d)
         d.mkdir(parents=True, exist_ok=True)
@@ -334,6 +498,31 @@ def main() -> int:
         # Parse tracklist
         tracks, song_count, chart_only = parse_tracklist(slug)
         
+        # Lift each rendered song into an embeddable fragment. A song without
+        # a render is dropped from the read view rather than published broken.
+        readable: list[dict[str, str]] = []
+        for track in tracks:
+            fragment = extract_song_fragment(
+                html_dir / slug / f"{track['source']}.html"
+            )
+            if not fragment:
+                print(
+                    f"warning: {slug}/{track['source']}: no HTML render — "
+                    "excluded from the read view",
+                    file=sys.stderr,
+                )
+                continue
+            (assets_songs_dir / f"{slug}--{track['slug']}.html").write_text(
+                fragment, encoding="utf-8"
+            )
+            readable.append(track)
+        
+        book_title = localize(meta, LOCALES[0]).get("title") or slug
+        accent = meta.get("cover", {}).get("subtitle_color")
+        read_url = (
+            f"songbooks/{slug}/{readable[0]['slug']}/" if readable else None
+        )
+        
         # Generate content for each language
         for lang in LOCALES:
             content = generate_songbook_content(
@@ -346,10 +535,28 @@ def main() -> int:
                 pdf_exists=True,
                 version=args.version,
                 lang=lang,
+                read_url=read_url,
             )
             
             output_path = content_dir / f"{slug}.{lang}.md"
             output_path.write_text(content, encoding="utf-8")
+            
+            localized_title = localize(meta, lang).get("title") or book_title
+            for index, track in enumerate(readable):
+                song_page = generate_song_content(
+                    slug=slug,
+                    book_title=localized_title,
+                    accent=accent,
+                    track=track,
+                    index=index,
+                    tracks=readable,
+                    lang=lang,
+                )
+                song_dir = songpages_dir / slug
+                song_dir.mkdir(parents=True, exist_ok=True)
+                (song_dir / f"{track['slug']}.{lang}.md").write_text(
+                    song_page, encoding="utf-8"
+                )
         
         # Track counts
         total_songs += song_count
@@ -357,9 +564,13 @@ def main() -> int:
         
         # Status line
         thumb_status = "thumb ok" if thumb_ok else "thumb skip"
+        read_status = f"read {len(readable)}" if readable else "read none"
         spotify_manifest = load_spotify_manifest(slug)
         spotify_status = "spotify yes" if has_spotify_link(spotify_manifest) else "spotify no"
-        print(f"{slug}: {song_count} songs, {thumb_status}, {spotify_status}")
+        print(
+            f"{slug}: {song_count} songs, {thumb_status}, {read_status}, "
+            f"{spotify_status}"
+        )
     
     # Generate song index pages for each locale
     for lang in LOCALES:

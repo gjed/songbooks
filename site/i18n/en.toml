@@ -177,3 +177,26 @@ other = "The sheet slipped out of the carriage. Head back to the collection and 
 
 [error_button]
 other = "Back to the collection"
+
+# --- Song page (read online) -----------------------------------------------
+
+[back_to_songbook]
+other = "← {{ . }}"
+
+[song_position]
+other = "Song {{ .n }} of {{ .total }}"
+
+[song_nav_label]
+other = "Songs in this songbook"
+
+[song_picker_label]
+other = "All songs"
+
+[song_prev]
+other = "Previous"
+
+[song_next]
+other = "Next"
+
+[song_render_missing]
+other = "The chords for this song are not available online yet. The PDF has them."
