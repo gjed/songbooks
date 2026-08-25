@@ -1,0 +1,47 @@
+name: Fix or add a song
+description: A wrong chord, a wrong lyric, a missing verse, or a song you'd like added.
+title: "fix: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve the songbooks by reporting errors or suggesting additions.
+
+  - type: input
+    id: songbook
+    attributes:
+      label: Songbook
+      description: Which songbook. Prefilled if you came from the website.
+    validations:
+      required: false
+
+  - type: input
+    id: song
+    attributes:
+      label: Song
+      description: Song title, if the report is about one song.
+    validations:
+      required: false
+
+  - type: input
+    id: page
+    attributes:
+      label: Page you came from
+      description: Prefilled automatically. Leave as-is.
+    validations:
+      required: false
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What's wrong (or what to add)
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: A link, a recording, an album booklet — anything that backs the correction. Optional.
+    validations:
+      required: false

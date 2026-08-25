@@ -1,0 +1,40 @@
+name: Request a removal
+description: You hold the rights to a song and want it taken out.
+title: "removal: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We claim no rights over any song. Removal requests are honoured.
+
+  - type: input
+    id: songbook
+    attributes:
+      label: Songbook
+      description: Which songbook this concerns. Leave blank if it's the whole project.
+    validations:
+      required: false
+
+  - type: input
+    id: page
+    attributes:
+      label: Page you came from
+      description: Prefilled automatically. Leave as-is.
+    validations:
+      required: false
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What should be removed
+      description: "Be specific: one song, the whole songbook, or something else."
+    validations:
+      required: true
+
+  - type: input
+    id: rights_holder
+    attributes:
+      label: Your relationship to this material
+      description: 'E.g. "I am the songwriter", "I represent the publisher", "I hold the recording rights". This is a plain statement, not a legal form.'
+    validations:
+      required: true

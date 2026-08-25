@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Contribute a song yourself
+    url: https://github.com/gjed/songbooks/blob/main/CONTRIBUTING.md
+    about: File conventions, how PDFs are built, and how to open a pull request.
