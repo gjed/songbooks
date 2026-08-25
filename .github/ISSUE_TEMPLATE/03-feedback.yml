@@ -1,0 +1,23 @@
+name: Propose a change / report a problem
+description: Something on the site or in a songbook is wrong, broken, or you just don't like it.
+title: "feedback: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We'd like to hear what's on your mind.
+
+  - type: input
+    id: page
+    attributes:
+      label: Page you came from
+      description: Prefilled automatically. Leave as-is.
+    validations:
+      required: false
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What's on your mind
+    validations:
+      required: true
