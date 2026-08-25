@@ -2,3 +2,13 @@
   {{- $css := . | minify | fingerprint -}}
   <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 {{- end -}}
+
+{{- /* chordpro.css is loaded on song pages only — it styles the ChordPro
+       fragment and the song-page chrome, and no other page renders either,
+       so every other page keeps its current CSS payload. */ -}}
+{{- if eq .Layout "song" -}}
+  {{- with resources.Get "css/chordpro.css" -}}
+    {{- $css := . | minify | fingerprint -}}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+  {{- end -}}
+{{- end -}}
