@@ -1009,6 +1009,88 @@ img { max-width: 100%; height: auto; display: block; }
   .page-title { font-size: 44px; }
 }
 
+/* ── 10c. Credits page ──────────────────────────────────────────────────
+   The one hand-authored prose page. It borrows the .page-list scaffold and
+   .book__desc's prose styling wholesale; all that is left is a comfortable
+   measure for long-form reading and the stack of three offers. */
+
+.credits__prose { max-width: 64ch; }
+
+.credits__actions { display: flex; flex-direction: column; }
+
+/* A stack, not a row of equal buttons: the three offers are addressed to
+   three different people (a rights holder, someone with a correction,
+   someone with a gripe), so each needs its own sentence of explanation
+   next to it rather than a bare label. */
+.offers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.offers__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 18px 0;
+  border-bottom: 1px dotted var(--rule);
+}
+
+.offers__item:last-child { border-bottom: none; }
+
+/* Same reasoning as .offer__btn: full-bleed target on a phone, because
+   "Tell us something is off" / "Segnala che qualcosa non va" is a long
+   label at 375px, and a stretched button is easier to hit than a wrapped
+   shrink-to-fit one. */
+.offers__item .btn-teal {
+  align-self: stretch;
+  justify-content: center;
+  text-align: center;
+}
+
+.offers__note {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink2);
+  max-width: 52ch;
+}
+
+/* Above 720px there is room to set label beside explanation, which turns
+   the stack into a scannable two-column key.
+
+   The grid lives on the LIST, not on each item, with the items set to
+   display: contents — that is what lets all three buttons share one
+   max-content column and come out the same width. A fixed column width
+   was tried first and had to go: "Tell us something is off" needs 265px
+   and its Italian counterpart 293px, so any hand-picked number either
+   wrapped one label onto two lines or over-reserved for the short ones.
+   max-content sizes to the longest label in whatever locale is rendering.
+
+   The dotted rules are dropped here on purpose. They were doing the
+   separating work in the mobile stack, where label and note sit on top of
+   each other; side by side the button blocks and the row gap already read
+   as three distinct offers, and display: contents would have taken the
+   li's border with it anyway. */
+@media (min-width: 720px) {
+  .offers {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    align-items: center;
+    column-gap: 26px;
+    row-gap: 20px;
+  }
+
+  .offers__item { display: contents; }
+
+  .offers__item .btn-teal { grid-column: 1; }
+
+  .offers__note { grid-column: 2; }
+}
+
 /* ── 11. 404 ────────────────────────────────────────────────────────────── */
 
 .error-page {
@@ -1073,6 +1155,21 @@ img { max-width: 100%; height: auto; display: block; }
   letter-spacing: 0.1em;
   color: var(--ink2);
 }
+
+/* Source and Credits share the footer's left slot. They wrap together as
+   one group rather than letting "Credits" drift onto the version's line;
+   at 320px the two labels plus separator still fit on one line in both
+   locales ("Source on GitHub · Credits and rights" is the longer pair). */
+.footer__links {
+  display: flex;
+  gap: 0.7ch;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.footer__sep { opacity: 0.5; }
+
+.footer__links a:hover { color: var(--accent-text); }
 
 .footer__meta { display: flex; gap: 0.6ch; align-items: baseline; }
 
