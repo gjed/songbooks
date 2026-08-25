@@ -1,4 +1,38 @@
-{{- /* dict: tracks (slice), artist (songbook artist, may be empty) */ -}}
+{{- /* dict: tracks (slice), artist (songbook artist, may be empty),
+               slug (songbook slug — omit to render the plain, non-linked list)
+
+       With `slug` given, every row links to that song's read page.
+
+       The linked variant borrows main.css's existing .song-rows/.song-row
+       link-row pattern (the one the song index at /songs/ already uses)
+       instead of inventing a clickable .tracks__item. Two reasons:
+
+         1. The metrics are already identical — .song-row and .tracks__item
+            both do `padding: 13px 0` with a 1px dotted rule and a 44px
+            minimum — so the tracklist's vertical rhythm is unchanged, while
+            the whole row becomes one 44px hit target with the site's
+            standard link hover.
+         2. main.css is out of scope for this change, and a new clickable-row
+            rule has nowhere honest to live. Reusing a pattern beats bolting
+            styles onto a page-specific stylesheet.
+
+       The number keeps .tracks__num, and stays column-aligned for free:
+       every face on this site is monospace, so "01 " and "12 " are the same
+       width without a grid gutter. */ -}}
+{{- $slug := .slug -}}
+{{- if $slug }}
+<div class="song-rows">
+  {{- range $i, $t := .tracks }}
+  <a class="song-row" href="{{ printf "songbooks/%s/%s/" $slug $t.slug | relLangURL }}">
+    <span class="song-row__title">
+      <span class="tracks__num">{{ printf "%02d" (add $i 1) }}</span>
+      {{ $t.title }}{{ with $t.artist }}<span class="tracks__by"> — {{ . }}</span>{{ end }}
+    </span>
+    <span class="song-row__book" aria-hidden="true">→</span>
+  </a>
+  {{- end }}
+</div>
+{{- else }}
 <ol class="tracks">
   {{- range $i, $t := .tracks }}
   <li class="tracks__item">
@@ -7,3 +41,4 @@
   </li>
   {{- end }}
 </ol>
+{{- end }}

@@ -3,8 +3,16 @@
 {{- $entries := slice -}}
 {{- range $books -}}
   {{- $book := . -}}
+  {{- $slug := $book.Params.slug -}}
   {{- range $book.Params.tracks -}}
-    {{- $entries = $entries | append (dict "title" .title "book" $book.Title "url" $book.RelPermalink) -}}
+    {{- /* Rows go to the song's own read page now, not to the songbook.
+           Falls back to the songbook page for a track with no slug, so a
+           row is never a dead link. */ -}}
+    {{- $url := $book.RelPermalink -}}
+    {{- if and $slug .slug -}}
+      {{- $url = printf "songbooks/%s/%s/" $slug .slug | relLangURL -}}
+    {{- end -}}
+    {{- $entries = $entries | append (dict "title" .title "book" $book.Title "url" $url) -}}
   {{- end -}}
 {{- end -}}
 {{- $entries = sort $entries "title" -}}
