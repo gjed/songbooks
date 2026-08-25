@@ -1,0 +1,45 @@
+{{- /* Closing call to action for songbook and song pages.
+       
+       Can be called two ways:
+       1. Old style (songbook page): {{ partial "offer.html" . }}
+          — uses .Title as songbook name, .Permalink as page URL
+       2. New style (song page): {{ partial "offer.html" (dict "heading" "..." "note" "..." "songbook" "..." "song" "..." "page" "...") }}
+          — all keys optional; missing keys fall back to context values
+
+       Deliberately OUTSIDE article.book's accent scope in single.html, and
+       painted with --teal / .btn-teal rather than --accent-text / .btn-cta:
+       "propose an edit" is a site-level affordance, not a property of the
+       songbook you happen to be reading, so it must look identical on
+       bricioline (#3F7779) and faccianuvola (#249FF9). --teal is the one
+       accent the per-book .has-accent derivation never touches, and it is
+       already theme-aware (day #0f7f8a / night #5fd0d8) with --teal-ink
+       sized for text on a teal fill. */ -}}
+{{- /* Detect calling convention: if context is a dict with "page" key, it's
+       the new style; otherwise it's a Page object (old style). */ -}}
+{{- $isDict := reflect.IsMap . -}}
+{{- $heading := "offer_heading" -}}
+{{- $note := "propose_edit_note" -}}
+{{- $songbook := "" -}}
+{{- $song := "" -}}
+{{- $page := "" -}}
+
+{{- if $isDict }}
+  {{- /* New style: dict with optional overrides */ -}}
+  {{- with .heading }}{{ $heading = . }}{{ end -}}
+  {{- with .note }}{{ $note = . }}{{ end -}}
+  {{- with .songbook }}{{ $songbook = . }}{{ end -}}
+  {{- with .song }}{{ $song = . }}{{ end -}}
+  {{- with .page }}{{ $page = . }}{{ end -}}
+{{- else }}
+  {{- /* Old style: Page object — use .Title and .Permalink */ -}}
+  {{- $songbook = .Title -}}
+  {{- $page = .Permalink -}}
+{{- end }}
+
+<section class="offer" aria-labelledby="offer-title">
+  <h2 class="offer__title" id="offer-title">{{ i18n $heading }}</h2>
+  <p class="offer__note">{{ i18n $note }}</p>
+  <a class="btn-teal offer__btn"
+     href="{{ partial "issue-link.html" (dict "template" "01-song-fix.yml" "songbook" $songbook "song" $song "page" $page) }}"
+     rel="noopener">{{ i18n "propose_edit" }}</a>
+</section>

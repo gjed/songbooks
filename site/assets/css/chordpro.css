@@ -103,6 +103,41 @@
 
 .song-page__missing { padding: 20px 0; }
 
+/* Secondary link to edit the source on GitHub — styled as a quiet link,
+   matching .book__back's muted appearance. */
+.song-page__source-edit {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+}
+
+.song-page__source-edit-title {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  margin: 0 0 8px 0;
+}
+
+.song-page__source-edit-note {
+  font-size: 13px;
+  color: var(--ink2);
+  margin: 0 0 12px 0;
+}
+
+.song-page__source-edit-link {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink2);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+.song-page__source-edit-link:hover { color: var(--accent-text); }
+
 /* The bar above the lyrics: jump-anywhere picker on the left, step controls
    on the right. They share a row on desktop and stack on the narrowest
    phones, where the picker wants the full width. */

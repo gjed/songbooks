@@ -106,6 +106,27 @@ other = "Show all {{ . }} songs"
 [chart_only]
 other = "Chord chart only — no lyrics."
 
+[offer_heading]
+other = "Found something to fix?"
+
+[propose_edit]
+other = "Propose an edit"
+
+[propose_edit_note]
+other = "A wrong chord, a missing verse, a song that belongs here. The form opens on GitHub with this songbook already filled in."
+
+[offer_heading_song]
+other = "Found something to fix in this song?"
+
+[propose_edit_note_song]
+other = "A wrong chord, a missing verse, or just a typo. The form opens on GitHub with this song already filled in."
+
+[edit_source_github]
+other = "Edit the source on GitHub"
+
+[edit_source_github_note]
+other = "For ChordPro syntax — opens GitHub's own editor and forks the repo for you."
+
 [listen_spotify]
 other = "Listen on Spotify"
 

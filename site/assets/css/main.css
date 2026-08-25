@@ -844,7 +844,7 @@ img { max-width: 100%; height: auto; display: block; }
 
 .tracks__item {
   display: grid;
-  grid-template-columns: 34px 1fr;
+  grid-template-columns: 34px 1fr auto;
   gap: 12px;
   align-items: baseline;
   padding: 13px 0;
@@ -866,6 +866,53 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .tracks__by { color: var(--ink2); }
+
+/* ── 9b. Closing "propose an edit" offer ────────────────────────────────
+   Sits last on a songbook page, after the tracklist and the links. It is
+   deliberately painted in --teal, not in the page's --accent-*: the offer
+   belongs to the site, not to the songbook, so it must look the same on
+   every book regardless of that book's cover colour. --teal is the only
+   accent .has-accent never re-derives. */
+
+.offer {
+  border-top: 1.5px solid var(--ink);
+  padding-top: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.offer__title {
+  margin: 0;
+  font: 400 22px/1.15 var(--font-display);
+  color: var(--ink);
+}
+
+.offer__note {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink2);
+  max-width: 52ch;
+}
+
+/* Full-bleed on a phone: at 375px the label wraps awkwardly inside a
+   shrink-to-fit button, and a rehearsal tap target wants the whole width.
+   Reverts to an inline button once there is room, at the same 720px the
+   rest of the page switches on. */
+.offer__btn {
+  margin-top: 6px;
+  align-self: stretch;
+  justify-content: center;
+  text-align: center;
+}
+
+@media (min-width: 720px) {
+  .offer { padding-top: 26px; }
+  .offer__title { font-size: 27px; }
+  .offer__btn { align-self: flex-start; }
+}
 
 .fold__summary {
   cursor: pointer;
@@ -1126,7 +1173,18 @@ img { max-width: 100%; height: auto; display: block; }
   transform: rotate(-2.5deg);
 }
 
+/* Site-constant sibling of .btn-cta: same primary weight (solid fill, ink
+   on top, 44px target), but filled with --teal instead of --accent-text so
+   it is identical on every page. .btn-cta answers "the thing this page is
+   about"; .btn-teal answers "the thing the site offers you". Used by the
+   404 button, the songbook page's closing offer, and the credits CTAs.
+
+   display is inline-flex, not the browser default inline, because these
+   are <a>s: min-height is ignored on an inline box, so without this the
+   44px target silently collapsed to the line box. */
 .btn-teal {
+  display: inline-flex;
+  align-items: center;
   background: var(--teal);
   color: var(--teal-ink);
   border: none;

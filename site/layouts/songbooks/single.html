@@ -73,5 +73,12 @@
     </ul>
   </section>
   {{- end }}
+
+  {{- /* Last thing on the page, after the tracklist and after the links —
+         two earlier placements nearer the top read as clutter. It sits
+         inside .book only to inherit the page's padding and column gap;
+         nothing in .offer reads an accent token, so the per-book
+         --accent-raw override on this element cannot reach it. */}}
+  {{ partial "offer.html" . }}
 </article>
 {{ end }}

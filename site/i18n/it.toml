@@ -106,6 +106,27 @@ other = "Mostra tutte le {{ . }} canzoni"
 [chart_only]
 other = "Solo giro di accordi — senza testi."
 
+[offer_heading]
+other = "Hai trovato qualcosa da correggere?"
+
+[propose_edit]
+other = "Proponi una modifica"
+
+[propose_edit_note]
+other = "Un accordo sbagliato, una strofa mancante, una canzone che ci starebbe bene. Il modulo si apre su GitHub con questo canzoniere già indicato."
+
+[offer_heading_song]
+other = "Hai trovato qualcosa da correggere in questa canzone?"
+
+[propose_edit_note_song]
+other = "Un accordo sbagliato, una strofa mancante, o solo un errore di battitura. Il modulo si apre su GitHub con questa canzone già indicata."
+
+[edit_source_github]
+other = "Modifica il sorgente su GitHub"
+
+[edit_source_github_note]
+other = "Per la sintassi ChordPro — apre l'editor di GitHub e crea un fork del repository per te."
+
 [listen_spotify]
 other = "Ascolta su Spotify"
 
