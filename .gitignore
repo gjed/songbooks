@@ -14,10 +14,14 @@ raw*.txt
 # Python bytecode cache
 __pycache__/
 
+# ChordPro HTML render (built from songbooks/ by `make html`)
+html/
+
 # Generated Hugo site (built from songbooks/)
 site/content/
 site/static/pdf/
 site/static/thumbs/
+site/assets/songs/
 site/public/
 site/resources/
 .hugo_build.lock
