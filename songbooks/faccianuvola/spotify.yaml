@@ -21,11 +21,12 @@
 # Regenerate with: make spotify-resolve
 $schema_version: 1
 playlist_name: faccianuvola
-playlist_id: null
+playlist_id: 3Nbm3p0PbmojAtBeEce8WL
 tracks:
-  01-portami-a-ballare-in-primavera: ''
-  02-unora-come-prima: ''
-  03-disperata-gioventu: ''
-  04-rondine-angelica: ''
-  05-verticale: ''
-  06-seibelleseibelle: ''
+  01-portami-a-ballare-in-primavera: spotify:track:39J4IyWQJWcBPU6tMnlD07
+  02-unora-come-prima: spotify:track:7dq6sXm3Xz0gc5ZOYTvZ3e
+  03-disperata-gioventu: spotify:track:697jHehBpjOoYuDg9dgC1d
+  04-rondine-angelica: spotify:track:1Tr2NJr6gIZU7olFv5K8IW
+  05-verticale: spotify:track:7CRiclkzpprFei2hnUagca
+  06-seibelleseibelle: spotify:track:1n2ahwT6xmQKt9XQbpYR8i
+mode: playlist
