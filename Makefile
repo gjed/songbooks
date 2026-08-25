@@ -2,6 +2,7 @@ CHORDPRO     := chordpro
 PROJECT_CFG  := chordpro-ukulele.json
 SONGBOOKS    := $(sort $(notdir $(patsubst %/,%,$(dir $(wildcard songbooks/*/*.cho)))))
 PDF_DIR      := pdf
+HTML_DIR     := html
 PDFS         := $(foreach sb,$(SONGBOOKS),$(PDF_DIR)/$(sb).pdf)
 GS           := gs
 PYTHON       := python3
@@ -13,7 +14,7 @@ COVER_SCRIPTS := scripts/make-cover.py scripts/songbook_meta.py
 SPOTIFY      := $(PYTHON) scripts/spotify_playlists.py
 SITE_DATA    := $(PYTHON) scripts/site-data.py
 
-.PHONY: all clean $(SONGBOOKS)
+.PHONY: all clean html $(SONGBOOKS)
 
 all: $(SONGBOOKS)
 
@@ -80,6 +81,25 @@ endef
 
 $(foreach sb,$(SONGBOOKS),$(eval $(call SONGBOOK_RULE,$(sb))))
 
+# HTML render for the online read view: one file per song, so editing one
+# .cho re-renders only that song. ChordPro would happily aggregate a whole
+# songbook into a single document, but the site links to songs individually.
+# Cover pseudo-songs are excluded — they are drawn by reportlab for print and
+# have no HTML equivalent.
+define HTML_RULE
+HTML_SRCS_$(1) := $$(filter-out $$(addprefix songbooks/$(1)/,$(COVER_FILES)),$$(wildcard songbooks/$(1)/*.cho))
+HTML_OUT_$(1)  := $$(patsubst songbooks/$(1)/%.cho,$(HTML_DIR)/$(1)/%.html,$$(HTML_SRCS_$(1)))
+HTML_TARGETS   += $$(HTML_OUT_$(1))
+
+$(HTML_DIR)/$(1)/%.html: songbooks/$(1)/%.cho $(PROJECT_CFG) $$(wildcard songbooks/$(1)/layout.json)
+	@mkdir -p $$(dir $$@)
+	$(CHORDPRO) $$(CFG_FLAGS_$(1)) --generate=HTML $$< -o $$@
+endef
+
+$(foreach sb,$(SONGBOOKS),$(eval $(call HTML_RULE,$(sb))))
+
+html: $(HTML_TARGETS)
+
 # Ad-hoc preview: render a full songbook (cover, chord chart, back cover,
 # songs) exactly like `make <slug>`, but for guitar instead of ukulele.
 # Swaps in the guitar instrument (tuning + chord diagrams) on top of the
@@ -111,6 +131,7 @@ clean:
 	rm -f $(PDFS) $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-intro.pdf \
 	  $(PDF_DIR)/*-chart.pdf $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf \
 	  $(PDF_DIR)/*-guitar-ita.pdf $(PDF_DIR)/*-guitar-eng.pdf
+	rm -rf $(HTML_DIR)
 
 # Spotify playlist sync: two-phase model
 # - resolve: interactive local curation, writes committed songbooks/<slug>/spotify.yaml
@@ -132,10 +153,10 @@ spotify-sync-apply:
 # Hugo site generation
 .PHONY: site site-serve
 
-site: all
+site: all html
 	$(SITE_DATA)
 	$(HUGO) --source site --minify
 
-site-serve: all
+site-serve: all html
 	$(SITE_DATA)
 	$(HUGO) server --source site
