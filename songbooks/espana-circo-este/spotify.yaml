@@ -21,15 +21,16 @@
 # Regenerate with: make spotify-resolve
 $schema_version: 1
 playlist_name: España Circo Este
-playlist_id: null
+playlist_id: 6eZIDg4GRlocJ7JS5VpMhR
 tracks:
-  01-addio-paura: ''
-  02-cara-vaticana: ''
-  03-dormo-poco-e-sogno-molto: ''
-  04-la-mia-rivolta: ''
-  05-la-revolucion-del-amor: ''
-  06-larte-della-fuga: ''
-  07-lo-stomaco-e-il-bullone: ''
-  08-mal-educacion: ''
-  09-tutto-si-trasforma: ''
-  10-vino-in-cartone-canzone-per-la-decrescita-felice: ''
+  01-addio-paura: spotify:track:2FIhoisCwLSc1kdSMNH1zZ
+  02-cara-vaticana: spotify:track:4NPJ0Ucsl4SfEmLpNTD3wW
+  03-dormo-poco-e-sogno-molto: spotify:track:0IEWeOIbR1Nn5FxRZ2NsRJ
+  04-la-mia-rivolta: spotify:track:4Pz1wvRl9fMwVJnPx1E5Nv
+  05-la-revolucion-del-amor: spotify:track:4P3WpW8pbvyJXM3MxkMOwQ
+  06-larte-della-fuga: spotify:track:44UFlrlMtdDlOk36yCSnhj
+  07-lo-stomaco-e-il-bullone: spotify:track:5ITeFWtBRXwKgngzeYoy3v
+  08-mal-educacion: spotify:track:7dGIvuLD50RkYgy8CXoGlq
+  09-tutto-si-trasforma: spotify:track:0wLhCOMRIiMVF438rSySh6
+  10-vino-in-cartone-canzone-per-la-decrescita-felice: spotify:track:55m4rAnIGJtrhxeKz5DIJx
+mode: playlist
