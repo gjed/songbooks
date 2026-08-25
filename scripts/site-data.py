@@ -372,6 +372,7 @@ def generate_song_content(
         "songbookTitle": book_title,
         "songbookUrl": f"songbooks/{slug}/",
         "songSlug": track["slug"],
+        "sourcePath": f"songbooks/{slug}/{track['source']}.cho",
         "weight": index + 1,
         "trackNumber": index + 1,
         "trackTotal": len(tracks),

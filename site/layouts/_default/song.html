@@ -79,6 +79,18 @@
   {{- end }}
 
   {{ partial "song-steps.html" (dict "prev" $prev "next" $next "place" "bottom" "label" (i18n "song_nav_label")) }}
+
+  {{- /* Propose an edit CTA, prefilled for this specific song */ -}}
+  {{ partial "offer.html" (dict "heading" "offer_heading_song" "note" "propose_edit_note_song" "songbook" $bookTitle "song" .Title "page" .Permalink) }}
+
+  {{- /* Secondary link to edit the source on GitHub */ -}}
+  <section class="song-page__source-edit" aria-labelledby="source-edit-title">
+    <h3 class="song-page__source-edit-title" id="source-edit-title">{{ i18n "edit_source_github" }}</h3>
+    <p class="song-page__source-edit-note">{{ i18n "edit_source_github_note" }}</p>
+    <a class="song-page__source-edit-link" href="{{ site.Params.repo }}/edit/main/{{ .Params.sourcePath }}" rel="noopener">
+      {{ i18n "edit_source_github" }}
+    </a>
+  </section>
 </article>
 {{- /* Scrolls the picker's current-song row into view on load. Only needed
        at scale (hsb-eng has 105 songs — song 74 renders off the top of a
