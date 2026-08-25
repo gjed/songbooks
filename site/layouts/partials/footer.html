@@ -10,7 +10,11 @@
   {{- end -}}
 {{- end -}}
 <footer class="footer{{ if .IsHome }} footer--home{{ end }}">
-  <a href="{{ .Site.Params.repo }}" rel="noopener">{{ i18n "footer_source" }}</a>
+  <span class="footer__links">
+    <a href="{{ .Site.Params.repo }}" rel="noopener">{{ i18n "footer_source" }}</a>
+    <span class="footer__sep" aria-hidden="true">·</span>
+    <a href="{{ "credits/" | relLangURL }}">{{ i18n "footer_credits" }}</a>
+  </span>
   <span class="footer__meta">
     <span class="footer__rights">{{ i18n "footer_rights" }}</span>{{ with $version }}<span class="footer__version">{{ . }}</span>{{ end }}
   </span>

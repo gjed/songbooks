@@ -1,0 +1,10 @@
+{{- /* dict: template (issue form filename, required), songbook, song, page (all
+       optional). Returns the href string only — call sites bring their own
+       anchor markup. Empty params are dropped rather than emitted blank.
+       Must `return` a plain string: emitting it would escape the separators
+       a second time when the caller drops it into an href. */ -}}
+{{- $q := slice "template" .template -}}
+{{- with .songbook }}{{ $q = $q | append "songbook" . }}{{ end -}}
+{{- with .song }}{{ $q = $q | append "song" . }}{{ end -}}
+{{- with .page }}{{ $q = $q | append "page" . }}{{ end -}}
+{{- return printf "%s/issues/new?%s" (strings.TrimSuffix "/" site.Params.repo) (querify $q) -}}

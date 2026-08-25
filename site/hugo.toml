@@ -4,8 +4,9 @@ defaultContentLanguageInSubdir = true
 enableRobotsTXT = true
 enableEmoji = false
 
-# Machine-generated content only (scripts/site-data.py). Nothing here is
-# hand-authored, so there are no taxonomies, no feeds, no term pages.
+# Most content is machine-generated (scripts/site-data.py) under
+# site/content/songbooks/; a few standalone pages (e.g. credits.*.md) are
+# hand-authored. Either way there are no taxonomies, no feeds, no term pages.
 disableKinds = ["rss", "taxonomy", "term"]
 
 # All user-visible chrome lives in i18n/*.toml. These titles are only ever

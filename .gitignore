@@ -17,8 +17,11 @@ __pycache__/
 # ChordPro HTML render (built from songbooks/ by `make html`)
 html/
 
-# Generated Hugo site (built from songbooks/)
-site/content/
+# Generated Hugo site (built from songbooks/); site/content/credits.*.md is
+# the one hand-authored exception and stays tracked.
+site/content/songbooks/
+site/content/songpages/
+site/content/songs.*.md
 site/static/pdf/
 site/static/thumbs/
 site/assets/songs/

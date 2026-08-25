@@ -150,10 +150,36 @@ other = "Canzoni"
 [empty_search_songs]
 other = "Nessuna canzone trovata."
 
+# --- Pagina crediti ---------------------------------------------------------
+
+[credits_actions_heading]
+other = "Scrivici"
+
+[credits_removal]
+other = "Chiedi una rimozione"
+
+[credits_removal_note]
+other = "Per chi detiene i diritti e vuole togliere una canzone o un intero canzoniere."
+
+[credits_change]
+other = "Proponi una modifica"
+
+[credits_change_note]
+other = "Un accordo sbagliato, una strofa mancante, una canzone da aggiungere."
+
+[credits_wrong]
+other = "Segnala che qualcosa non va"
+
+[credits_wrong_note]
+other = "Tutto il resto — una pagina rotta, una traduzione infelice, una scelta che non condividi."
+
 # --- Footer --------------------------------------------------------------
 
 [footer_source]
 other = "Codice su GitHub"
+
+[footer_credits]
+other = "Crediti e diritti"
 
 [footer_rights]
 other = "Testi, musica e accordi restano dei rispettivi artisti."

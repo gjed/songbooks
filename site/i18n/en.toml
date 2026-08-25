@@ -150,10 +150,36 @@ other = "Songs"
 [empty_search_songs]
 other = "No song found."
 
+# --- Credits page ----------------------------------------------------------
+
+[credits_actions_heading]
+other = "Get in touch"
+
+[credits_removal]
+other = "Request a removal"
+
+[credits_removal_note]
+other = "For rights holders who want a song or a whole songbook taken down."
+
+[credits_change]
+other = "Propose a change"
+
+[credits_change_note]
+other = "A wrong chord, a missing verse, a song worth adding."
+
+[credits_wrong]
+other = "Tell us something is off"
+
+[credits_wrong_note]
+other = "Anything else — a broken page, a bad translation, a choice you disagree with."
+
 # --- Footer --------------------------------------------------------------
 
 [footer_source]
 other = "Source on GitHub"
+
+[footer_credits]
+other = "Credits and rights"
 
 [footer_rights]
 other = "Lyrics, music and chords remain the property of their respective artists."

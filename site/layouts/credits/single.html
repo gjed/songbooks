@@ -1,0 +1,40 @@
+{{ define "main" }}
+{{- /* Hand-authored prose page. Reuses the scaffold the other inner pages
+       already share (.page-list padding/gap rhythm, .page-title display
+       face, .section-head rule, .book__desc prose styling) so it needs
+       almost no page-specific CSS of its own. */ -}}
+{{- $page := .Permalink -}}
+<article class="page-list">
+
+  <p><a class="book__back" href="{{ "" | relLangURL }}">{{ i18n "back_to_all" }}</a></p>
+
+  <div class="page-list__intro">
+    <h1 class="page-title">{{ .Title }}</h1>
+    {{- with .Content }}<div class="book__desc credits__prose">{{ . }}</div>{{ end }}
+  </div>
+
+  <section class="credits__actions">
+    <h2 class="section-head">{{ i18n "credits_actions_heading" }}</h2>
+    <ul class="offers">
+      <li class="offers__item">
+        <a class="btn-teal"
+           href="{{ partial "issue-link.html" (dict "template" "02-removal.yml" "page" $page) }}"
+           rel="noopener">{{ i18n "credits_removal" }}</a>
+        <p class="offers__note">{{ i18n "credits_removal_note" }}</p>
+      </li>
+      <li class="offers__item">
+        <a class="btn-teal"
+           href="{{ partial "issue-link.html" (dict "template" "01-song-fix.yml" "page" $page) }}"
+           rel="noopener">{{ i18n "credits_change" }}</a>
+        <p class="offers__note">{{ i18n "credits_change_note" }}</p>
+      </li>
+      <li class="offers__item">
+        <a class="btn-teal"
+           href="{{ partial "issue-link.html" (dict "template" "03-feedback.yml" "page" $page) }}"
+           rel="noopener">{{ i18n "credits_wrong" }}</a>
+        <p class="offers__note">{{ i18n "credits_wrong_note" }}</p>
+      </li>
+    </ul>
+  </section>
+</article>
+{{ end }}
