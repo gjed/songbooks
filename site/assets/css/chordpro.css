@@ -351,7 +351,9 @@
       "head head"
       "side bar"
       "side lyrics"
-      "side foot";
+      "side foot"
+      "side offer"
+      "side source";
     align-items: start;
 
     /* Wider than the single-column reading measure on purpose: room for a
@@ -368,6 +370,14 @@
   .chordpro,
   .song-page__missing { grid-area: lyrics; }
   .song-page > .song-steps--bottom { grid-area: foot; }
+
+  /* Both closing sections must be placed explicitly. Without a grid-area
+     they auto-place into the first free cell, which is the 250px "side"
+     column — the CTA would collapse into the sidebar and the source-edit
+     block would land beside it instead of below. They stack at the foot of
+     the reading column, after the step controls. */
+  .song-page > .offer { grid-area: offer; }
+  .song-page__source-edit { grid-area: source; }
 
   .song-page__title { font-size: 44px; }
 
