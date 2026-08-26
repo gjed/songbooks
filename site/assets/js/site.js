@@ -28,12 +28,53 @@
 
   /* ---- day / night toggle ------------------------------------------- */
 
+  /* The SVG favicon carries both colourways behind an internal
+     @media (prefers-color-scheme: dark), which tracks the OS only — it
+     cannot see the data-theme attribute. So while the visitor is following
+     the OS we leave the auto file alone (it is already correct, and it
+     stays correct if they change the OS setting mid-session). The moment
+     they make an explicit choice we point the link at the matching
+     single-theme file instead.
+
+     Every href comes from data attributes emitted by
+     partials/head-icons.html through relURL, so nothing here hardcodes a
+     path — baseURL is a subpath and this file must not know that. */
+  function syncFavicon(theme) {
+    var link = document.querySelector('link[data-role="favicon-svg"]');
+    if (!link) return;
+
+    var explicit = null;
+    try {
+      var saved = localStorage.getItem("theme");
+      if (saved === "day" || saved === "night") explicit = saved;
+    } catch (e) {
+      /* storage unavailable — treat as "following the OS" */
+    }
+
+    var href = explicit
+      ? link.getAttribute("data-icon-" + (theme === "night" ? "night" : "day"))
+      : link.getAttribute("data-icon-auto");
+    if (!href || link.getAttribute("href") === href) return;
+
+    /* Some browsers only re-read the icon when the element itself changes,
+       so replace the node rather than mutating href in place. */
+    var next = link.cloneNode(false);
+    next.setAttribute("href", href);
+    if (link.parentNode) link.parentNode.replaceChild(next, link);
+  }
+
   function initTheme() {
     var toggles = toArray(document.querySelectorAll('[data-role="theme-toggle"]'));
-    if (!toggles.length) return;
 
     function currentTheme() {
       return document.documentElement.getAttribute("data-theme") === "night" ? "night" : "day";
+    }
+
+    /* No toggle on this page: there is still a saved choice to honour, so
+       reconcile the icon once and stop. */
+    if (!toggles.length) {
+      syncFavicon(currentTheme());
+      return;
     }
 
     function render() {
@@ -43,6 +84,7 @@
         if (label) btn.textContent = label;
         btn.setAttribute("aria-pressed", theme === "night" ? "true" : "false");
       });
+      syncFavicon(theme);
     }
 
     toggles.forEach(function (btn) {
