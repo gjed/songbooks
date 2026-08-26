@@ -7,6 +7,7 @@ PDFS         := $(foreach sb,$(SONGBOOKS),$(PDF_DIR)/$(sb).pdf)
 GS           := gs
 PYTHON       := python3
 HUGO         ?= hugo
+HUGO_PORT    ?= 1313
 MAKE_COVER   := $(PYTHON) scripts/make-cover.py
 # Cover generation sources: the entry point plus the shared metadata reader
 # it imports, so a change to either rebuilds every cover page.
@@ -159,4 +160,4 @@ site: all html
 
 site-serve: all html
 	$(SITE_DATA)
-	$(HUGO) server --source site
+	$(HUGO) server --source site --port $(HUGO_PORT)
