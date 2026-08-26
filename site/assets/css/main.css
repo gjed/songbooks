@@ -844,7 +844,7 @@ img { max-width: 100%; height: auto; display: block; }
 
 .tracks__item {
   display: grid;
-  grid-template-columns: 34px 1fr auto;
+  grid-template-columns: 34px 1fr;
   gap: 12px;
   align-items: baseline;
   padding: 13px 0;
