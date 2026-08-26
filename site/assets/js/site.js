@@ -30,29 +30,31 @@
 
   /* The SVG favicon carries both colourways behind an internal
      @media (prefers-color-scheme: dark), which tracks the OS only — it
-     cannot see the data-theme attribute. So while the visitor is following
-     the OS we leave the auto file alone (it is already correct, and it
-     stays correct if they change the OS setting mid-session). The moment
-     they make an explicit choice we point the link at the matching
-     single-theme file instead.
+     cannot see the data-theme attribute. So the auto file is correct
+     exactly while the page itself is still following the OS, and a pinned
+     page needs the matching single-theme file instead.
+
+     data-theme is that pin, and it is the same signal the stylesheet
+     selects on (:root:not([data-theme="day"]):not([data-theme="night"])).
+     Reading the attribute rather than localStorage matters in two cases
+     where the two disagree: theme-init.html pins data-theme="night" on a
+     dark-OS first paint with nothing saved, so a later OS switch to light
+     would flip the icon while CSS held the page dark; and a toggle whose
+     localStorage.setItem() throws still sets the attribute, so the page
+     moves and storage does not.
 
      Every href comes from data attributes emitted by
      partials/head-icons.html through relURL, so nothing here hardcodes a
      path — baseURL is a subpath and this file must not know that. */
-  function syncFavicon(theme) {
+  function syncFavicon() {
     var link = document.querySelector('link[data-role="favicon-svg"]');
     if (!link) return;
 
-    var explicit = null;
-    try {
-      var saved = localStorage.getItem("theme");
-      if (saved === "day" || saved === "night") explicit = saved;
-    } catch (e) {
-      /* storage unavailable — treat as "following the OS" */
-    }
+    var pinned = document.documentElement.getAttribute("data-theme");
+    if (pinned !== "day" && pinned !== "night") pinned = null;
 
-    var href = explicit
-      ? link.getAttribute("data-icon-" + (theme === "night" ? "night" : "day"))
+    var href = pinned
+      ? link.getAttribute("data-icon-" + pinned)
       : link.getAttribute("data-icon-auto");
     if (!href || link.getAttribute("href") === href) return;
 
@@ -70,10 +72,10 @@
       return document.documentElement.getAttribute("data-theme") === "night" ? "night" : "day";
     }
 
-    /* No toggle on this page: there is still a saved choice to honour, so
-       reconcile the icon once and stop. */
+    /* No toggle on this page: the theme may still be pinned, so reconcile
+       the icon once and stop. */
     if (!toggles.length) {
-      syncFavicon(currentTheme());
+      syncFavicon();
       return;
     }
 
@@ -84,7 +86,7 @@
         if (label) btn.textContent = label;
         btn.setAttribute("aria-pressed", theme === "night" ? "true" : "false");
       });
-      syncFavicon(theme);
+      syncFavicon();
     }
 
     toggles.forEach(function (btn) {
