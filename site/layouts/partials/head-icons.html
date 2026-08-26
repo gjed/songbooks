@@ -1,0 +1,40 @@
+{{- /* Favicon set — a real Special Elite glyph on the rounded slab tile.
+
+       Two axes:
+         letter <- language, resolved HERE at build time.
+                   it -> "c" (Canzonieri), everything else -> "s" (Songbooks).
+         colour <- theme, resolved at RUNTIME. favicon-<letter>.svg carries
+                   both colourways behind an internal
+                   @media (prefers-color-scheme: dark), so the OS-following
+                   majority and the no-JS case are correct with zero script
+                   and no flash.
+
+       A media query inside the SVG can only observe the OS preference — it
+       cannot see the data-theme attribute this site sets. So visitors who
+       have clicked the theme toggle would otherwise get a desynced icon.
+       The data-icon-day / data-icon-night attributes below hand the explicit
+       per-theme hrefs to initTheme() in assets/js/site.js, which swaps them
+       in when (and only when) an explicit choice is active. The hrefs are
+       emitted through relURL here so the JS never has to know that baseURL
+       is a subpath (https://gjed.github.io/songbooks/).
+
+       PNG and ICO cannot respond to a media query at all, so they ship one
+       variant per language in the day colourway (dark slab plate) — the
+       plate that holds against both light and dark browser chrome.
+
+       These files live in site/static/ rather than site/assets/ on purpose:
+       browsers fetch them by hardcoded URL convention, so they must not be
+       fingerprinted the way head-css.html fingerprints CSS. */ -}}
+
+{{- $letter := cond (eq .Language.Lang "it") "c" "s" -}}
+
+<link rel="icon" type="image/svg+xml"
+      href="{{ printf "favicon-%s.svg" $letter | relURL }}"
+      data-role="favicon-svg"
+      data-icon-auto="{{ printf "favicon-%s.svg" $letter | relURL }}"
+      data-icon-day="{{ printf "favicon-%s-day.svg" $letter | relURL }}"
+      data-icon-night="{{ printf "favicon-%s-night.svg" $letter | relURL }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ printf "favicon-%s-32x32.png" $letter | relURL }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ printf "favicon-%s-16x16.png" $letter | relURL }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ printf "apple-touch-icon-%s.png" $letter | relURL }}">
+<link rel="shortcut icon" href="{{ "favicon.ico" | relURL }}">
