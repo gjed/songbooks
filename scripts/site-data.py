@@ -13,6 +13,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import html as html_module
 import re
 import shutil
 import subprocess
@@ -43,14 +44,214 @@ PSEUDO_SONGS = {"00-cover.cho", "01-chord-chart.cho", "99-back-cover.cho"}
 BODY_RE = re.compile(r"<body[^>]*>(?P<body>.*)</body>", re.DOTALL | re.IGNORECASE)
 STYLE_RE = re.compile(r"<style[^>]*>.*?</style>", re.DOTALL | re.IGNORECASE)
 
-# Cell text, captured so significant whitespace can be protected (see
-# protect_cell_whitespace).
-CELL_RE = re.compile(r"(<td[^>]*>)([^<]*)(</td>)", re.IGNORECASE)
-# A space run Hugo's HTML minifier would destroy: leading, trailing, or 2+.
-FRAGILE_SPACES_RE = re.compile(r"^ +| +$|  +")
-
 # Leading track number on a .cho filename, dropped from the public URL.
 TRACK_NUM_RE = re.compile(r"^\d+[-_]")
+
+# ── songline wrap transform ──────────────────────────────────────────────
+# ChordPro's HTML backend emits one <table class="songline"> per lyric line,
+# with the chord in column N sitting above the lyric fragment in column N —
+# alignment carried entirely by table columns. A <tr> has no wrapping model,
+# so long lines cannot wrap in that markup no matter what CSS says. This
+# section rewrites each table into a flat inline <div>: atomic
+# chord+syllable groups (which never wrap internally) separated by plain
+# breakable tail text (which wraps at every space). See
+# site/assets/css/chordpro.css's "songline table" section for the CSS half
+# of this contract (.songline/.cl/.clx).
+SONGLINE_TABLE_RE = re.compile(r'<table class="songline">(.*?)</table>', re.DOTALL)
+SONGLINE_ROW_RE = re.compile(r'<tr class="(chords|lyrics)">(.*?)</tr>', re.DOTALL)
+SONGLINE_TD_RE = re.compile(r'<td( class="indent")?>(.*?)</td>', re.DOTALL)
+
+NBSP = "\u00a0"
+# Rough monospace glyph-advance ratio (advance ≈ 0.6 * font-size), used only
+# to decide how many lyric words an anchor needs to visually cover its
+# chord — not for pixel-perfect layout. See chordpro.css: chord row is
+# 12px/700, lyric row is 15px/400.
+_CHORD_GLYPH_PX = 12 * 0.6
+_LYRIC_GLYPH_PX = 15 * 0.6
+
+
+def _songline_encode_tail(text: str) -> str:
+    """Encode a run of breakable lyric text: escape it, and turn space runs
+    into (n-1) no-break spaces + one real breakable space, so exactly one
+    wrap opportunity survives per run. A lone space stays a lone (breakable)
+    space. Hugo's minifier is configured with keepWhitespace=true (see
+    site/hugo.toml) so these interior spaces are not at risk of being
+    trimmed the way protect_cell_whitespace once had to guard against."""
+    if not text:
+        return ""
+    parts: list[str] = []
+    i, n = 0, len(text)
+    while i < n:
+        if text[i] == " ":
+            j = i
+            while j < n and text[j] == " ":
+                j += 1
+            run = j - i
+            parts.append((NBSP * (run - 1) + " ") if run > 1 else " ")
+            i = j
+        else:
+            j = i
+            while j < n and text[j] != " ":
+                j += 1
+            parts.append(html_module.escape(text[i:j], quote=False))
+            i = j
+    return "".join(parts)
+
+
+def _songline_split_anchor(frag: str, chord_chars: int) -> tuple[str, str]:
+    """Split a lyric fragment into (anchor, tail) at a word boundary.
+
+    The anchor is the minimal run of whole words (each including its
+    trailing space) whose rendered width covers the chord above it — so a
+    short chord like "A" anchors to one syllable, not the whole fragment.
+    If the fragment contains no space at all, the entire fragment becomes
+    the anchor and the tail is empty — signalling to the caller that the
+    next column's chord lands inside this same (still-open) word and must
+    be merged into the same atomic group.
+    """
+    if not frag:
+        return "", ""
+    min_width = chord_chars * _CHORD_GLYPH_PX
+    covered = 0.0
+    i, n = 0, len(frag)
+    last_space_end = 0
+    while i < n:
+        j = i
+        while j < n and frag[j] != " ":
+            j += 1
+        word_end = j
+        k = j
+        while k < n and frag[k] == " ":
+            k += 1
+        covered += (word_end - i) * _LYRIC_GLYPH_PX
+        if k > j:
+            last_space_end = k
+        if covered >= min_width or k >= n:
+            if k >= n:
+                if k > j:
+                    return frag[:k], frag[k:]
+                return frag, ""  # exhausted mid-word: whole frag is the anchor
+            return frag[:k], frag[k:]
+        i = k
+    return frag[:last_space_end] or frag, frag[last_space_end:]
+
+
+def _songline_emit_group(cols: list[tuple[str, str]]) -> str:
+    """Render one atomic chord+syllable group. A single column becomes a
+    `.cl` inline-block; two or more (a chord landing mid-word) become a
+    `.clx` mini inline-table — ChordPro's own table alignment machinery,
+    shrunk to one word, so it stays unbreakable by construction."""
+    if len(cols) == 1:
+        chord, lyric = cols[0]
+        ch = (html_module.escape(chord, quote=False) + NBSP) if chord else ""
+        ly = html_module.escape(lyric, quote=False)
+        return f'<span class="cl"><span class="ch">{ch}</span><span class="ly">{ly}</span></span>'
+    rows_ch = "".join(
+        f'<span class="ch">{(html_module.escape(c, quote=False) + NBSP) if c else ""}</span>'
+        for c, _ in cols
+    )
+    rows_ly = "".join(
+        f'<span class="ly">{html_module.escape(l, quote=False)}</span>' for _, l in cols
+    )
+    return (
+        '<span class="clx">'
+        f'<span class="r">{rows_ch}</span>'
+        f'<span class="r">{rows_ly}</span>'
+        "</span>"
+    )
+
+
+def _transform_songline(table_body: str) -> str:
+    """Rewrite one <table class="songline">...</table> body into a wrappable
+    <div class="songline">. See the module-level comment above for why."""
+    rows = dict(SONGLINE_ROW_RE.findall(table_body))
+    has_chords = "chords" in rows
+
+    if not has_chords:
+        # Lyric-only line (not observed in the current corpus, but ChordPro
+        # allows it — handle defensively rather than assume).
+        cells = [
+            html_module.unescape(text)
+            for _, text in SONGLINE_TD_RE.findall(rows.get("lyrics", ""))
+        ]
+        return f'<div class="songline">{_songline_encode_tail("".join(cells))}</div>'
+
+    chord_cells = [
+        html_module.unescape(c).rstrip(" ")
+        for _, c in SONGLINE_TD_RE.findall(rows["chords"])
+    ]
+    lyric_cells = [
+        (html_module.unescape(text), bool(cls))
+        for cls, text in SONGLINE_TD_RE.findall(rows.get("lyrics", ""))
+    ]
+    n = len(chord_cells)
+    if len(lyric_cells) != n:
+        # Chord-only line (chorded intro with no lyric row at all): pad so
+        # every chord still gets an (empty) lyric anchor rather than being
+        # dropped silently.
+        lyric_cells = (lyric_cells + [("", False)] * n)[:n]
+
+    parts: list[str] = []
+    pending = ""  # breakable tail text collected since the last group
+    first_group = True
+    i = 0
+    while i < n:
+        frag, indent = lyric_cells[i]
+
+        # A dangling non-space run at the end of `pending` (no boundary
+        # since the previous fragment) belongs under THIS chord, not free
+        # in the tail — otherwise it could wrap away from its chord.
+        prefix = ""
+        if pending and not pending.endswith(" ") and not indent:
+            j = len(pending)
+            while j > 0 and pending[j - 1] != " ":
+                j -= 1
+            prefix, pending = pending[j:], pending[:j]
+
+        # ChordPro marks a fragment whose source began with real whitespace
+        # as class="indent" (the space itself is stripped from the text).
+        # Restore it as an actual breakable space — a no-break space only
+        # at the very start of the line, where no break is wanted.
+        if indent and not prefix:
+            pending += NBSP if (first_group and not pending) else " "
+
+        parts.append(_songline_encode_tail(pending))
+        pending = ""
+
+        cols = [("", prefix)] if prefix else []
+        anchor, tail = _songline_split_anchor(frag, len(chord_cells[i]) or 1)
+        cols.append((chord_cells[i], anchor))
+
+        # The anchor consumed the whole fragment with no boundary after it:
+        # the next chord lands inside this same still-open word (ChordPro's
+        # mid-word split) — fuse it into the same atomic group.
+        while tail == "" and anchor and not anchor.endswith(" ") and i + 1 < n:
+            nxt_frag, nxt_indent = lyric_cells[i + 1]
+            if nxt_indent:
+                break  # false alarm: that IS a real word boundary
+            i += 1
+            anchor, tail = _songline_split_anchor(
+                nxt_frag, len(chord_cells[i]) or 1
+            )
+            cols.append((chord_cells[i], anchor))
+
+        parts.append(_songline_emit_group(cols))
+        first_group = False
+        pending = tail
+        i += 1
+
+    parts.append(_songline_encode_tail(pending))
+    return f'<div class="songline">{"".join(parts)}</div>'
+
+
+def make_songlines_wrappable(html: str) -> str:
+    """Rewrite every <table class="songline"> in a rendered fragment into a
+    wrappable <div class="songline">. See _transform_songline for why this
+    exists and site/assets/css/chordpro.css's songline section for the CSS
+    half of the contract."""
+    return SONGLINE_TABLE_RE.sub(
+        lambda m: _transform_songline(m.group(1)), html
+    )
 
 
 def parse_headers(path: Path) -> dict[str, str]:
@@ -143,39 +344,6 @@ def song_url_slug(cho_name: str) -> str:
     return TRACK_NUM_RE.sub("", Path(cho_name).stem)
 
 
-def protect_cell_whitespace(html: str) -> str:
-    """Make whitespace inside <td> cells survive Hugo's HTML minifier.
-
-    ChordPro splits a lyric line into adjacent <td> cells at each chord
-    boundary, and the space that separates two words often lands at the END of
-    a cell ("<td>la punta </td><td>del mio naso</td>"). Hugo's minifier trims
-    leading and trailing whitespace inside inline elements, which silently
-    glues the words together ("la puntadel"). Chord cells lose their trailing
-    space the same way, shifting chords left of their syllable.
-
-    CSS cannot compensate — `white-space: pre` styles whitespace that is still
-    in the document, and by then the minifier has removed it. Nor can `&#32;`:
-    the minifier decodes numeric entities for ordinary space and trims the
-    result. Verified against Hugo 0.165 that only no-break space survives, so
-    fragile runs (leading, trailing, or 2+ spaces) become `&#160;`. Single
-    interior spaces are left alone — they are never trimmed, and keeping them
-    readable matters more.
-
-    No-break space is safe here specifically because the songline table sets
-    `white-space: pre` and `width: max-content`, so nothing wraps anyway.
-    """
-    def fix(match: re.Match[str]) -> str:
-        open_tag, text, close_tag = match.group(1), match.group(2), match.group(3)
-        if not text or "&#160;" in text:
-            return match.group(0)
-        protected = FRAGILE_SPACES_RE.sub(
-            lambda m: "&#160;" * len(m.group(0)), text
-        )
-        return f"{open_tag}{protected}{close_tag}"
-
-    return CELL_RE.sub(fix, html)
-
-
 def extract_song_fragment(html_path: Path) -> str | None:
     """Return one rendered song as an embeddable HTML fragment.
 
@@ -196,7 +364,7 @@ def extract_song_fragment(html_path: Path) -> str | None:
         return None
 
     body = STYLE_RE.sub("", match["body"])
-    body = protect_cell_whitespace(body)
+    body = make_songlines_wrappable(body)
     return body.strip() or None
 
 

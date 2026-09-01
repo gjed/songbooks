@@ -9,20 +9,21 @@
    over for free. Radius stays 0 and shadows stay hard-offset, per main.css.
 
    ── The alignment machinery: do not "clean this up" ──────────────────────
-   ChordPro places chords with TABLE COLUMNS, not absolute positioning:
+   ChordPro places chords with TABLE COLUMNS, not absolute positioning, and
+   the lyric is split MID-WORD at each chord ("questa matt" + "ina,"). A
+   <tr> has no wrapping model, so that markup can never wrap — long lines
+   would force sideways scrolling on every viewport, phone through desktop.
 
-       <table class="songline">
-         <tr class="chords"><td>C </td><td>Am </td></tr>
-         <tr class="lyrics"><td>questa matt</td><td>ina,</td></tr>
-       </table>
-
-   One table = one lyric line. The chord in column N sits above the lyric
-   fragment in column N, and the lyric is split MID-WORD at each chord
-   ("questa matt" + "ina,"). So border-collapse: collapse, border-spacing: 0,
-   zero cell padding and `white-space: pre` are load-bearing, not cosmetic —
-   any gap or wrap pulls words apart and slides lyrics out from under their
-   chords. A monospace chord row is part of the same contract; luckily the
-   whole site is already monospace.
+   scripts/site-data.py::make_songlines_wrappable rewrites each
+   `<table class="songline">` into a flat `<div class="songline">` before it
+   reaches this stylesheet: atomic chord+syllable groups (`.cl` for a chord
+   over one word, `.clx` — a shrunk one-word version of ChordPro's own table
+   trick — for a chord that lands mid-word) separated by plain breakable
+   text nodes. Wrapping happens ONLY at those text-node spaces; every group
+   is `white-space: pre` and never breaks internally. Do not reintroduce the
+   <table> markup or let a group split across a wrap point — either breaks
+   chord-to-syllable alignment or corrupts a word. A monospace chord row is
+   part of the same contract; luckily the whole site is already monospace.
    ======================================================================== */
 
 /* ── 0. Song page chrome ─────────────────────────────────────────────────
@@ -329,7 +330,7 @@
   .song-steps--bottom .song-step { flex: 1; }
 }
 
-@media (min-width: 720px) {
+@media (min-width: 900px) {
   /* Desktop: the picker stops being a dropdown and becomes a persistent
      sidebar, so the page becomes a two-column grid instead of a single
      flex column. Named areas rather than source order, because the picker
@@ -339,7 +340,15 @@
 
      .song-picker has to be this grid's direct child to land in "side" —
      see the comment above <details class="song-picker"> in song.html for
-     why it is a sibling of .song-bar rather than nested inside it. */
+     why it is a sibling of .song-bar rather than nested inside it.
+
+     900px, not 720px: at 720px the reading column (720 − 32 page margin −
+     104 padding − 250 sidebar − 40 gap = 294px) is narrower than a 390px
+     PHONE gets in the single-column layout (355px) — the sidebar was
+     firing before there was room for it. 900px clears the corpus's p90
+     line length (51 chars ≈ 459px at ~9px/char) unwrapped: 900 − 32 − 104
+     − 290 = 474px. Between 720–900px the mobile dropdown picker stays,
+     which is a fine pattern on its own, not a degraded one. */
   .song-page {
     padding: 38px 52px 46px;
     display: grid;
@@ -553,7 +562,8 @@
   border-left-color: var(--ink2);
 }
 
-.chordpro .bridge .lyrics td { font-style: italic; }
+.chordpro .bridge .songline { font-style: italic; }
+.chordpro .bridge .ch { font-style: normal; }  /* chords stay upright */
 
 /* ── section labels: {comment: RIT}, {label: …} ───────────────────────── */
 
@@ -576,63 +586,86 @@
   border-bottom: 2px solid var(--accent);
 }
 
-/* ── songline table: the alignment machinery ──────────────────────────── */
+/* ── songline: the alignment machinery ───────────────────────────────────
+   scripts/site-data.py rewrites ChordPro's per-line <table> into this:
+
+     <div class="songline">
+       <span class="cl"><span class="ch">C </span><span class="ly">questa</span></span>
+       mattina, al primo incontro con lo
+       <span class="clx">
+         <span class="r"><span class="ch"></span><span class="ch">Am </span></span>
+         <span class="r"><span class="ly">spec</span><span class="ly">chio</span></span>
+       </span>
+     </div>
+
+   `.songline` itself is an ordinary wrapping block. `.cl` (one chord over
+   one word) and `.clx` (a chord landing mid-word, needing >1 column — a
+   one-word shrink of ChordPro's own table trick) are the atomic units:
+   `white-space: pre` inline blocks that never break internally. Everything
+   between them is plain breakable text. Wrapping only ever happens at
+   those text-node spaces, so a chord can never separate from its
+   syllable — the whole reason this markup exists. */
 
 .chordpro .songline {
-  /* Zero gap between cells. Non-negotiable — see the header note. */
-  border-collapse: collapse;
-  border-spacing: 0;
-
-  /* Never shrink to fit the container: shrinking wraps a cell and slides
-     the lyric out from under its chord. Overflow instead, and let the
-     section scroller above deal with it. */
-  width: max-content;
-  max-width: none;
-  table-layout: auto;
-
   margin: 0 0 4px;
+  /* A pathological unbreakable token (freak long word, no chords at all)
+     still can't blow out the layout — it breaks instead. Sections keep
+     their scroller (see above) as a last-resort fallback, not the plan. */
+  overflow-wrap: break-word;
+  /* Hanging indent so a wrapped continuation is visually distinct from the
+     next line while a song is being played. */
+  padding-left: 2ch;
+  text-indent: -2ch;
 }
 
 .chordpro .songline:last-child { margin-bottom: 0; }
 
-.chordpro .songline td {
-  padding: 0;              /* see border-collapse note */
-  border: 0;
-  /* Preserves the trailing space ChordPro puts on chord cells ("Am ") and
-     inside lyric fragments, and stops the wrap that would break columns. */
+/* .cl / .clx groups and their chord/lyric parts. */
+.chordpro .cl {
+  display: inline-block;
   white-space: pre;
+  vertical-align: bottom;
+}
+
+.chordpro .cl .ch,
+.chordpro .cl .ly { display: block; }
+
+.chordpro .clx {
+  display: inline-table;
+  border-collapse: collapse;
+  vertical-align: bottom;
+}
+
+.chordpro .clx .r { display: table-row; }
+
+.chordpro .clx .ch,
+.chordpro .clx .ly {
+  display: table-cell;
+  white-space: pre;
+  padding: 0;
   text-align: left;
 }
 
-/* Chord row. Same typeface as the lyrics — the site is monospace
+/* Chord glyphs. Same typeface as the lyrics — the site is monospace
    throughout — so the separation is carried by weight, colour, size and
    letter-spacing instead. You can scan the chord line without reading it. */
-.chordpro .songline .chords td {
-  vertical-align: bottom;  /* chords hug the lyric line beneath them */
+.chordpro .ch {
   color: var(--cp-chord);
   font-size: 12px;
   font-weight: 700;
   /* Tight leading is deliberate. ChordPro emits a chords row for every
-     line, even unchorded ones (a lone &nbsp; cell), and there is no
-     selector for "row whose cells are all whitespace" — that row always
-     claims a line box. Tight leading bounds the cost and keeps chorded and
-     unchorded lines on the same rhythm instead of jumping. */
+     line, even unchorded ones, and every group always carries one — tight
+     leading bounds the cost and keeps chorded and unchorded lines on the
+     same rhythm instead of jumping. */
   line-height: 1.15;
   letter-spacing: 0;
 }
 
-.chordpro .songline .lyrics td { vertical-align: top; }
-
-/* ChordPro marks a fragment whose source began with whitespace as
-   class="indent". Re-inject that space with padding — margins do not apply
-   to table cells — which offsets the lyric from the chord above it exactly
-   as the original leading space did. */
-.chordpro .songline .lyrics td.indent { padding-left: 1ch; }
-
-/* Chord-only lines (intros) have a filled chords row and an empty lyrics
-   row, and vice versa. An empty <td> collapses its row to zero height and
-   swallows the line's rhythm, so give every empty cell something to sit on. */
-.chordpro .songline td:empty::after { content: "\200b"; }
+/* Chord-only lines (intros) and unchorded lines inside a chorded song both
+   carry an empty .ch or .ly. Give every empty span something to sit on so
+   its line box doesn't collapse and swallow the rhythm. */
+.chordpro .ch:empty::after,
+.chordpro .ly:empty::after { content: "\200b"; }
 
 /* ── tab blocks ───────────────────────────────────────────────────────── */
 
@@ -649,15 +682,14 @@
 }
 
 /* ── narrow screens ──────────────────────────────────────────────────────
-   You cannot wrap a chord/lyric pair — the alignment lives in table
-   columns and a <tr> has no wrapping model. So: shrink first, then scroll,
-   never clip silently.
+   Lines wrap now, so this is buying back room rather than working around
+   an unwrappable table:
      1. One notch of type shrink buys back the short lines.
      2. Sections bleed to the full sheet width, claiming back the page
-        padding before scrolling has to start. Mirrors .book/.song-page's
-        18px inline padding in main.css — keep the two in step.
-     3. The scrolling shadows above surface the affordance if it still
-        overflows. */
+        padding. Mirrors .book/.song-page's 18px inline padding in
+        main.css — keep the two in step.
+     3. The scrolling shadows above stay as a last-resort overflow hint,
+        should a single unbreakable token ever exceed the column. */
 
 @media (max-width: 480px) {
   .chordpro { font-size: 14.5px; }
@@ -724,6 +756,6 @@
   .chordpro .label { color: #000; break-after: avoid; }
 
   .chordpro .songline { break-inside: avoid; }
-  .chordpro .songline .chords td { font-weight: 700; }
+  .chordpro .ch { font-weight: 700; }
   .chordpro .tab { color: #000; }
 }

@@ -42,6 +42,11 @@ disableKinds = ["rss", "taxonomy", "term"]
 [minify]
   [minify.tdewolff.html]
     keepQuotes = true
+    # Song lyrics carry meaning in their whitespace: scripts/site-data.py
+    # emits songline text with single interior spaces as real wrap points
+    # (see chordpro.css's songline section). Without this the minifier
+    # trims/collapses inline-element whitespace and can eat those spaces.
+    keepWhitespace = true
 
 [caches]
   [caches.images]
