@@ -106,6 +106,53 @@ All four headers are required. `{key: ...}` always uses English note names
      exits 0 with no "unknown chord" warnings (new chords may need defining —
      see chordpro-songbook-management).
 
+## Site variants
+
+A song may optionally have a "site variant" file used only by the online (HTML) build:
+
+```text
+NN-song-slug.cho           # original — the print source of truth
+NN-song-slug.site.cho      # optional site variant (online view only)
+```
+
+If a variant exists, the online view uses it instead of the original. The PDF/print build always uses the original and never reads `.site.cho` files. Cover pseudo-songs (`00-cover.cho`, `01-chord-chart.cho`, `99-back-cover.cho`) never get site variants.
+
+**Permitted differences** — the variant may differ ONLY by:
+
+1. Additional inline `[CHORD]` brackets (chords on later verses).
+1. Choruses written out in full where the original only refers to them.
+
+Anything else — lyric text, verse/chorus structure, section order, metadata/directives — is a divergence and is a build failure. **The original ALWAYS has precedence on correctness**: when the two disagree, the original is right and the variant must be re-synced to it.
+
+### Why choruses need writing out
+
+Two idioms in the print sources stand for "repeat the chorus here", and ChordPro
+renders **both** as a label in the PDF and as **nothing at all** in HTML:
+
+```text
+{chorus}                    # bare recall directive (also {chorus: x2})
+
+{start_of_chorus}           # empty chorus block: directives but no lyrics
+{comment: RIT}
+{end_of_chorus}
+```
+
+That is fine in print, where the reader scrolls back up one page. Online each
+song is its own page and the repeat simply vanishes, so a site variant writes
+the chorus out in full at every recall.
+
+### Placing chords on later verses
+
+Copy a chord line verbatim only when the later verse's lyric line is
+**character-identical** to an already-chorded line — then the chord positions
+are known-correct by construction.
+
+Otherwise the chords must be **placed by hand** against the source material.
+Never stretch the first verse's progression over different words: syllable
+counts shift between verses and the chords land on the wrong beats. If the
+source never recorded chords for a verse, leave that verse unchorded — an
+invented progression is worse than none.
+
 ## Edge cases
 
 - **Chord-only lines inside a section** (instrumental figures): allowed as

@@ -13,9 +13,12 @@ Each `.cho` file is one song. One song = one page when rendered.
 songbooks/
   <songbook-slug>/      # one folder per songbook, kebab-case
     NN-song-slug.cho    # two-digit track number prefix, kebab-case slug
+    NN-song-slug.site.cho  # optional site variant (online view only)
 ```
 
 Band and album metadata live in each song's ChordPro headers, not in the folder structure.
+
+**Site variants**: a song may have an optional `.site.cho` file used by the HTML build but not PDF. If it exists, the online view uses it; if not, the original is used. Adoption is per-song, fully opt-in. See `skills/chordpro-song-authoring` for permitted differences and `skills/chordpro-songbook-management` for build enforcement.
 
 ## ChordPro conventions
 
