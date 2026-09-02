@@ -48,6 +48,22 @@ Constraint: **one song = one page** (2-column layout). After any build,
 check the page count matches the song count; a song spilling to a second
 page needs content fixes or user sign-off, not silent acceptance.
 
+## Site variants and build enforcement
+
+A song may have an optional `.site.cho` variant used only by the online (HTML) build. If the variant exists, the HTML build uses it; the PDF/print build always ignores `.site.cho` files and uses the original. This allows the online view to show chords on all verses and expanded choruses without breaking the print constraint of one song per page.
+
+A guard script, `scripts/check-site-variants.py`, runs during `make site` and in CI. For each `.site.cho` it normalizes both files — expands chorus recalls into the full chorus block, strips all inline `[CHORD]` brackets, collapses whitespace — and requires the results to be identical. Any other difference (lyric text, section order, directives) hard-fails the build with a diff report.
+
+Both "repeat the chorus" idioms count as a recall and expand to the same block: the bare `{chorus}` / `{chorus: x2}` directive, and an empty `{start_of_chorus}`…`{end_of_chorus}` block holding only directives such as `{comment: RIT}`. Recall arguments are dropped on expansion, so a variant for a `{chorus: x2}` song writes the chorus block out once.
+
+**To fix a reported divergence**: re-sync the variant to the original by checking that:
+
+1. All lyric text and section structure match the original.
+1. The only changes are additional `[CHORD]` brackets on later verses and/or choruses written out in full.
+1. All other directives, metadata, and ordering match exactly.
+
+Re-run `make site` to verify the guard passes. See `skills/chordpro-song-authoring` for permitted differences and the hand-placement rule.
+
 ## Chord configuration (`chordpro-ukulele.json`)
 
 - Instrument comes from `"include": ["ukulele"]` — never set instrument
