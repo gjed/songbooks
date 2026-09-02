@@ -10,6 +10,7 @@ on:
       - "Makefile"
       - ".github/workflows/pr-check.yml"
       - "scripts/spotify_playlists.py"
+      - "scripts/check-site-variants.py"
 
 jobs:
   compile:
@@ -82,6 +83,26 @@ jobs:
           fi
           echo "Built PDFs:"
           ls -la pdf/
+
+  site-variants:
+    name: Check site variants
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+
+      - name: Check .site.cho variants against their originals
+        run: |
+          set -euo pipefail
+          python3 scripts/check-site-variants.py || {
+            EXIT_CODE=$?
+            echo "::error::A songbooks/*/*.site.cho variant diverges from its original beyond the permitted differences (extra inline chords, choruses written out in full). The original always has precedence on correctness — re-sync the variant to it using the diff above."
+            exit $EXIT_CODE
+          }
 
   spotify-validate:
     name: Validate Spotify manifest
