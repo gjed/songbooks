@@ -14,6 +14,7 @@ MAKE_COVER   := $(PYTHON) scripts/make-cover.py
 COVER_SCRIPTS := scripts/make-cover.py scripts/songbook_meta.py
 SPOTIFY      := $(PYTHON) scripts/spotify_playlists.py
 SITE_DATA    := $(PYTHON) scripts/site-data.py
+CHECK_SITE_VARIANTS := $(PYTHON) scripts/check-site-variants.py
 
 .PHONY: all clean html $(SONGBOOKS)
 
@@ -49,13 +50,18 @@ HAS_CHART_$(1)  := $$(wildcard songbooks/$(1)/chords.png)
 # songbook.yaml declares an `intro:` section.
 HAS_INTRO_$(1)  := $$(shell grep -ls '^intro:' songbooks/$(1)/songbook.yaml 2>/dev/null)
 
+# Real song sources for this songbook: every .cho file except optional
+# .site.cho variants, which the PDF build never reads (HTML-only — see
+# AGENTS.md / skills/chordpro-song-authoring).
+SONG_ALL_$(1) := $$(filter-out %.site.cho,$$(wildcard songbooks/$(1)/*.cho))
+
 ifeq ($$(strip $$(HAS_COVER_$(1))),)
 # No cover — render everything normally
-$(PDF_DIR)/$(1).pdf: songbooks/$(1)/*.cho $(PROJECT_CFG) $$(wildcard songbooks/$(1)/layout.json) | $(PDF_DIR)
+$(PDF_DIR)/$(1).pdf: $$(SONG_ALL_$(1)) $(PROJECT_CFG) $$(wildcard songbooks/$(1)/layout.json) | $(PDF_DIR)
 	$(CHORDPRO) $$(CFG_FLAGS_$(1)) $$(filter %.cho,$$^) -o $$@
 else
 # Has cover pages — generate with Python (centered), songs with ChordPro
-SONG_SRCS_$(1)  := $$(wildcard songbooks/$(1)/*.cho)
+SONG_SRCS_$(1)  := $$(SONG_ALL_$(1))
 SONG_ONLY_$(1)  := $$(filter-out $$(addprefix songbooks/$(1)/,$(COVER_FILES)),$$(SONG_SRCS_$(1)))
 
 COVER_PDF_$(1)  := $(PDF_DIR)/$(1)-cover.pdf
@@ -87,12 +93,25 @@ $(foreach sb,$(SONGBOOKS),$(eval $(call SONGBOOK_RULE,$(sb))))
 # songbook into a single document, but the site links to songs individually.
 # Cover pseudo-songs are excluded — they are drawn by reportlab for print and
 # have no HTML equivalent.
+#
+# Each song may have an optional NN-slug.site.cho variant (see AGENTS.md /
+# skills/chordpro-song-authoring), used only by this HTML build; the PDF
+# path above never reads .site.cho files. When a variant exists it is
+# preferred as the render source; the output filename always matches the
+# original song's stem either way.
 define HTML_RULE
-HTML_SRCS_$(1) := $$(filter-out $$(addprefix songbooks/$(1)/,$(COVER_FILES)),$$(wildcard songbooks/$(1)/*.cho))
+HTML_SRCS_$(1) := $$(filter-out $$(addprefix songbooks/$(1)/,$(COVER_FILES)),$$(filter-out %.site.cho,$$(wildcard songbooks/$(1)/*.cho)))
 HTML_OUT_$(1)  := $$(patsubst songbooks/$(1)/%.cho,$(HTML_DIR)/$(1)/%.html,$$(HTML_SRCS_$(1)))
 HTML_TARGETS   += $$(HTML_OUT_$(1))
 
-$(HTML_DIR)/$(1)/%.html: songbooks/$(1)/%.cho $(PROJECT_CFG) $$(wildcard songbooks/$(1)/layout.json)
+$$(foreach src,$$(HTML_SRCS_$(1)),$$(eval $$(call HTML_SONG_RULE,$(1),$$(src))))
+endef
+
+# $(1) = songbook slug, $(2) = original songbooks/<slug>/NN-slug.cho path.
+# Prefers songbooks/<slug>/NN-slug.site.cho as the render source when it
+# exists, re-checked on every make invocation.
+define HTML_SONG_RULE
+$(HTML_DIR)/$(1)/$$(basename $$(notdir $(2))).html: $$(if $$(wildcard $$(patsubst %.cho,%.site.cho,$(2))),$$(patsubst %.cho,%.site.cho,$(2)),$(2)) $(PROJECT_CFG) $$(wildcard songbooks/$(1)/layout.json)
 	@mkdir -p $$(dir $$@)
 	$(CHORDPRO) $$(CFG_FLAGS_$(1)) --generate=HTML $$< -o $$@
 endef
@@ -114,7 +133,7 @@ guitar-ita guitar-eng: | $(PDF_DIR)
 	$(CHORDPRO) --config $(PROJECT_CFG) --config guitar \
 	  $(if $(wildcard songbooks/$(SB)/layout.json),--config songbooks/$(SB)/layout.json) \
 	  --transcode=$(if $(filter guitar-ita,$@),latin,common) \
-	  $(filter-out songbooks/$(SB)/00-cover.cho songbooks/$(SB)/01-chord-chart.cho songbooks/$(SB)/99-back-cover.cho,$(wildcard songbooks/$(SB)/*.cho)) \
+	  $(filter-out songbooks/$(SB)/00-cover.cho songbooks/$(SB)/01-chord-chart.cho songbooks/$(SB)/99-back-cover.cho %.site.cho,$(wildcard songbooks/$(SB)/*.cho)) \
 	  -o $(PDF_DIR)/$(SB)-$@-songs.pdf
 	@if grep -qs '^cover:' songbooks/$(SB)/songbook.yaml; then \
 	  $(MAKE_COVER) songbooks/$(SB) $(PDF_DIR) ; \
@@ -155,9 +174,11 @@ spotify-sync-apply:
 .PHONY: site site-serve
 
 site: all html
+	$(CHECK_SITE_VARIANTS)
 	$(SITE_DATA)
 	$(HUGO) --source site --minify
 
 site-serve: all html
+	$(CHECK_SITE_VARIANTS)
 	$(SITE_DATA)
 	$(HUGO) server --source site --port $(HUGO_PORT)
