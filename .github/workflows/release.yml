@@ -43,6 +43,11 @@ jobs:
           sudo fc-cache -f
           pip install Pillow reportlab PyYAML
 
+      # Guard the optional .site.cho variants before anything renders: a
+      # variant that has drifted from its original must not reach the site.
+      - name: Check site variants
+        run: python3 scripts/check-site-variants.py
+
       - name: Compile all songbooks
         run: make all html
 
