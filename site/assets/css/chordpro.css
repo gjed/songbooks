@@ -454,6 +454,10 @@
    At rest it is held back to ~70% opacity so it reads as chrome, not
    content, and comes fully forward on hover/focus/while playing. */
 
+/* The author display below would beat the UA's `[hidden] { display: none }`,
+   which is the whole no-JS contract — restate it at higher specificity. */
+.autoscroll[hidden] { display: none; }
+
 .autoscroll {
   position: fixed;
   z-index: 20;
