@@ -590,6 +590,13 @@
 /* Nothing to autoscroll on paper. */
 @media print { .autoscroll { display: none !important; } }
 
+/* The cluster is fixed over the bottom-right corner — the same corner the
+   bottom "Next" step scrolls into. Reserve clearance below the page's last
+   content so that, fully scrolled, the steps sit above the cluster instead
+   of underneath it. Scoped on the revealed control so a no-JS page (cluster
+   still [hidden]) pays no dead space. */
+.song-page:has(.autoscroll:not([hidden])) { padding-bottom: 110px; }
+
 /* ── the ChordPro fragment ─────────────────────────────────────────────── */
 
 .chordpro {
