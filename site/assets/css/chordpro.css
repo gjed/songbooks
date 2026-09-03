@@ -628,6 +628,12 @@
   display: inline-block;
   white-space: pre;
   vertical-align: bottom;
+  /* .songline sets a negative text-indent for its hanging indent. Being
+     inline-block, this group starts its own block-formatting context, so
+     that inherited indent re-applies to IT — shrinking (sometimes to ~0)
+     the shrink-to-fit width the browser gives it and smashing its chord/
+     lyric glyphs into whatever sits next to it. Reset it. */
+  text-indent: 0;
 }
 
 .chordpro .cl .ch,
@@ -637,6 +643,8 @@
   display: inline-table;
   border-collapse: collapse;
   vertical-align: bottom;
+  /* Same text-indent reset as .cl — see comment there. */
+  text-indent: 0;
 }
 
 .chordpro .clx .r { display: table-row; }
