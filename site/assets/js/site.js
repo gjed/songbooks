@@ -264,17 +264,20 @@
        }
      }
 
+      /* The toggle is an action button whose accessible name swaps between
+         the two commands (Scroll/Pause) — deliberately NOT aria-pressed: a
+         toggle button needs a stable name, and pairing a swapped name with
+         aria-pressed reads as "Pause, pressed" in assistive tech. The
+         playing state is styled off the wrapper's .is-playing class. */
       function updatePlayButton() {
         wrapper.classList.toggle("is-playing", state.playing);
         if (!btnToggle) return;
         if (state.playing) {
           var pauseLabel = btnToggle.getAttribute("data-label-pause");
           if (pauseLabel) btnToggle.textContent = pauseLabel;
-          btnToggle.setAttribute("aria-pressed", "true");
         } else {
           var playLabel = btnToggle.getAttribute("data-label-play");
           if (playLabel) btnToggle.textContent = playLabel;
-          btnToggle.setAttribute("aria-pressed", "false");
         }
       }
 

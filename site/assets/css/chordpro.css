@@ -552,14 +552,17 @@
 
 .autoscroll__btn--toggle:hover { color: var(--accent-text); background: var(--paper); }
 
-/* Pressed state = currently scrolling. Filled, because "is it running?"
-   must be answerable without reading the label. */
-.autoscroll__btn--toggle[aria-pressed="true"] {
+/* Playing state = currently scrolling. Filled, because "is it running?"
+   must be answerable without reading the label. Driven off the wrapper's
+   .is-playing class — the toggle is an action button whose label swaps
+   (Scroll/Pause), so it must NOT carry aria-pressed; a toggle-button name
+   has to stay stable, and ours deliberately doesn't. */
+.autoscroll.is-playing .autoscroll__btn--toggle {
   background: var(--accent-text);
   color: var(--accent-ink);
 }
 
-.autoscroll__btn--toggle[aria-pressed="true"]:hover {
+.autoscroll.is-playing .autoscroll__btn--toggle:hover {
   background: var(--accent-text);
   color: var(--accent-ink);
   filter: brightness(var(--hover-lift));
