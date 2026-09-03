@@ -608,9 +608,12 @@
 
 .chordpro .songline {
   margin: 0 0 4px;
-  /* A pathological unbreakable token (freak long word, no chords at all)
-     still can't blow out the layout — it breaks instead. Sections keep
-     their scroller (see above) as a last-resort fallback, not the plan. */
+  /* Only reaches plain breakable text between groups: a pathological long
+     word with no chords near it can still break here. It does NOT reach
+     inside .cl/.clx — they're white-space: pre by construction, so a freak
+     unbreakable run *inside* a group (e.g. a long hyphenated word under a
+     chord) cannot break even with this rule. Sections keep their scroller
+     (see above) as the real last-resort fallback for that case. */
   overflow-wrap: break-word;
   /* Hanging indent so a wrapped continuation is visually distinct from the
      next line while a song is being played. */
