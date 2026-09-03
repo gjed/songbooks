@@ -502,6 +502,21 @@
 
 .autoscroll__level:empty { display: none; }
 
+/* Visually-hidden live region: speed changes are announced here as a full
+   localized sentence, since the visible readout is a bare aria-hidden
+   number. Standard clip-pattern hiding — display:none would silence it. */
+.autoscroll__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .autoscroll__row {
   display: flex;
   align-items: stretch;

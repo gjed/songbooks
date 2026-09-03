@@ -265,3 +265,7 @@ other = "Slower"
 
 [autoscroll_faster]
 other = "Faster"
+
+# Announced by the aria-live region on speed changes; %s is the level 1–10.
+[autoscroll_speed_status]
+other = "Scroll speed %s of 10"

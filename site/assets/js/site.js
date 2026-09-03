@@ -253,6 +253,7 @@
      var btnSlower = document.querySelector('[data-role="autoscroll-slower"]');
      var btnFaster = document.querySelector('[data-role="autoscroll-faster"]');
      var levelDisplay = document.querySelector('[data-role="autoscroll-level"]');
+     var statusRegion = document.querySelector('[data-role="autoscroll-status"]');
 
      function getPxPerSec() {
        return BASE_SPEED * Math.pow(SPEED_CURVE, state.level - 1);
@@ -262,6 +263,15 @@
        if (levelDisplay) {
          levelDisplay.textContent = String(state.level);
        }
+     }
+
+     /* Announce the new level to assistive tech as a localized sentence —
+        the visible readout is a bare aria-hidden number. Only called on
+        user-initiated changes, never on init, so page load stays silent. */
+     function announceLevel() {
+       if (!statusRegion) return;
+       var template = statusRegion.getAttribute("data-status-template") || "%s";
+       statusRegion.textContent = template.replace("%s", String(state.level));
      }
 
       /* The toggle is an action button whose accessible name swaps between
@@ -348,6 +358,7 @@
            }
            updateLevelDisplay();
          }
+         announceLevel();
        });
      }
 
@@ -362,6 +373,7 @@
            }
            updateLevelDisplay();
          }
+         announceLevel();
        });
      }
 
