@@ -250,3 +250,19 @@ other = "Successiva"
 
 [song_render_missing]
 other = "Gli accordi di questa canzone non sono ancora online. Nel PDF ci sono."
+
+# Scorrimento automatico. I due stati del pulsante vengono scambiati da
+# site.js leggendo gli attributi data-label-*: entrambi devono suonare come
+# un comando, non come uno stato.
+
+[autoscroll_play]
+other = "Scorri"
+
+[autoscroll_pause]
+other = "Pausa"
+
+[autoscroll_slower]
+other = "Più lento"
+
+[autoscroll_faster]
+other = "Più veloce"

@@ -430,6 +430,162 @@
   }
 }
 
+/* ── the autoscroll control ──────────────────────────────────────────────
+   Hands-free scrolling for someone playing off the screen. Ships `hidden`
+   from song.html; site.js unhides it, so with JS off there is no control
+   and this whole section never paints.
+
+   PLACEMENT: pinned to the viewport's bottom-right, not in the document
+   flow. Three reasons it is not in .song-bar or the sidebar:
+     1. The posture is a phone in landscape on a stand, hands on the
+        instrument. An in-flow control scrolls away exactly when it is
+        needed — the one button you must reach mid-song is "pause", and it
+        has to be in the same place on the last line as on the first.
+     2. Bottom-right is the thumb arc of the hand that lets go of the neck,
+        and in landscape it is the shortest reach on the panel.
+     3. It cannot collide with the >=720px sticky picker, which owns the
+        LEFT column and is pinned to the TOP of it. Opposite corner, no
+        overlap at any width. `position: fixed` also means it claims no
+        grid area and cannot reflow a songline.
+
+   It sits over the page's right margin at desktop widths and over the
+   right edge of the reading column on a phone, where the far right of a
+   lyric line is the emptiest part of the page (lines are ragged-right).
+   At rest it is held back to ~70% opacity so it reads as chrome, not
+   content, and comes fully forward on hover/focus/while playing. */
+
+.autoscroll {
+  position: fixed;
+  z-index: 20;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+
+  /* Only the buttons should swallow taps — the cluster's own box (and the
+     level readout's line) must let a tap through to the lyrics beneath. */
+  pointer-events: none;
+
+  opacity: 0.72;
+}
+
+.autoscroll:hover,
+.autoscroll:focus-within,
+.autoscroll.is-playing { opacity: 1; }
+
+/* Opacity only, and only on the control — the reading surface underneath
+   never moves. Skipped entirely for reduced-motion readers. */
+@media (prefers-reduced-motion: no-preference) {
+  .autoscroll { transition: opacity 120ms linear; }
+}
+
+/* The speed readout. JS fills the textContent with the level number; while
+   it is empty (no JS having run yet, or a design that never sets it) the
+   element must not paint a stray box. */
+.autoscroll__level {
+  margin: 0;
+  padding: 2px 6px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink2);
+}
+
+.autoscroll__level:empty { display: none; }
+
+.autoscroll__row {
+  display: flex;
+  align-items: stretch;
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  /* The site's one shadow idiom: hard offset, zero blur, in --teal. Same
+     as .song-picker__panel's, one notch smaller. */
+  box-shadow: 3px 3px 0 var(--teal);
+  pointer-events: auto;
+}
+
+.autoscroll__btn {
+  /* 44px each way is the floor, and the reason the cluster is this size at
+     all — see .song-picker__summary / .song-step, which set the same. */
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: var(--ink2);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* One hairline between neighbours instead of a border per button, so the
+   three read as a single instrument rather than three loose chips. */
+.autoscroll__btn + .autoscroll__btn { border-left: 1px solid var(--rule); }
+
+.autoscroll__btn:hover { color: var(--ink); background: var(--paper); }
+
+/* The +/− glyphs are typographic, not text: bigger and unspaced so they
+   stay legible as targets at a glance. */
+.autoscroll__btn--step { font-size: 17px; letter-spacing: 0; }
+
+/* Play/pause is the one control you hit mid-song, so it is the only one
+   carrying accent ink — wider target, and unmistakable in a fast glance. */
+.autoscroll__btn--toggle {
+  min-width: 88px;
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
+.autoscroll__btn--toggle:hover { color: var(--accent-text); background: var(--paper); }
+
+/* Pressed state = currently scrolling. Filled, because "is it running?"
+   must be answerable without reading the label. */
+.autoscroll__btn--toggle[aria-pressed="true"] {
+  background: var(--accent-text);
+  color: var(--accent-ink);
+}
+
+.autoscroll__btn--toggle[aria-pressed="true"]:hover {
+  background: var(--accent-text);
+  color: var(--accent-ink);
+  filter: brightness(var(--hover-lift));
+}
+
+/* main.css's global focus ring is outside-drawn and would be clipped by the
+   cluster's own border on the end buttons; inset it instead. */
+.autoscroll__btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+
+/* Landscape phone — the actual music-stand posture. Vertical space is the
+   scarce axis there (a 390x844 phone turned sideways is ~390px tall minus
+   browser chrome), so the cluster loses a notch of height and the readout
+   moves onto the same row as the buttons rather than stacking above them. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .autoscroll {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+  }
+
+  .autoscroll__btn { min-height: 40px; }
+}
+
+/* Nothing to autoscroll on paper. */
+@media print { .autoscroll { display: none !important; } }
+
 /* ── the ChordPro fragment ─────────────────────────────────────────────── */
 
 .chordpro {

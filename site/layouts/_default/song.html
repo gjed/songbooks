@@ -74,6 +74,30 @@
 
   {{- with resources.Get (printf "songs/%s--%s.html" .Params.songbook .Params.songSlug) }}
   <div class="chordpro">{{ .Content | safeHTML }}</div>
+
+  {{- /* Hands-free scrolling for playing off the screen. Rendered only when
+         there are actually lyrics on the page, and shipped `hidden` — site.js
+         removes the attribute, so with JS off there is no dead control and
+         the page is untouched. Everything here is chrome: it is
+         position: fixed in chordpro.css, so it takes no grid slot and does
+         not reflow a single songline. */ -}}
+  <div class="autoscroll" data-role="autoscroll" hidden>
+    <p class="autoscroll__level" data-role="autoscroll-level" aria-hidden="true"></p>
+    <div class="autoscroll__row">
+      <button type="button" class="autoscroll__btn autoscroll__btn--step"
+        data-role="autoscroll-slower" aria-label="{{ i18n "autoscroll_slower" }}">
+        <span aria-hidden="true">−</span>
+      </button>
+      <button type="button" class="autoscroll__btn autoscroll__btn--toggle"
+        data-role="autoscroll-toggle" aria-pressed="false"
+        data-label-play="{{ i18n "autoscroll_play" }}"
+        data-label-pause="{{ i18n "autoscroll_pause" }}">{{ i18n "autoscroll_play" }}</button>
+      <button type="button" class="autoscroll__btn autoscroll__btn--step"
+        data-role="autoscroll-faster" aria-label="{{ i18n "autoscroll_faster" }}">
+        <span aria-hidden="true">+</span>
+      </button>
+    </div>
+  </div>
   {{- else }}
   <p class="note song-page__missing">{{ i18n "song_render_missing" }}</p>
   {{- end }}

@@ -194,35 +194,182 @@
     });
   }
 
-  /* ---- song index: live search --------------------------------------- */
+   /* ---- song index: live search --------------------------------------- */
 
-  function initSongIndex() {
-    var wrap = document.querySelector('[data-role="song-rows"]');
-    var search = document.querySelector('[data-role="song-search"]');
-    if (!wrap || !search) return;
+   function initSongIndex() {
+     var wrap = document.querySelector('[data-role="song-rows"]');
+     var search = document.querySelector('[data-role="song-search"]');
+     if (!wrap || !search) return;
 
-    var count = document.querySelector('[data-role="song-result-count"]');
-    var empty = document.querySelector('[data-role="song-empty"]');
+     var count = document.querySelector('[data-role="song-result-count"]');
+     var empty = document.querySelector('[data-role="song-empty"]');
 
-    function apply() {
-      var q = search.value.trim().toLowerCase();
-      var visible = 0;
-      toArray(wrap.children).forEach(function (el) {
-        var title = (el.getAttribute("data-title") || "").toLowerCase();
-        var match = !q || title.indexOf(q) !== -1;
-        el.hidden = !match;
-        if (match) visible += 1;
-      });
-      fillTemplateCount(count, visible);
-      if (empty) empty.hidden = visible !== 0;
-    }
+     function apply() {
+       var q = search.value.trim().toLowerCase();
+       var visible = 0;
+       toArray(wrap.children).forEach(function (el) {
+         var title = (el.getAttribute("data-title") || "").toLowerCase();
+         var match = !q || title.indexOf(q) !== -1;
+         el.hidden = !match;
+         if (match) visible += 1;
+       });
+       fillTemplateCount(count, visible);
+       if (empty) empty.hidden = visible !== 0;
+     }
 
-    search.addEventListener("input", debounce(apply, 60));
-  }
+     search.addEventListener("input", debounce(apply, 60));
+   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    initTheme();
-    initHome();
-    initSongIndex();
-  });
+   /* ---- autoscroll: smooth per-pixel glide on song pages -------------- */
+
+   function initAutoscroll() {
+     var wrapper = document.querySelector('[data-role="autoscroll"]');
+     if (!wrapper) return;
+
+     /* Reveal the control (progressive enhancement: no JS = no UI) */
+     wrapper.removeAttribute("hidden");
+
+     /* Speed level mapping: level 1..10 maps to ~8 px/s at level 1,
+        ~110 px/s at level 10 via exponential curve. */
+     var MIN_LEVEL = 1;
+     var MAX_LEVEL = 10;
+     var DEFAULT_LEVEL = 3;
+     var SPEED_CURVE = 1.35;
+     var BASE_SPEED = 8; /* px/s at level 1 */
+
+     var state = { level: DEFAULT_LEVEL, playing: false, acc: 0, rafId: null };
+
+     /* Read persisted level from storage, clamped to valid range */
+     try {
+       var stored = parseInt(localStorage.getItem("autoscroll-speed"), 10);
+       if (stored >= MIN_LEVEL && stored <= MAX_LEVEL) {
+         state.level = stored;
+       }
+     } catch (e) {
+       /* storage unavailable — use default */
+     }
+
+     var btnToggle = document.querySelector('[data-role="autoscroll-toggle"]');
+     var btnSlower = document.querySelector('[data-role="autoscroll-slower"]');
+     var btnFaster = document.querySelector('[data-role="autoscroll-faster"]');
+     var levelDisplay = document.querySelector('[data-role="autoscroll-level"]');
+
+     function getPxPerSec() {
+       return BASE_SPEED * Math.pow(SPEED_CURVE, state.level - 1);
+     }
+
+     function updateLevelDisplay() {
+       if (levelDisplay) {
+         levelDisplay.textContent = String(state.level);
+       }
+     }
+
+      function updatePlayButton() {
+        wrapper.classList.toggle("is-playing", state.playing);
+        if (!btnToggle) return;
+        if (state.playing) {
+          var pauseLabel = btnToggle.getAttribute("data-label-pause");
+          if (pauseLabel) btnToggle.textContent = pauseLabel;
+          btnToggle.setAttribute("aria-pressed", "true");
+        } else {
+          var playLabel = btnToggle.getAttribute("data-label-play");
+          if (playLabel) btnToggle.textContent = playLabel;
+          btnToggle.setAttribute("aria-pressed", "false");
+        }
+      }
+
+     function isAtBottom() {
+       var tolerance = 2;
+       return window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - tolerance;
+     }
+
+     var lastTime = null;
+
+     function scroll(timestamp) {
+       if (!state.playing) {
+         state.rafId = null;
+         return;
+       }
+
+       if (lastTime === null) {
+         lastTime = timestamp;
+       }
+
+       var dt = Math.min(timestamp - lastTime, 100); /* clamp to 100ms to guard against background tabs */
+       lastTime = timestamp;
+
+       var pxPerSec = getPxPerSec();
+       state.acc += pxPerSec * (dt / 1000);
+       var whole = Math.floor(state.acc);
+
+       if (whole > 0) {
+         window.scrollBy(0, whole);
+         state.acc -= whole;
+       }
+
+       /* Stop if document bottom is reached */
+       if (isAtBottom()) {
+         state.playing = false;
+         lastTime = null;
+         updatePlayButton();
+         state.rafId = null;
+         return;
+       }
+
+       state.rafId = requestAnimationFrame(scroll);
+     }
+
+     if (btnToggle) {
+       btnToggle.addEventListener("click", function () {
+         state.playing = !state.playing;
+         updatePlayButton();
+         if (state.playing) {
+           lastTime = null;
+           state.acc = 0;
+           state.rafId = requestAnimationFrame(scroll);
+         } else if (state.rafId) {
+           cancelAnimationFrame(state.rafId);
+           state.rafId = null;
+         }
+       });
+     }
+
+     if (btnSlower) {
+       btnSlower.addEventListener("click", function () {
+         if (state.level > MIN_LEVEL) {
+           state.level -= 1;
+           try {
+             localStorage.setItem("autoscroll-speed", String(state.level));
+           } catch (e) {
+             /* storage unavailable */
+           }
+           updateLevelDisplay();
+         }
+       });
+     }
+
+     if (btnFaster) {
+       btnFaster.addEventListener("click", function () {
+         if (state.level < MAX_LEVEL) {
+           state.level += 1;
+           try {
+             localStorage.setItem("autoscroll-speed", String(state.level));
+           } catch (e) {
+             /* storage unavailable */
+           }
+           updateLevelDisplay();
+         }
+       });
+     }
+
+     updateLevelDisplay();
+     updatePlayButton();
+   }
+
+   document.addEventListener("DOMContentLoaded", function () {
+     initTheme();
+     initHome();
+     initSongIndex();
+     initAutoscroll();
+   });
 })();

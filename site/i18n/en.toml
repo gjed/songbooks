@@ -250,3 +250,18 @@ other = "Next"
 
 [song_render_missing]
 other = "The chords for this song are not available online yet. The PDF has them."
+
+# Hands-free scrolling. The toggle's two states are swapped by site.js from
+# the data-label-* attributes, so both must read as a button, not a status.
+
+[autoscroll_play]
+other = "Scroll"
+
+[autoscroll_pause]
+other = "Pause"
+
+[autoscroll_slower]
+other = "Slower"
+
+[autoscroll_faster]
+other = "Faster"
