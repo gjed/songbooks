@@ -312,7 +312,7 @@ def parse_tracklist(slug: str) -> tuple[list[dict[str, str]], int, bool]:
     tracks: list[dict[str, str]] = []
     
     for cho in sorted(songbook_dir.glob("*.cho")):
-        if cho.name in PSEUDO_SONGS:
+        if cho.name in PSEUDO_SONGS or cho.name.endswith(".site.cho"):
             continue
         
         headers = parse_headers(cho)
