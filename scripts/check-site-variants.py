@@ -16,7 +16,7 @@ requires the normalized forms to be identical. It also checks, line by
 line, that every chord present in the original survives in the variant, in
 the same order.
 
-Three source idioms count as a recall, because ChordPro renders all of them
+Four source idioms count as a recall, because ChordPro renders all of them
 as a label (or nothing) in print and as nothing at all in HTML:
   1. The bare {chorus} directive, optionally with a repeat count
      ({chorus: x2} expands the block twice).
@@ -26,6 +26,10 @@ as a label (or nothing) in print and as nothing at all in HTML:
      (e.g. {comment: Ultimo rit. x 2}) — deliberately narrow so it can only
      ever match a genuine final-chorus marker, never an unrelated note like
      {comment: Stesso giro del rit.} or {comment: RIT} alone.
+  4. The exact standalone comment {comment: Ripete il ritornello} ("repeats
+     the chorus"), implicit count of 1 — matched on its literal wording
+     rather than any generic "repeat" pattern, and confirmed unique across
+     the corpus, so it can't accidentally swallow an unrelated comment.
 
 Usage: scripts/check-site-variants.py
 Exit 0: no variants, or every variant matches its original.
@@ -58,6 +62,10 @@ CHORUS_RECALL_RE = re.compile(r"^\{chorus\b([^}]*)\}$")
 FINAL_CHORUS_COMMENT_RE = re.compile(
     r"^\{comment:\s*.*\brit\b.*\bx\s*(\d+)\s*\}$", re.IGNORECASE
 )
+# Exact match only — this is a literal known phrase, not a generic pattern.
+REPEATS_CHORUS_COMMENT_RE = re.compile(
+    r"^\{comment:\s*Ripete il ritornello\s*\}$", re.IGNORECASE
+)
 REPEAT_COUNT_RE = re.compile(r"\bx\s*(\d+)\b", re.IGNORECASE)
 
 
@@ -71,7 +79,7 @@ def expand_chorus_recalls(text: str) -> str:
     marked count, wrapped in {start_of_chorus}/{end_of_chorus} markers — the
     canonical written-out form a site variant is expected to use.
 
-    Three source idioms count as a recall, because ChordPro renders all of
+    Four source idioms count as a recall, because ChordPro renders all of
     them as a label (or nothing) in print and as *nothing* in HTML:
 
       1. A bare ``{chorus}`` / ``{chorus: x2}`` directive line — repeat
@@ -81,6 +89,8 @@ def expand_chorus_recalls(text: str) -> str:
          (implicit count of 1).
       3. A standalone ``{comment: ...}`` line naming both "rit" and an
          ``xN`` count, e.g. ``{comment: Ultimo rit. x 2}``.
+      4. The exact standalone ``{comment: Ripete il ritornello}``, implicit
+         count of 1.
 
     A recall with no preceding full chorus is left untouched (malformed
     source, not this script's concern)."""
@@ -123,6 +133,9 @@ def expand_chorus_recalls(text: str) -> str:
         final = FINAL_CHORUS_COMMENT_RE.match(stripped)
         if final and last_chorus is not None:
             out.extend(last_chorus * _repeat_count(stripped))
+            continue
+        if REPEATS_CHORUS_COMMENT_RE.match(stripped) and last_chorus is not None:
+            out.extend(last_chorus)
             continue
         out.append(line)
     return "\n".join(out)
