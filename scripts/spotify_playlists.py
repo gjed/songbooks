@@ -169,6 +169,8 @@ def scan_songbooks(only: str | None = None) -> list[Songbook]:
         book = Songbook(slug=slug,
                         display_name=read_display_name(folder) or slug)
         for cho in sorted(folder.glob("*.cho")):
+            if cho.name.endswith(".site.cho"):
+                continue
             headers = parse_headers(cho)
             title = headers.get("title", "").strip()
             artist = headers.get("artist", "").strip()
