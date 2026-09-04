@@ -110,8 +110,17 @@ endef
 # $(1) = songbook slug, $(2) = original songbooks/<slug>/NN-slug.cho path.
 # Prefers songbooks/<slug>/NN-slug.site.cho as the render source when it
 # exists, re-checked on every make invocation.
+#
+# The songbook directory itself is also a prerequisite. Make only compares
+# the CURRENT prerequisite list's mtimes against the target — it has no
+# memory of which file actually produced it last time. Without this, adding
+# or removing a .site.cho leaves every affected target's mtime newer than
+# whichever source is now current, so it looks up to date and never
+# re-renders. The directory's mtime changes on any add/remove within it, so
+# it forces every song in the songbook to be re-checked when that happens;
+# each recipe still only reruns if its own resolved source actually changed.
 define HTML_SONG_RULE
-$(HTML_DIR)/$(1)/$$(basename $$(notdir $(2))).html: $$(if $$(wildcard $$(patsubst %.cho,%.site.cho,$(2))),$$(patsubst %.cho,%.site.cho,$(2)),$(2)) $(PROJECT_CFG) $$(wildcard songbooks/$(1)/layout.json)
+$(HTML_DIR)/$(1)/$$(basename $$(notdir $(2))).html: $$(if $$(wildcard $$(patsubst %.cho,%.site.cho,$(2))),$$(patsubst %.cho,%.site.cho,$(2)),$(2)) $(PROJECT_CFG) $$(wildcard songbooks/$(1)/layout.json) songbooks/$(1)
 	@mkdir -p $$(dir $$@)
 	$(CHORDPRO) $$(CFG_FLAGS_$(1)) --generate=HTML $$< -o $$@
 endef
