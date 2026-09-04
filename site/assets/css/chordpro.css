@@ -376,7 +376,11 @@
   .song-page__head { grid-area: head; }
   .song-picker { grid-area: side; }
   .song-bar { grid-area: bar; }
-  .chordpro,
+  /* .song-body, not .chordpro: the fragment is now nested inside the body
+     wrapper, and it is the wrapper that has to be the grid item — see the
+     comment above <div class="song-body"> in song.html for why the sticky
+     autoscroll bar cannot be a direct child of this grid. */
+  .song-body,
   .song-page__missing { grid-area: lyrics; }
   .song-page > .song-steps--bottom { grid-area: foot; }
 
@@ -435,67 +439,90 @@
    from song.html; site.js unhides it, so with JS off there is no control
    and this whole section never paints.
 
-   PLACEMENT: pinned to the viewport's bottom-right, not in the document
-   flow. Three reasons it is not in .song-bar or the sidebar:
-     1. The posture is a phone in landscape on a stand, hands on the
-        instrument. An in-flow control scrolls away exactly when it is
-        needed — the one button you must reach mid-song is "pause", and it
-        has to be in the same place on the last line as on the first.
-     2. Bottom-right is the thumb arc of the hand that lets go of the neck,
-        and in landscape it is the shortest reach on the panel.
-     3. It cannot collide with the >=720px sticky picker, which owns the
-        LEFT column and is pinned to the TOP of it. Opposite corner, no
-        overlap at any width. `position: fixed` also means it claims no
-        grid area and cannot reflow a songline.
+   PLACEMENT: in the document flow, immediately after the accent rule that
+   .song-bar draws under the header and immediately before the first lyric,
+   then `position: sticky` so it stays parked at the top of the viewport for
+   the whole song. In flow rather than floated over a corner: the control
+   belongs to the song, so it reads as the last piece of the header rather
+   than as an app widget hovering over someone's sheet music, and it can
+   never sit on top of a chord — the lyrics start below it and scroll under
+   it. Sticky rather than static because the one button you must reach
+   mid-song is pause, and it has to be in the same place on the last line
+   as on the first.
 
-   It sits over the page's right margin at desktop widths and over the
-   right edge of the reading column on a phone, where the far right of a
-   lyric line is the emptiest part of the page (lines are ragged-right).
-   At rest it is held back to ~70% opacity so it reads as chrome, not
-   content, and comes fully forward on hover/focus/while playing. */
+   Two consequences worth stating, because both are easy to break:
+     - It must be OPAQUE. A sticky bar has live lyrics travelling underneath
+       it; the old floated version could afford 0.72 rest opacity, this one
+       cannot. Rest restraint is carried by weight and colour instead.
+     - Its containing block must be the whole song, not its own row. See
+       .song-body below and the note in song.html.
+
+   No collision with the >=720px picker: that is sticky in the LEFT column
+   and this is in the right one, so they share no pixels at any width.
+   Mobile is the case that actually needs a z-index — the picker's dropdown
+   panel floats over the reading column at z-index 5, so this bar sits at 4
+   and correctly goes under an open picker while still covering the lyrics.
+
+   The bar can be tall enough to matter on a landscape phone, so it is kept
+   to one row and trimmed a notch at short viewport heights. */
+
+/* LOAD-BEARING, and invisible if you only read this file: main.css gives
+   .sheet `overflow: hidden`, and an ancestor with hidden overflow is a
+   scroll container. A sticky descendant sticks to its NEAREST scroll
+   container, so the bar below would have anchored itself to .sheet — a box
+   that never scrolls — and would have sat there inert while the document
+   moved. `overflow: clip` clips identically but does NOT create a scroll
+   container, so the bar anchors to the viewport as intended.
+
+   Scoped here on purpose: chordpro.css is loaded on song pages only, so no
+   other page's .sheet changes behaviour. Browsers without `clip` (pre-2022)
+   drop the declaration, keep `hidden`, and get a bar that scrolls away
+   normally — degraded, not broken. */
+.sheet { overflow: clip; }
+
+/* Nothing but a grid/containing-block host: no padding, no background, no
+   box of its own. It exists so the sticky bar has the song's full height to
+   travel through — see song.html. */
+.song-body { min-width: 0; }
 
 /* The author display below would beat the UA's `[hidden] { display: none }`,
    which is the whole no-JS contract — restate it at higher specificity. */
 .autoscroll[hidden] { display: none; }
 
 .autoscroll {
-  position: fixed;
-  z-index: 20;
-  right: max(14px, env(safe-area-inset-right));
-  bottom: max(14px, env(safe-area-inset-bottom));
+  position: sticky;
+  top: 0;
+  /* Above the lyrics it covers, below the picker's floating panel (z-index
+     5), which must stay clickable over it on mobile. */
+  z-index: 4;
 
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 5px;
+  align-items: center;
+  gap: 10px;
+  /* Buttons to the right: that is the thumb that leaves the neck, and in
+     landscape it is the shortest reach across the panel. */
+  justify-content: flex-end;
 
-  /* Only the buttons should swallow taps — the cluster's own box (and the
-     level readout's line) must let a tap through to the lyrics beneath. */
-  pointer-events: none;
+  margin-bottom: 18px;
+  padding: 7px 0 8px;
 
-  opacity: 0.72;
+  /* Opaque, and matching the page rather than the card, so the bar reads as
+     the sheet itself holding still while the song slides under it. The rule
+     underneath is the join: without it the lyrics appear to end abruptly at
+     an invisible edge. */
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
 }
 
-.autoscroll:hover,
-.autoscroll:focus-within,
-.autoscroll.is-playing { opacity: 1; }
-
-/* Opacity only, and only on the control — the reading surface underneath
-   never moves. Skipped entirely for reduced-motion readers. */
-@media (prefers-reduced-motion: no-preference) {
-  .autoscroll { transition: opacity 120ms linear; }
-}
-
-/* The speed readout. JS fills the textContent with the level number; while
-   it is empty (no JS having run yet, or a design that never sets it) the
-   element must not paint a stray box. */
+/* The speed readout, kept on the far side of the row from the buttons so a
+   thumb never covers the number it just changed. JS fills the textContent
+   with the level; while it is empty (no JS yet, or a level never set) the
+   element must not paint a stray box or claim the row's width. */
 .autoscroll__level {
-  margin: 0;
-  padding: 2px 6px;
-  background: var(--card);
-  border: 1px solid var(--rule);
+  order: -1;
+  margin: 0 auto 0 0;
   font-size: 10px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   font-variant-numeric: tabular-nums;
   color: var(--ink2);
 }
@@ -522,10 +549,11 @@
   align-items: stretch;
   background: var(--card);
   border: 1.5px solid var(--ink);
-  /* The site's one shadow idiom: hard offset, zero blur, in --teal. Same
-     as .song-picker__panel's, one notch smaller. */
+  /* The site's one shadow idiom: hard offset, zero blur, in --teal. Same as
+     .song-picker__panel's, one notch smaller. Kept even though the bar is
+     now in flow: it is what stops the button block from reading as part of
+     the lyrics it sits directly above. */
   box-shadow: 3px 3px 0 var(--teal);
-  pointer-events: auto;
 }
 
 .autoscroll__btn {
@@ -590,16 +618,30 @@
   outline-offset: -4px;
 }
 
+/* Narrow screens: the sections below bleed out to the full sheet width
+   (see §the ChordPro fragment's 480px block — margin-inline: -18px), so a
+   bar left at the page's padding width would let lyrics slide past it on
+   both sides as they scroll underneath. Bleed the bar by the same amount
+   and pad it back, so it covers everything that can pass beneath it.
+   Keep the two in step. */
+@media (max-width: 480px) {
+  .autoscroll {
+    margin-inline: -18px;
+    padding-inline: 18px;
+  }
+}
+
 /* Landscape phone — the actual music-stand posture. Vertical space is the
    scarce axis there (a 390x844 phone turned sideways is ~390px tall minus
-   browser chrome), so the cluster loses a notch of height and the readout
-   moves onto the same row as the buttons rather than stacking above them. */
+   browser chrome) and this bar spends it off the top of the song, so it
+   gives back every pixel it can: shorter targets and tighter padding. 40px
+   is under the 44px guideline and taken knowingly — at this height the
+   alternative is a control that eats a tenth of the visible lyrics, and the
+   row is full-width so the targets stay wide even as they lose height. */
 @media (max-height: 520px) and (orientation: landscape) {
   .autoscroll {
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
-    bottom: max(10px, env(safe-area-inset-bottom));
+    margin-bottom: 12px;
+    padding: 5px 0 6px;
   }
 
   .autoscroll__btn { min-height: 40px; }
@@ -607,13 +649,6 @@
 
 /* Nothing to autoscroll on paper. */
 @media print { .autoscroll { display: none !important; } }
-
-/* The cluster is fixed over the bottom-right corner — the same corner the
-   bottom "Next" step scrolls into. Reserve clearance below the page's last
-   content so that, fully scrolled, the steps sit above the cluster instead
-   of underneath it. Scoped on the revealed control so a no-JS page (cluster
-   still [hidden]) pays no dead space. */
-.song-page:has(.autoscroll:not([hidden])) { padding-bottom: 110px; }
 
 /* ── the ChordPro fragment ─────────────────────────────────────────────── */
 

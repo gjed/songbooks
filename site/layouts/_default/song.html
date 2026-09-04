@@ -72,36 +72,51 @@
     {{ partial "song-steps.html" (dict "prev" $prev "next" $next "place" "top") }}
   </nav>
 
+  {{- /* .song-body wraps the control and the fragment as ONE grid item, and
+         that is load-bearing rather than tidiness. The autoscroll bar is
+         position: sticky, and a sticky box is constrained to its containing
+         block; for a direct child of .song-page at >=720px that containing
+         block is its own grid area, which is exactly its own height — the
+         bar would have zero travel and never stick. Wrapped, its containing
+         block becomes .song-body, which is as tall as the whole song, so it
+         can ride the full scroll. Same shape as the picker, whose sticky
+         panel is a CHILD of the grid item rather than the item itself.
+         The wrapper adds no box of its own: no padding, no background, and
+         it is what now carries grid-area: lyrics. */ -}}
   {{- with resources.Get (printf "songs/%s--%s.html" .Params.songbook .Params.songSlug) }}
-  <div class="chordpro">{{ .Content | safeHTML }}</div>
-
-  {{- /* Hands-free scrolling for playing off the screen. Rendered only when
-         there are actually lyrics on the page, and shipped `hidden` — site.js
-         removes the attribute, so with JS off there is no dead control and
-         the page is untouched. Everything here is chrome: it is
-         position: fixed in chordpro.css, so it takes no grid slot and does
-         not reflow a single songline. */ -}}
-  <div class="autoscroll" data-role="autoscroll" hidden>
-    <p class="autoscroll__level" data-role="autoscroll-level" aria-hidden="true"></p>
-    {{- /* The visible readout above is a bare number and stays out of the
-           accessibility tree; speed changes are announced here instead, as a
-           localized sentence. site.js fills it from the template attribute. */ -}}
-    <p class="autoscroll__sr" data-role="autoscroll-status" aria-live="polite"
-      data-status-template="{{ i18n "autoscroll_speed_status" }}"></p>
-    <div class="autoscroll__row">
-      <button type="button" class="autoscroll__btn autoscroll__btn--step"
-        data-role="autoscroll-slower" aria-label="{{ i18n "autoscroll_slower" }}">
-        <span aria-hidden="true">−</span>
-      </button>
-      <button type="button" class="autoscroll__btn autoscroll__btn--toggle"
-        data-role="autoscroll-toggle"
-        data-label-play="{{ i18n "autoscroll_play" }}"
-        data-label-pause="{{ i18n "autoscroll_pause" }}">{{ i18n "autoscroll_play" }}</button>
-      <button type="button" class="autoscroll__btn autoscroll__btn--step"
-        data-role="autoscroll-faster" aria-label="{{ i18n "autoscroll_faster" }}">
-        <span aria-hidden="true">+</span>
-      </button>
+  <div class="song-body">
+    {{- /* Hands-free scrolling for playing off the screen. Sits directly
+           under the .song-bar rule that closes the header, ahead of the
+           first lyric, and sticks there as the song scrolls past. Rendered
+           only when there are actually lyrics on the page, and shipped
+           `hidden` — site.js removes the attribute, so with JS off there is
+           no dead control and no reserved space. It never touches the
+           fragment markup. */ -}}
+    <div class="autoscroll" data-role="autoscroll" hidden>
+      {{- /* The visible readout is a bare number and stays out of the
+             accessibility tree; speed changes are announced in the live
+             region below instead, as a localized sentence. site.js fills it
+             from the template attribute. */ -}}
+      <p class="autoscroll__sr" data-role="autoscroll-status" aria-live="polite"
+        data-status-template="{{ i18n "autoscroll_speed_status" }}"></p>
+      <div class="autoscroll__row">
+        <button type="button" class="autoscroll__btn autoscroll__btn--step"
+          data-role="autoscroll-slower" aria-label="{{ i18n "autoscroll_slower" }}">
+          <span aria-hidden="true">−</span>
+        </button>
+        <button type="button" class="autoscroll__btn autoscroll__btn--toggle"
+          data-role="autoscroll-toggle"
+          data-label-play="{{ i18n "autoscroll_play" }}"
+          data-label-pause="{{ i18n "autoscroll_pause" }}">{{ i18n "autoscroll_play" }}</button>
+        <button type="button" class="autoscroll__btn autoscroll__btn--step"
+          data-role="autoscroll-faster" aria-label="{{ i18n "autoscroll_faster" }}">
+          <span aria-hidden="true">+</span>
+        </button>
+      </div>
+      <p class="autoscroll__level" data-role="autoscroll-level" aria-hidden="true"></p>
     </div>
+
+    <div class="chordpro">{{ .Content | safeHTML }}</div>
   </div>
   {{- else }}
   <p class="note song-page__missing">{{ i18n "song_render_missing" }}</p>
