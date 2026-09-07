@@ -180,19 +180,23 @@ spotify-sync:
 spotify-sync-apply:
 	$(SPOTIFY) sync --apply $(if $(SB),--songbook $(SB))
 
-# Chord diagram generation
+# Chord diagram data for the site. Unlike the rest of site/assets, the
+# generated tables are committed: they are ChordPro's own chord library, they
+# change only when ChordPro or chordpro-ukulele.json does, and committing them
+# keeps the site build free of any ChordPro dependency. Run this by hand after
+# touching chordpro-ukulele.json, and commit the result.
 chords:
 	$(CHORDS)
 
 # Hugo site generation
 .PHONY: site site-serve
 
-site: all html chords
+site: all html
 	$(CHECK_SITE_VARIANTS)
 	$(SITE_DATA)
 	$(HUGO) --source site --minify
 
-site-serve: all html chords
+site-serve: all html
 	$(CHECK_SITE_VARIANTS)
 	$(SITE_DATA)
 	$(HUGO) server --source site --port $(HUGO_PORT)

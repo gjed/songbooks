@@ -25,7 +25,6 @@ site/content/songs.*.md
 site/static/pdf/
 site/static/thumbs/
 site/assets/songs/
-site/assets/chords/
 site/public/
 site/resources/
 .hugo_build.lock
