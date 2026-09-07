@@ -1,0 +1,33 @@
+# Songbook metadata + print layout. Human-authored.
+# spotify.yaml is machine-written (spotify_playlists.py) and stays separate.
+slug: rares
+title: Rareș
+artist: Rareș
+language: it
+notation: common
+
+blurb: Rareș, cantautore di Marghera — Curriculum Vitae, Folk_2021, Sincero!
+
+description:
+  it: >-
+    Canzoni di Rareș, cantautore di Marghera (VE), tratte dagli album
+    *Curriculum Vitae*, *Folk_2021* e *Sincero!*, più il duetto *Agosto*
+    con faccianuvola. Ukulele, accordi in notazione inglese.
+  en: >-
+    Songs by Rareș, a singer-songwriter from Marghera (VE, Italy), drawn from
+    the albums *Curriculum Vitae*, *Folk_2021*, and *Sincero!*, plus the
+    duet *Agosto* with faccianuvola. Ukulele, English chord notation.
+
+# Print layout — presence of `cover:` is what enables cover pages.
+cover:
+  title: null
+  logo: cover-rares.png
+  logo_width: 420
+  logo_offset: 10
+  strip_top: null
+  strip_bottom: null
+
+back:
+  image: back-rares.png
+  image_width: 260
+  caption: "Curriculum Vitae  ·  Folk_2021  ·  Sincero!"
