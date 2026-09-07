@@ -12,7 +12,10 @@ Usage:
 from __future__ import annotations
 
 import json
+import os
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -21,9 +24,10 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SONGBOOKS_DIR = REPO_ROOT / "songbooks"
 SITE_ASSETS_DIR = REPO_ROOT / "site" / "assets" / "chords"
 
-# ChordPro builtin config paths
-BUILTIN_UKULELE = Path("/usr/share/perl5/ChordPro/res/config/ukulele.json")
-BUILTIN_GUITAR = Path("/usr/share/perl5/ChordPro/res/config/guitar.json")
+# Last-resort guess: where a distro package (Debian/Ubuntu `chordpro`) puts the
+# resource tree. CI installs ChordPro by extracting the AppImage instead, so
+# this path does not exist there — see find_chordpro_res_dir().
+DISTRO_RES_DIR = Path("/usr/share/perl5/ChordPro/res")
 
 # Project override for ukulele (no guitar override yet)
 PROJECT_UKULELE_OVERRIDE = REPO_ROOT / "chordpro-ukulele.json"
@@ -107,6 +111,59 @@ def load_json_config(path: Path) -> dict[str, Any]:
     text = path.read_text(encoding="utf-8")
     text = sanitize_json(text)
     return json.loads(text)
+
+
+def find_chordpro_res_dir() -> Path:
+    """Locate ChordPro's resource tree, which holds the builtin chord configs.
+
+    There is no single answer: a distro package puts it under /usr/share, while
+    CI extracts the AppImage into an arbitrary directory and only installs a
+    wrapper on PATH. So ask ChordPro itself — `--about` prints the resolved
+    "Resource path" — and fall back to the distro layout only as a last guess.
+
+    CHORDPRO_RES_DIR overrides everything, for unusual installs.
+    """
+    override = os.environ.get("CHORDPRO_RES_DIR")
+    if override:
+        path = Path(override)
+        if (path / "config" / "ukulele.json").is_file():
+            return path
+        raise FileNotFoundError(
+            f"CHORDPRO_RES_DIR={override} has no config/ukulele.json in it"
+        )
+
+    chordpro = shutil.which("chordpro")
+    if chordpro:
+        try:
+            about = subprocess.run(
+                [chordpro, "--about"],
+                capture_output=True,
+                text=True,
+                timeout=120,
+                check=False,
+            ).stdout
+        except (OSError, subprocess.SubprocessError) as exc:
+            print(f"warning: could not run 'chordpro --about': {exc}", file=sys.stderr)
+        else:
+            match = re.search(r"^\s*Resource path\s+(\S.*?)\s*$", about, re.M)
+            if match:
+                path = Path(match.group(1))
+                if (path / "config" / "ukulele.json").is_file():
+                    return path
+                print(
+                    f"warning: chordpro reports resource path {path}, but it has "
+                    "no config/ukulele.json",
+                    file=sys.stderr,
+                )
+
+    if (DISTRO_RES_DIR / "config" / "ukulele.json").is_file():
+        return DISTRO_RES_DIR
+
+    raise FileNotFoundError(
+        "Could not locate ChordPro's resource directory. Ensure 'chordpro' is on "
+        "PATH (its --about output is used to find it), or set CHORDPRO_RES_DIR to "
+        "the directory containing config/ukulele.json."
+    )
 
 
 def extract_chord_tokens_from_corpus() -> set[str]:
@@ -369,9 +426,10 @@ def main() -> int:
     """Main entry point."""
     try:
         # Load builtin configs
-        print("Loading ChordPro builtin configs...", file=sys.stderr)
-        builtin_uke = load_json_config(BUILTIN_UKULELE)
-        builtin_guitar = load_json_config(BUILTIN_GUITAR)
+        res_dir = find_chordpro_res_dir()
+        print(f"Loading ChordPro builtin configs from {res_dir}...", file=sys.stderr)
+        builtin_uke = load_json_config(res_dir / "config" / "ukulele.json")
+        builtin_guitar = load_json_config(res_dir / "config" / "guitar.json")
         
         # Load project overrides (if they exist)
         project_uke_override = None
