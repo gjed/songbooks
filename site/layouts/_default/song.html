@@ -168,8 +168,14 @@
       {{- /* Horizontally scrollable, using the same scrolling-shadow recipe
              the lyric sections use — see chordpro.css. min-height is set in
              CSS so filling this list after the fetch resolves does not move
-             the lyrics a second time. */ -}}
-      <ul class="chordbox__strip" data-role="chord-strip" aria-labelledby="chordbox-label"></ul>
+             the lyrics a second time.
+
+             tabindex="0" makes the scroll container itself the single tab stop
+             for the row, so a keyboard can scroll to diagrams past the right
+             edge. The tiles stay unfocusable on purpose — one stop for the
+             whole row, not one per chord. main.css already draws the ring via
+             :where(..., [tabindex]):focus-visible. */ -}}
+      <ul class="chordbox__strip" data-role="chord-strip" tabindex="0" aria-labelledby="chordbox-label"></ul>
     </div>
 
     <div class="chordpro">{{ .Content | safeHTML }}</div>
