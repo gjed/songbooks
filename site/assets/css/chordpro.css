@@ -650,6 +650,410 @@
 /* Nothing to autoscroll on paper. */
 @media print { .autoscroll { display: none !important; } }
 
+/* ── chord diagrams ──────────────────────────────────────────────────────
+   Three parts of one feature, kept together: the strip of fretboxes above
+   the lyrics (.chordbox), the diagrams themselves (.fretbox, an inline SVG
+   site.js draws), and the popover that opens on a chord inside the lyrics
+   (.chordpop).
+
+   All of it ships `hidden` from song.html and is unhidden by site.js — with
+   JS off none of this paints and nothing reserves space, same contract as
+   the autoscroll bar above.
+
+   PLACEMENT: the strip sits between the autoscroll bar and the first lyric,
+   inside .song-body, so at >=900px it lands in the reading column with the
+   song rather than auto-placing into the 250px sidebar. It is NOT sticky:
+   it is reference material you read once before starting, unlike pause,
+   which you need mid-song. Making it sticky would also spend a third of a
+   landscape phone's height on diagrams you have already memorised by the
+   second verse — the whole reason the lyric chords are tappable instead.
+
+   No new :root tokens: the fretbox paints in currentColor (--cp-chord, i.e.
+   the same accent ink as the chord glyphs in the lyrics), its grid in
+   --rule and its nut in --ink, so both themes and every per-songbook accent
+   carry over with no re-render on theme change. */
+
+/* Same reason as .autoscroll[hidden] above: the display rules below would
+   otherwise beat the UA's `[hidden] { display: none }` and break the
+   no-JS contract. */
+.chordbox[hidden] { display: none; }
+.chordpop[hidden] { display: none; }
+
+.chordbox {
+  /* Locals mirroring the fragment's, because .chordbox is a sibling of
+     .chordpro and inherits none of its. Kept in step with .chordpro. */
+  --cp-chord: var(--accent-text);
+  --cp-surface: var(--paper);
+  --cp-shade: rgba(27, 35, 56, 0.22);
+
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px dotted var(--rule);
+  color: var(--cp-chord);
+}
+
+.chordbox__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+/* Same small-caps chrome as .chordpro .comment (the RIT label) — this is a
+   label on the song, so it should read as one of the song's own markers
+   rather than as app furniture. Muted ink, though: the accent belongs to
+   the chords, not to the word above them. */
+.chordbox__label {
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+/* The instrument switch. Two buttons hairlined together into one object,
+   the same "single instrument, not loose chips" idiom as .autoscroll__row —
+   one notch smaller and shadowless, because this is a preference you set
+   once and the autoscroll cluster must stay the loudest control on screen. */
+.chordbox__switch {
+  display: flex;
+  flex: none;
+  border: 1px solid var(--rule);
+  background: var(--card);
+}
+
+.chordbox__inst {
+  min-height: 30px;
+  padding: 0 9px;
+  background: transparent;
+  border: 0;
+  color: var(--ink2);
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.chordbox__inst + .chordbox__inst { border-left: 1px solid var(--rule); }
+
+.chordbox__inst:hover { color: var(--ink); background: var(--paper); }
+
+/* The chosen instrument is filled, not merely tinted: "which neck am I
+   looking at" has to be answerable from across a room, and the diagrams
+   themselves give no clue at a glance beyond their string count. */
+.chordbox__inst[aria-pressed="true"] {
+  background: var(--accent-text);
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
+.chordbox__inst[aria-pressed="true"]:hover {
+  background: var(--accent-text);
+  color: var(--accent-ink);
+  filter: brightness(var(--hover-lift));
+}
+
+/* Inset, like .autoscroll__btn's: the outside-drawn global ring would be
+   clipped by the group's own border on the end buttons. */
+.chordbox__inst:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+
+/* The strip. Horizontally scrollable with the same recipe the lyric
+   sections use — including `contain: inline-size`, which is just as
+   load-bearing here as it is there: the tile list is a max-content flex
+   row, and without it that intrinsic width propagates up through
+   .song-body and .song-page to the shrink-to-fit .sheet and scrolls the
+   DOCUMENT sideways instead of the strip. Read the long note on
+   `.chordpro .verse` before touching either. */
+.chordbox__strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 0 0 6px;
+  list-style: none;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  contain: inline-size;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+
+  /* Scrolling shadows, horizontal variant: surface-coloured covers pinned
+     to the content box travel with the tiles and uncover a shadow pinned to
+     the container. An overflow hint that shows up only when a song has more
+     chords than fit, with no JS and no arrows. */
+  background-image:
+    linear-gradient(to right, var(--cp-surface) 40%, transparent),
+    linear-gradient(to left, var(--cp-surface) 40%, transparent),
+    radial-gradient(farthest-side at 0 50%, var(--cp-shade), transparent),
+    radial-gradient(farthest-side at 100% 50%, var(--cp-shade), transparent);
+  background-position: 0 0, 100% 0, 0 0, 100% 0;
+  background-size: 22px 100%, 22px 100%, 9px 100%, 9px 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}
+
+.chordbox__strip::-webkit-scrollbar { height: 4px; }
+.chordbox__strip::-webkit-scrollbar-track { background: transparent; }
+.chordbox__strip::-webkit-scrollbar-thumb { background: var(--rule); }
+
+.chordbox__tile {
+  /* Containing block for the visually-hidden spoken label below: left
+     unpositioned it would resolve against the page instead, and a stray
+     1px box parked at some arbitrary offset inside a scroll container can
+     extend that container's scrollable area. */
+  position: relative;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 7px 6px 5px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+}
+
+/* Fixed height, stated before the JSON lands. The tiles are built and the
+   strip revealed in the same tick as everything else site.js unhides, then
+   the diagrams paint INSIDE these boxes when the fetch resolves — so the
+   fetch never moves the lyrics a second time. Min-width holds a ukulele
+   fretbox's footprint; a 6-string guitar box is wider and grows the tile,
+   which is honest — you switched necks. */
+.chordbox__figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  min-width: 40px;
+}
+
+.chordbox__figure .fretbox { height: 100%; width: auto; }
+
+/* The name under the diagram, as WRITTEN in the song — Italian solfège
+   stays Italian solfège (LA-, MI7); only the diagram lookup goes through
+   the alias table. No text-transform, for the same reason: `Am` and `AM`
+   are not the same chord. */
+.chordbox__name {
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--cp-chord);
+}
+
+/* A chord with no entry in the table. The tile stays — the strip is a
+   checklist of what the song asks for, and a silent gap would read as
+   "you already know that one" — but goes quiet: muted ink, dashed edge,
+   nothing where the grid would be. */
+.chordbox__tile.is-blank {
+  border-style: dashed;
+  background: transparent;
+}
+
+/* The diagram, spelled out. The SVG is aria-hidden — a drawing is not a
+   label — so this is what a screen reader actually reads off each tile:
+   "How to play C: G open, C open, E open, A 3rd fret". Visually hidden with
+   the clip pattern, not display:none, which would silence it. Same
+   technique as .autoscroll__sr above. */
+.chordbox__spoken {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.chordbox__tile.is-blank .chordbox__name { color: var(--ink2); font-weight: 400; }
+.chordbox__tile.is-blank .chordbox__figure { min-width: 34px; }
+
+/* Narrow screens: bleed to the sheet edge like the lyric sections below,
+   so the strip scrolls edge-to-edge instead of stopping short of a chord
+   it could have shown. Keep the 18px in step with .song-page's padding. */
+@media (max-width: 480px) {
+  .chordbox {
+    margin-inline: -18px;
+    padding-inline: 18px;
+  }
+
+  /* The strip's own scroll box keeps the bleed but not the padding, so the
+     first and last tile can sit right at the sheet edge. */
+  .chordbox__strip {
+    margin-inline: -18px;
+    padding-inline: 18px;
+  }
+}
+
+/* Landscape phone — the music-stand posture, where vertical space is the
+   scarce axis. Same trade the autoscroll bar makes: shrink rather than
+   disappear, since the diagrams are the one thing on the page you cannot
+   look up any other way while playing. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .chordbox { margin-bottom: 12px; padding-bottom: 10px; }
+  .chordbox__figure { height: 42px; }
+}
+
+/* ── tappable chords in the lyrics ───────────────────────────────────────
+   The class is added by site.js to the EXISTING .ch spans — no wrapper, no
+   restructuring, because the .cl/.clx alignment machinery cannot survive
+   either (see the header note). It only ever lands on spans that hold a
+   real chord, so empty ones and N.C. stay inert.
+
+   A dotted underline in a faded accent, and nothing else at rest. It has
+   to be findable without being told, but these lyrics are read while
+   playing: a page of buttons, boxes or pointer cursors would turn the song
+   into a UI. The full-strength colour is held back for hover/open, where
+   the reader has already committed.
+
+   These spans are NOT promoted to buttons and take no focus — see the long
+   note in site.js. A pointer shortcut to the row above, not a second
+   keyboard path through a few hundred controls. */
+
+.chordpro .ch.is-tappable {
+  cursor: pointer;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in oklab, var(--cp-chord) 45%, transparent);
+  /* Clear of the lyric glyphs underneath — .ch runs at line-height 1.15,
+     so there is very little room below the baseline to spend. */
+  text-underline-offset: 1px;
+  /* Chords are 12px in a 44px-minimum world. The tap target cannot grow
+     without moving the chord off its syllable, so it buys what it can from
+     the empty band between the chord row and the lyric instead. */
+  touch-action: manipulation;
+}
+
+.chordpro .ch.is-tappable:hover,
+.chordpro .ch.is-tappable.is-open {
+  text-decoration-color: var(--cp-chord);
+  text-decoration-style: solid;
+}
+
+/* ── the chord popover ───────────────────────────────────────────────────
+   Moved to <body> by site.js and positioned in PAGE coordinates. That is
+   not tidiness: the lyric sections are `overflow-x: auto` + `contain:
+   inline-size` scroll containers, so a popover left inside one would be
+   clipped at the section edge and would slide away with the line whenever
+   the reader scrolled it sideways. Anchored to the document instead, it
+   rides vertical scrolling — autoscroll included — with no repositioning
+   work at all, and site.js closes it if the section underneath scrolls
+   horizontally out from under its chord.
+
+   Styled as the site's raised sheet: --card fill, 1.5px --ink edge, hard
+   offset shadow in --teal. Same object as .song-picker__panel, which is
+   also a thing that floats over the lyrics and must not read as part of
+   them. */
+
+.chordpop {
+  --cp-chord: var(--accent-text);
+
+  position: absolute;
+  /* Over the autoscroll bar (4) and the picker's dropdown panel (5): it is
+     the most transient thing on the page and always the answer to the very
+     last tap. */
+  z-index: 6;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px 10px;
+  max-width: min(240px, calc(100vw - 24px));
+
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--teal);
+  color: var(--cp-chord);
+}
+
+/* Bigger than the strip's tiles by half again: this one is being read right
+   now, at arm's length, probably in bad light, by someone whose other hand
+   is on a fretboard. */
+.chordpop__figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 84px;
+}
+
+.chordpop__figure .fretbox { height: 100%; width: auto; }
+
+/* The unavailable case: a plain sentence in place of the grid, no icon and
+   no empty frame. It is one of the two answers this popover can give. */
+.chordpop__figure.is-blank {
+  height: auto;
+  max-width: 20ch;
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--ink2);
+}
+
+/* Above the diagram, not below it: the reader tapped a name and is checking
+   they got the right one, so the name answers first. */
+.chordpop__name {
+  order: -1;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* An explicit close, because Escape is not a gesture on a phone and
+   "tap outside" is a thing you have to already know. Kept as a corner
+   glyph at the 30px it can afford without crowding a 240px card. */
+.chordpop__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--ink2);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chordpop__close:hover { color: var(--ink); }
+.chordpop__close:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+
+/* Themes: everything above derives from main.css's tokens, except the
+   scroll shadow — a translucent navy vanishes on a dark surface. Same
+   override the fragment makes for itself further down. */
+:root[data-theme="night"] .chordbox { --cp-shade: rgba(0, 0, 0, 0.55); }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="day"]):not([data-theme="night"]) .chordbox {
+    --cp-shade: rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* Nothing here exists on paper: the strip is a screen affordance, the
+   popover cannot be opened, and the printed songbook has its own chord
+   chart page. */
+@media print {
+  .chordbox,
+  .chordpop { display: none !important; }
+
+  .chordpro .ch.is-tappable { text-decoration: none; }
+}
+
 /* ── the ChordPro fragment ─────────────────────────────────────────────── */
 
 .chordpro {
