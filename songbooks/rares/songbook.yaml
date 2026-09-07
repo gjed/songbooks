@@ -26,8 +26,17 @@ cover:
   logo_offset: 10
   strip_top: null
   strip_bottom: null
+  rules:
+    - { color: "#F6C13A", y: 790, height: 9 }
+    - { color: "#7FBC41", y: 777, height: 9 }
+    - { color: "#DB3129", y: 764, height: 9 }
+    - { color: "#DB3129", y: 56, height: 9 }
+    - { color: "#7FBC41", y: 43, height: 9 }
+    - { color: "#F6C13A", y: 30, height: 9 }
 
 back:
   image: back-rares.png
   image_width: 260
   caption: "Curriculum Vitae  ·  Folk_2021  ·  Sincero!"
+  rules:
+    - { color: "#DB3129", y: 30, height: 9 }
