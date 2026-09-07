@@ -15,8 +15,9 @@ COVER_SCRIPTS := scripts/make-cover.py scripts/songbook_meta.py
 SPOTIFY      := $(PYTHON) scripts/spotify_playlists.py
 SITE_DATA    := $(PYTHON) scripts/site-data.py
 CHECK_SITE_VARIANTS := $(PYTHON) scripts/check-site-variants.py
+CHORDS       := $(PYTHON) scripts/chord-diagrams.py
 
-.PHONY: all clean html $(SONGBOOKS)
+.PHONY: all clean html chords $(SONGBOOKS)
 
 all: $(SONGBOOKS)
 
@@ -179,15 +180,19 @@ spotify-sync:
 spotify-sync-apply:
 	$(SPOTIFY) sync --apply $(if $(SB),--songbook $(SB))
 
+# Chord diagram generation
+chords:
+	$(CHORDS)
+
 # Hugo site generation
 .PHONY: site site-serve
 
-site: all html
+site: all html chords
 	$(CHECK_SITE_VARIANTS)
 	$(SITE_DATA)
 	$(HUGO) --source site --minify
 
-site-serve: all html
+site-serve: all html chords
 	$(CHECK_SITE_VARIANTS)
 	$(SITE_DATA)
 	$(HUGO) server --source site --port $(HUGO_PORT)
