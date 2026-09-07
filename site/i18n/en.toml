@@ -269,3 +269,47 @@ other = "Faster"
 # Announced by the aria-live region on speed changes; %s is the level 1–10.
 [autoscroll_speed_status]
 other = "Scroll speed %s of 10"
+
+# Chord diagrams. The row above the lyrics, its ukulele/guitar switch, and
+# the popover that opens when a chord inside the lyrics is tapped. Drawn by
+# site.js from site/assets/chords/*.json, so none of this shows with JS off.
+
+[chords_row_label]
+other = "Chords in this song"
+
+[chord_instrument_label]
+other = "Instrument for the chord diagrams"
+
+[instrument_ukulele]
+other = "Ukulele"
+
+[instrument_guitar]
+other = "Guitar"
+
+# Accessible name for each diagram, and for a chord you can tap in the
+# lyrics; %s is the chord as written in the song.
+[chord_diagram_for]
+other = "How to play %s"
+
+[chord_popover_label]
+other = "Chord diagram"
+
+[chord_popover_close]
+other = "Close"
+
+[chord_diagram_unavailable]
+other = "No diagram for this chord yet."
+
+# A diagram is a drawing, so each one is also spelled out for anyone
+# reading the page rather than looking at it: "How to play C: G open,
+# C open, E open, A fret 3". These name what sits on each string — the ○
+# and × markers above the nut, or a fret number (%s).
+
+[chord_string_open]
+other = "open"
+
+[chord_string_muted]
+other = "not played"
+
+[chord_string_fret]
+other = "fret %s"

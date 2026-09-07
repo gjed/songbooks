@@ -270,3 +270,48 @@ other = "Più veloce"
 # Annunciato dalla regione aria-live al cambio di velocità; %s è il livello 1–10.
 [autoscroll_speed_status]
 other = "Velocità di scorrimento %s su 10"
+
+# Diagrammi degli accordi. La striscia sopra il testo, il suo interruttore
+# ukulele/chitarra e il riquadro che si apre toccando un accordo nel testo.
+# Li disegna site.js leggendo site/assets/chords/*.json: senza JS non
+# compare nulla.
+
+[chords_row_label]
+other = "Accordi di questa canzone"
+
+[chord_instrument_label]
+other = "Strumento per i diagrammi"
+
+[instrument_ukulele]
+other = "Ukulele"
+
+[instrument_guitar]
+other = "Chitarra"
+
+# Nome accessibile di ogni diagramma e di ogni accordo toccabile nel testo;
+# %s è l'accordo come è scritto nella canzone.
+[chord_diagram_for]
+other = "Come si suona %s"
+
+[chord_popover_label]
+other = "Diagramma dell'accordo"
+
+[chord_popover_close]
+other = "Chiudi"
+
+[chord_diagram_unavailable]
+other = "Per questo accordo non c'è ancora il diagramma."
+
+# Un diagramma è un disegno, quindi ognuno viene anche scritto a parole per
+# chi legge la pagina invece di guardarla: "Come si suona DO: G a vuoto,
+# C a vuoto, E a vuoto, A tasto 3". Dicono cosa c'è su ogni corda: i
+# simboli ○ e × sopra il capotasto, o il numero del tasto (%s).
+
+[chord_string_open]
+other = "a vuoto"
+
+[chord_string_muted]
+other = "non suonata"
+
+[chord_string_fret]
+other = "tasto %s"

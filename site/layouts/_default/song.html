@@ -116,7 +116,86 @@
       <p class="autoscroll__level" data-role="autoscroll-level" aria-hidden="true"></p>
     </div>
 
+    {{- /* The chord row: one fretbox per distinct chord in the song, in
+           order of first appearance, with an instrument switch. Same
+           progressive-enhancement contract as the autoscroll bar above —
+           shipped `hidden`, site.js unhides it — and for the same reason:
+           the diagrams are drawn client-side from a JSON table, so with JS
+           off there is nothing to show and no empty box to explain.
+
+           It lives INSIDE .song-body rather than as a direct child of
+           .song-page on purpose: .song-body is what carries
+           `grid-area: lyrics` at >=900px, so anything nested in it lands in
+           the reading column for free. A direct child would auto-place into
+           the 250px sidebar column instead — the same trap documented for
+           .offer and .song-page__source-edit further down.
+
+           The two JSON tables are handed to JS as fingerprinted URLs, and
+           both are wrapped in `with`: scripts/chord-diagrams.py generates
+           them, so on a tree where it has never run the attribute is simply
+           absent and site.js finds no URL and returns instead of 404ing.
+           No hardcoded path anywhere — baseURL can be a subpath. */ -}}
+    <div class="chordbox" data-role="chord-diagrams" hidden
+      data-instrument="ukulele"
+      {{- with resources.Get "chords/ukulele.json" }}
+      {{- $j := . | fingerprint }} data-chords-ukulele="{{ $j.RelPermalink }}"{{ end }}
+      {{- with resources.Get "chords/guitar.json" }}
+      {{- $j := . | fingerprint }} data-chords-guitar="{{ $j.RelPermalink }}"{{ end }}
+      {{- /* Templates for the strip: the accessible name of each diagram
+             (%s = the chord as written), and the sentence a chord with no
+             entry in the table gets instead. */}}
+      data-label-diagram="{{ i18n "chord_diagram_for" }}"
+      data-label-unavailable="{{ i18n "chord_diagram_unavailable" }}"
+      {{- /* Words for the ○ and × markers and for a fret number, used when
+             a diagram is read out rather than looked at. */}}
+      data-label-open="{{ i18n "chord_string_open" }}"
+      data-label-muted="{{ i18n "chord_string_muted" }}"
+      data-label-fret="{{ i18n "chord_string_fret" }}">
+      <div class="chordbox__head">
+        <p class="chordbox__label" id="chordbox-label">{{ i18n "chords_row_label" }}</p>
+        {{- /* Two plain buttons with aria-pressed rather than a radiogroup:
+               the pair is a either/or filter over content that is already on
+               the page, which is exactly the pattern the home page's sort
+               chips use (data-role="sort-chip"). site.js hides whichever
+               button has no JSON table behind it. */ -}}
+        <div class="chordbox__switch" role="group" aria-label="{{ i18n "chord_instrument_label" }}">
+          <button type="button" class="chordbox__inst" data-role="chord-instrument"
+            data-instrument="ukulele" aria-pressed="true">{{ i18n "instrument_ukulele" }}</button>
+          <button type="button" class="chordbox__inst" data-role="chord-instrument"
+            data-instrument="guitar" aria-pressed="false">{{ i18n "instrument_guitar" }}</button>
+        </div>
+      </div>
+      {{- /* Horizontally scrollable, using the same scrolling-shadow recipe
+             the lyric sections use — see chordpro.css. min-height is set in
+             CSS so filling this list after the fetch resolves does not move
+             the lyrics a second time. */ -}}
+      <ul class="chordbox__strip" data-role="chord-strip" aria-labelledby="chordbox-label"></ul>
+    </div>
+
     <div class="chordpro">{{ .Content | safeHTML }}</div>
+
+    {{- /* The lyric popover. Authored here so its strings come from i18n,
+           but site.js MOVES it to <body> on init: the lyric sections are
+           `overflow-x: auto` + `contain: inline-size` scroll containers, so
+           a popover left inside one would be clipped at the section edge and
+           would scroll away sideways with the line it belongs to. Positioned
+           in document coordinates from <body>, it rides vertical scrolling
+           (including autoscroll) without a single reposition. */ -}}
+           No role="dialog" and no tabindex: it takes no focus (see the note
+           in site.js), and it is a pointer shortcut to information the chord
+           row above already presents accessibly — announcing it as a dialog
+           would promise a focus contract it deliberately does not keep. It
+           announces itself as a live region instead, which is what it
+           actually is: content that appears where you tapped.
+
+           Its strings all come from the .chordbox above rather than being
+           repeated here — one owner per string. */ -}}
+    <div class="chordpop" data-role="chord-popover" aria-live="polite" hidden>
+      <button type="button" class="chordpop__close" data-role="chord-popover-close"
+        aria-label="{{ i18n "chord_popover_close" }}"><span aria-hidden="true">×</span></button>
+      <p class="chordpop__name" data-role="chord-popover-name"></p>
+      <div class="chordpop__figure" data-role="chord-popover-figure"></div>
+    </div>
   </div>
   {{- else }}
   <p class="note song-page__missing">{{ i18n "song_render_missing" }}</p>
