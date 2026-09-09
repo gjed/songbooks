@@ -22,7 +22,7 @@ description:
 # Print layout — presence of `cover:` is what enables cover pages.
 cover:
   title: null
-  logo: cover-bricioline.png
+  logo: images/COVER BRICIOLINE.jpg
   logo_width: 460
   logo_offset: 20
   strip_top: null
