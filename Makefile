@@ -28,9 +28,13 @@ $(PDF_DIR):
 COVER_FILES = 00-cover.cho 01-chord-chart.cho 99-back-cover.cho
 COVER_EXISTS = $(wildcard $(1)/$(2))
 
-# Cover layout inputs: images plus the songbook.yaml layout sections
+# Cover layout inputs: images plus the songbook.yaml layout sections.
+# images/* is tracked too because a cover `logo:` may point at an artwork
+# there (bricioline's cover reuses the art edition's album image), so a
+# cover rebuilds when that file's contents change, not only when a
+# cover-*.png does.
 COVER_ASSETS = $(wildcard $(1)/cover-*.png $(1)/cover-*.jpeg $(1)/back-*.png \
-  $(1)/chords.png $(1)/strip-*.png $(1)/songbook.yaml)
+  $(1)/chords.png $(1)/strip-*.png $(1)/songbook.yaml $(1)/images/*)
 
 # Target per songbook slug: make bricioline, make bricioline-en, etc.
 # Optional per-songbook layout overlay: songbooks/<slug>/layout.json
@@ -116,7 +120,7 @@ $(1)-art: $(PDF_DIR)/$(1)-art.pdf
 
 $(PDF_DIR)/$(1)-art.pdf: $$(ART_SONGS_$(1)) $(ART_SCRIPTS) $(PROJECT_CFG) \
     $$(call COVER_ASSETS,songbooks/$(1)) \
-    $$(wildcard songbooks/$(1)/images) \
+    $$(wildcard songbooks/$(1)/images/*) \
     $$(wildcard songbooks/$(1)/layout.json) | $(PDF_DIR)
 	$(MAKE_COVER) songbooks/$(1) $(PDF_DIR)
 	$(MAKE_ART) songbooks/$(1) $(PDF_DIR)
