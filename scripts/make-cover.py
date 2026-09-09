@@ -330,6 +330,37 @@ def _draw_centered_image(c, img_path, width, center_y, max_height=None):
     return disp_h
 
 
+def _balanced_below_layout(conf, logo, cap_ratio=0.70):
+    """Geometry for `title_below` covers: logo then title, three equal gaps.
+
+    The vertical field is what the rule bands leave free -- from the bottom
+    edge of the lowest top rule to the top edge of the highest bottom rule.
+    Into it go the artwork and, beneath it, the title, with the leftover
+    space split evenly three ways: above the image, between image and
+    title, and below the title.
+
+    The title's visual height is taken as `title_size * cap_ratio` (~21pt
+    at 30pt), i.e. baseline to cap/ascender top. Descenders are ignored on
+    purpose: they hang below the baseline and a title without them (such as
+    "bricioline") would otherwise read as sitting too high.
+
+    Returns (logo_center_y, title_baseline, gap).
+    """
+    rules = conf.get("rules") or []
+    tops = [r["y"] for r in rules if r["y"] > PAGE_H / 2]
+    bots = [r["y"] + r.get("height", 4) for r in rules if r["y"] <= PAGE_H / 2]
+    top = min(tops) if tops else PAGE_H - MARGIN
+    bottom = max(bots) if bots else MARGIN
+
+    w, h = _open_img(logo).getSize()
+    disp_w = min(conf["logo_width"], PAGE_W - 2 * MARGIN)
+    disp_h = disp_w * (h / w)
+
+    cap = conf["title_size"] * cap_ratio
+    gap = (top - bottom - disp_h - cap) / 3
+    return top - gap - disp_h / 2, top - 2 * gap - disp_h - cap, gap
+
+
 def spotify_url(sb_dir):
     """Return the public Spotify URL for this songbook, or None.
 
@@ -702,10 +733,23 @@ def make_cover(sb_dir, output, cfg):
     _paint_background(c, conf.get("background"))
     _draw_rules(c, conf.get("rules"))
 
-    if conf.get("title"):
-        c.setFont(conf["title_font"], conf["title_size"])
-        c.setFillColor(HexColor(conf["title_color"]))
-        c.drawCentredString(PAGE_W / 2, PAGE_H - MARGIN - 35, conf["title"])
+    logo = _resolve(sb_dir, conf.get("logo"))
+
+    # `title_below: true` puts the title under the artwork and derives both
+    # positions so the whitespace above the image, between image and title,
+    # and below the title comes out equal. Without the flag the title keeps
+    # its historical spot near the top of the page and the logo its manual
+    # `logo_offset` -- which is what every other songbook expects.
+    below = bool(conf.get("title_below")) and bool(logo)
+    if below:
+        logo_center, title_y, _gap = _balanced_below_layout(conf, logo)
+    else:
+        logo_center = PAGE_H / 2 + conf["logo_offset"]
+        # title_offset lowers the title from its default top baseline: a
+        # songbook whose rules sit high (bricioline's top band is at y764-790)
+        # needs the title dropped clear of them. Defaults to 0 for everyone
+        # else, whose covers have no rules up there to collide with.
+        title_y = PAGE_H - MARGIN - 35 - conf.get("title_offset", 0)
 
     strip_top = _resolve(sb_dir, conf.get("strip_top"))
     if strip_top:
@@ -713,10 +757,13 @@ def make_cover(sb_dir, output, cfg):
                     width=PAGE_W - 2 * MARGIN, preserveAspectRatio=True,
                     anchor="n", mask="auto")
 
-    logo = _resolve(sb_dir, conf.get("logo"))
     if logo:
-        _draw_centered_image(c, logo, conf["logo_width"],
-                             PAGE_H / 2 + conf["logo_offset"])
+        _draw_centered_image(c, logo, conf["logo_width"], logo_center)
+
+    if conf.get("title"):
+        c.setFont(conf["title_font"], conf["title_size"])
+        c.setFillColor(HexColor(conf["title_color"]))
+        c.drawCentredString(PAGE_W / 2, title_y, conf["title"])
 
     if conf.get("subtitle"):
         c.setFont(conf["subtitle_font"], conf["subtitle_size"])

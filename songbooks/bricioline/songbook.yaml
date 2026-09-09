@@ -21,10 +21,17 @@ description:
 
 # Print layout — presence of `cover:` is what enables cover pages.
 cover:
-  title: null
+  title: bricioline
+  title_font: Courier-Bold
+  title_size: 30
+  title_color: "#3F7779"
+  # Title sits under the artwork; the layout then derives the image centre
+  # and the title baseline so the three gaps inside the rule bands -- above
+  # the image, image-to-title, title-to-bottom-band -- are equal. This makes
+  # title_offset and logo_offset unused for this cover.
+  title_below: true
   logo: images/07-bricioline-art.jpg
   logo_width: 460
-  logo_offset: 20
   strip_top: null
   strip_bottom: null
   subtitle: "canzoniere  ·  ukulele"
