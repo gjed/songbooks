@@ -105,3 +105,41 @@ back:
   spotify: false
   rules:
     - { color: "#3F7779", y: 30, height: 9 }
+
+# Presence of `art:` is what enables the art edition (`make bricioline-art`):
+# a duplex booklet where every song sits on a recto with its album artwork
+# facing it. Rules are omitted on purpose — the art pages and the index
+# inherit the cover's triple-rule motif, so the frame stays in one place.
+art:
+  width: 500          # just inside the rules' own width — the art dominates
+  offset: 6           # slight optical lift inside the frame
+  # The alternate take is a companion to track 01, not a piece of the
+  # album: it has no artwork of its own, and pairing it with a second
+  # print of 01's cover would repeat a spread the reader just turned
+  # past. The art edition therefore closes on the title track. It stays
+  # in the songbook proper — `make bricioline` still prints it.
+  exclude:
+    - 08-come-una-foglia-seconda-voce
+  toc:
+    title: indice
+    title_font: Courier-Bold
+    title_size: 22
+    title_color: "#3F7779"
+    number_font: Courier-Bold
+    number_color: "#D6A8A1"   # the third rule colour, as a quiet accent
+    entry_font: Courier
+    entry_size: 13
+    entry_color: "#3F7779"
+    entry_leading: 28
+  songs:
+    01-come-una-foglia: "images/Come una Foglia_Artwork_jpeg.jpg"
+    # Stored with a decomposed (NFD) "e + combining grave" in the
+    # filename, unlike the other accented artwork here. It has to be
+    # spelled the way the file actually is; a normalised spelling
+    # looks identical and fails the artwork-not-found check.
+    02-cose-un-limone: "images/CheCos_èUnLimone3000x3000.png"
+    03-rizoma: "images/COVER RIZOMA.png"
+    04-qui-la-guerra-non-puo-entrar: "images/Qui la guerra non può entrar cover.jpg"
+    05-il-rifugio-degli-animali: "images/cover_Rifugio animali_page-0001 (1).jpg"
+    06-dentini: "images/Dentini cover.jpg"
+    07-bricioline: "images/COVER BRICIOLINE.jpg"

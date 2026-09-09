@@ -89,6 +89,59 @@ endef
 
 $(foreach sb,$(SONGBOOKS),$(eval $(call SONGBOOK_RULE,$(sb))))
 
+# Art edition: a duplex booklet where every song sits on a recto with its
+# album artwork facing it on the opposing verso. Page order is
+#   cover, blank, index, (artwork, song) × N, back cover
+# so every artwork lands on an even page and every song on an odd one.
+# Enabled per songbook by an `art:` section in its songbook.yaml (see
+# scripts/make-art-pages.py); this leaves `make <slug>` untouched.
+#
+# Each song is rendered on its own rather than as one ChordPro document:
+# one song = one page is a repo constraint, and rendering singly is what
+# guarantees the pairing cannot drift by a page.
+#
+# Which songs the edition carries, and in what order, is make-art-pages.py's
+# call alone (an `art.exclude` list may hold songs back) -- it writes the
+# order to <slug>-art-manifest.txt and the recipe below renders and merges
+# exactly that. The .cho wildcard here is only a rebuild trigger: deriving
+# the page order twice is how a booklet ends up with an index that disagrees
+# with its own pages.
+MAKE_ART := $(PYTHON) scripts/make-art-pages.py
+ART_SCRIPTS := scripts/make-art-pages.py $(COVER_SCRIPTS)
+
+define ART_RULE
+ART_SONGS_$(1) := $$(sort $$(filter-out $$(addprefix songbooks/$(1)/,$(COVER_FILES)),$$(filter-out %.site.cho,$$(wildcard songbooks/$(1)/*.cho))))
+
+$(1)-art: $(PDF_DIR)/$(1)-art.pdf
+
+$(PDF_DIR)/$(1)-art.pdf: $$(ART_SONGS_$(1)) $(ART_SCRIPTS) $(PROJECT_CFG) \
+    $$(call COVER_ASSETS,songbooks/$(1)) \
+    $$(wildcard songbooks/$(1)/images) \
+    $$(wildcard songbooks/$(1)/layout.json) | $(PDF_DIR)
+	$(MAKE_COVER) songbooks/$(1) $(PDF_DIR)
+	$(MAKE_ART) songbooks/$(1) $(PDF_DIR)
+	@set -e ; \
+	parts="$(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-blank.pdf $(PDF_DIR)/$(1)-toc.pdf" ; \
+	while read -r stem ; do \
+	  $(CHORDPRO) $$(CFG_FLAGS_$(1)) songbooks/$(1)/$$$$stem.cho \
+	    -o $(PDF_DIR)/$(1)-song-$$$$stem.pdf ; \
+	  parts="$$$$parts $(PDF_DIR)/$(1)-art-$$$$stem.pdf $(PDF_DIR)/$(1)-song-$$$$stem.pdf" ; \
+	done < $(PDF_DIR)/$(1)-art-manifest.txt ; \
+	parts="$$$$parts $(PDF_DIR)/$(1)-back.pdf" ; \
+	echo "Merge → $$@" ; \
+	$(GS) -q -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile=$$@ $$$$parts
+	rm -f $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-intro.pdf \
+	  $(PDF_DIR)/$(1)-chart.pdf $(PDF_DIR)/$(1)-back.pdf \
+	  $(PDF_DIR)/$(1)-blank.pdf $(PDF_DIR)/$(1)-toc.pdf \
+	  $(PDF_DIR)/$(1)-art-*.pdf $(PDF_DIR)/$(1)-song-*.pdf \
+	  $(PDF_DIR)/$(1)-art-manifest.txt
+endef
+
+ART_SONGBOOKS := $(sort $(notdir $(patsubst %/,%,$(dir $(wildcard songbooks/*/songbook.yaml)))))
+ART_ENABLED   := $(foreach sb,$(ART_SONGBOOKS),$(if $(shell grep -ls '^art:' songbooks/$(sb)/songbook.yaml 2>/dev/null),$(sb)))
+.PHONY: $(addsuffix -art,$(ART_ENABLED))
+$(foreach sb,$(ART_ENABLED),$(eval $(call ART_RULE,$(sb))))
+
 # HTML render for the online read view: one file per song, so editing one
 # .cho re-renders only that song. ChordPro would happily aggregate a whole
 # songbook into a single document, but the site links to songs individually.
@@ -160,7 +213,9 @@ guitar-ita guitar-eng: | $(PDF_DIR)
 clean:
 	rm -f $(PDFS) $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-intro.pdf \
 	  $(PDF_DIR)/*-chart.pdf $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf \
-	  $(PDF_DIR)/*-guitar-ita.pdf $(PDF_DIR)/*-guitar-eng.pdf
+	  $(PDF_DIR)/*-guitar-ita.pdf $(PDF_DIR)/*-guitar-eng.pdf \
+	  $(PDF_DIR)/*-art.pdf $(PDF_DIR)/*-art-*.pdf $(PDF_DIR)/*-song-*.pdf \
+	  $(PDF_DIR)/*-blank.pdf $(PDF_DIR)/*-toc.pdf
 	rm -rf $(HTML_DIR)
 
 # Spotify playlist sync: two-phase model
