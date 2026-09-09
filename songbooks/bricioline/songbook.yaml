@@ -22,7 +22,7 @@ description:
 # Print layout — presence of `cover:` is what enables cover pages.
 cover:
   title: null
-  logo: images/COVER BRICIOLINE.jpg
+  logo: images/07-bricioline-art.jpg
   logo_width: 460
   logo_offset: 20
   strip_top: null
@@ -132,14 +132,10 @@ art:
     entry_color: "#3F7779"
     entry_leading: 28
   songs:
-    01-come-una-foglia: "images/Come una Foglia_Artwork_jpeg.jpg"
-    # Stored with a decomposed (NFD) "e + combining grave" in the
-    # filename, unlike the other accented artwork here. It has to be
-    # spelled the way the file actually is; a normalised spelling
-    # looks identical and fails the artwork-not-found check.
-    02-cose-un-limone: "images/CheCos_èUnLimone3000x3000.png"
-    03-rizoma: "images/COVER RIZOMA.png"
-    04-qui-la-guerra-non-puo-entrar: "images/Qui la guerra non può entrar cover.jpg"
-    05-il-rifugio-degli-animali: "images/cover_Rifugio animali_page-0001 (1).jpg"
-    06-dentini: "images/Dentini cover.jpg"
-    07-bricioline: "images/COVER BRICIOLINE.jpg"
+    01-come-una-foglia: "images/01-come-una-foglia-art.jpg"
+    02-cose-un-limone: "images/02-cose-un-limone-art.png"
+    03-rizoma: "images/03-rizoma-art.png"
+    04-qui-la-guerra-non-puo-entrar: "images/04-qui-la-guerra-non-puo-entrar-art.jpg"
+    05-il-rifugio-degli-animali: "images/05-il-rifugio-degli-animali-art.jpg"
+    06-dentini: "images/06-dentini-art.jpg"
+    07-bricioline: "images/07-bricioline-art.jpg"
