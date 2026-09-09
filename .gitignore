@@ -5,6 +5,10 @@ raw*.txt
 .worktrees/
 *.zip
 
+# Full-resolution source art — downsampled copies are what's committed
+# under songbooks/*/images/; keep originals local for future re-renders.
+images-original/
+
 # Spotify OAuth token cache (local only — never commit)
 .spotify-token-cache*
 
