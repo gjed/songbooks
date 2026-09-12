@@ -127,7 +127,8 @@ $(PDF_DIR)/$(1)-art.pdf: $$(ART_SONGS_$(1)) $(ART_SCRIPTS) $(PROJECT_CFG) \
 	@set -e ; \
 	parts="$(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-blank.pdf $(PDF_DIR)/$(1)-toc.pdf" ; \
 	while read -r stem ; do \
-	  $(CHORDPRO) $$(CFG_FLAGS_$(1)) songbooks/$(1)/$$$$stem.cho \
+	  : "art editions print Italian chord names (the only art songbook is Italian)" ; \
+	  $(CHORDPRO) $$(CFG_FLAGS_$(1)) --transcode=latin songbooks/$(1)/$$$$stem.cho \
 	    -o $(PDF_DIR)/$(1)-song-$$$$stem.pdf ; \
 	  parts="$$$$parts $(PDF_DIR)/$(1)-art-$$$$stem.pdf $(PDF_DIR)/$(1)-song-$$$$stem.pdf" ; \
 	done < $(PDF_DIR)/$(1)-art-manifest.txt ; \
