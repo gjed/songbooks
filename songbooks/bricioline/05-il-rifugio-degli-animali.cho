@@ -3,23 +3,27 @@
 {album: Bricioline}
 {key: C}
 
-{comment: Arpeggio su strofa C-G7-G7-C}
-{comment: 4 Note: 2,3,4,1}
+{start_of_verse}
+Arpeggio su prima strofa
+4 note: 2,3,4,1
+{end_of_verse}
+
+
 
 {start_of_verse}
 [C]il giorno che Fiona la mucca Frisona
 [G7]scoprì un prato verde era un giorno perfetto
-[G7]si liberò dal recinto di legno senza troppo impegno per fare [C]un giretto
+[G7]si liberò dal recinto di legno senza troppo [C]impegno per fare un giretto
 {end_of_verse}
 
 {start_of_verse}
 [Dm]si spaventò in un primo momento
 [Am]perché conosceva soltanto il cemento
-[E7]poi camminò con stupore tra i [G7]fiori
-[C]e disse "che bella la vita qua [C7]fuori!"
+[E7]poi camminò con stupore [G7]tra i fiori
+[C]e disse "che bella la vita [C7]qua fuori!"
 [F]si spaventò col rumore del vento
 [C]perché era forte come un sentimento
-[G7]era la voglia di vivere libera senza recinti felice[C/G7] e contenta[C]
+[G7]era la voglia di vivere libera senza [C/G7]recinti felice e [C]contenta
 {end_of_verse}
 
 {start_of_chorus}
@@ -71,20 +75,20 @@ la voglia di vivere libere insieme per sempre felici e contente"
 {end_of_chorus}
 
 {start_of_verse}
-[C]poi venne Gina la [F]Cocincina
-[F]che è una gallina [C]tutta d'un [F]pezzo [G7]
-[C]non si faceva di certo [F]spennare [G7]
-[C]voleva esser libera con ogni [F]mezzo [G7]
+poi venne [C]Gina la [F]Cocincina[G7]
+[F]che è una [C]gallina [F]tutta d'[G7]un pezzo
+[C]non si face[F]va di ce[G7]rto spenna[F]re
+[C]voleva esser[F] libera [G7]con ogni mezzo
 {end_of_verse}
 
 {start_of_verse}
 [Dm]si rallegrò fin dal primo momento
 [Am]nel vedere tutto quel fermento
-[E7]di animali contenti e [G7]felici
-[C]che corrono insieme come vecchi [C7]amici
+[E7]di animali contenti [G7]e felici
+[C]che corrono insie[C7]me come vecchi amici
 [F]era quasi commossa di nuovo
-come la volta [C]del suo primo uovo
-disse "venite[G7] da me senza indugio!
+come la [C]volta del suo primo uovo
+disse "[G7]venite da me senza indugio!
 [G7]potremo vivere liberi insieme per sempre
 [C/G7]nel nostro stupendo [C]rifugio"
 {end_of_verse}

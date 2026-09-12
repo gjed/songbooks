@@ -3,23 +3,25 @@
 {album: Bricioline}
 {key: C}
 
-{comment: Arpeggio su strofa C-G7-G7-C}
-{comment: 4 Note: 2,3,4,1}
+{start_of_verse}
+Arpeggio su prima strofa
+4 note: 2,3,4,1
+{end_of_verse}
 
 {start_of_verse}
 [C]il giorno che Fiona la mucca Frisona
 [G7]scoprì un prato verde era un giorno perfetto
-[G7]si liberò dal recinto di legno senza troppo impegno per fare [C]un giretto
+[G7]si liberò dal recinto di legno senza troppo [C]impegno per fare un giretto
 {end_of_verse}
 
 {start_of_verse}
 [Dm]si spaventò in un primo momento
 [Am]perché conosceva soltanto il cemento
-[E7]poi camminò con stupore tra i [G7]fiori
-[C]e disse "che bella la vita qua [C7]fuori!"
+[E7]poi camminò con stupore [G7]tra i fiori
+[C]e disse "che bella la vita [C7]qua fuori!"
 [F]si spaventò col rumore del vento
 [C]perché era forte come un sentimento
-[G7]era la voglia di vivere libera senza recinti felice[C/G7] e contenta[C]
+[G7]era la voglia di vivere libera senza [C/G7]recinti felice e [C]contenta
 {end_of_verse}
 
 {start_of_chorus}
@@ -33,17 +35,17 @@
 {start_of_verse}
 [C]il giorno che Caio il cavallo Baio
 [G7]scoprì la campagna era un giorno di festa
-[G7]scappò dall'arena voltando la schiena correndo veloce come una [C]tempesta
+[G7]scappò dall'arena voltando la schiena correndo [C]veloce come una tempesta
 {end_of_verse}
 
 {start_of_verse}
 [Dm]si ricordò in un primo momento
 [Am]della sua bella medaglia d'argento
-[E7]che avrebbe avuto vincendo la [G7]gara
-[C]ma la libertà è più preziosa e più [C7]rara
+[E7]che avrebbe avuto vincendo [G7]la gara
+[C]ma la libertà è più preziosa e [C7]più rara
 [F]si ricordò dopo qualche momento
 [C]che più dell'oro conta un sentimento:
-[G7]la voglia di correre libero senza recinti felice[C/G7] e contento[C]
+[G7]la voglia di correre libero senza [C/G7]recinti felice e [C]contento
 {end_of_verse}
 
 {start_of_chorus}
@@ -57,17 +59,17 @@
 {start_of_verse}
 [C]il giorno che Dora la capra d'Angora
 [G7]incontrò sua sorella era un giorno di maggio
-[G7]era andata a cercare erba da mangiucchiare perché era un po' stufa del triste [C]foraggio
+[G7]era andata a cercare erba da mangiucchiare perché era un po' [C]stufa del triste foraggio
 {end_of_verse}
 
 {start_of_verse}
 [Dm]non la vide in un primo momento
 [Am]perché era passato tantissimo tempo
-[E7]da quando il fattore l'aveva co[G7]stretta
-[C]a stare lontana dall'altra ca[C7]pretta
+[E7]da quando il fattore l'aveva [G7]costretta
+[C]a stare lontana dall'altra [C7]capretta
 [F]la riconobbe e si corsero incontro
 [C]saltellando e gridando: "la sento!
-[G7]la voglia di vivere libere insieme per sempre felici[C/G7] e contente"[C]
+[G7]la voglia di vivere libere insieme per [C/G7]sempre felici e [C]contente"
 {end_of_verse}
 
 {start_of_chorus}
@@ -79,20 +81,20 @@
 {end_of_chorus}
 
 {start_of_verse}
-[C]poi venne Gina la [F]Cocincina
-[F]che è una gallina [C]tutta d'un [F]pezzo [G7]
-[C]non si faceva di certo [F]spennare [G7]
-[C]voleva esser libera con ogni [F]mezzo [G7]
+poi venne [C]Gina la [F]Cocincina[G7]
+[F]che è una [C]gallina [F]tutta d'[G7]un pezzo
+[C]non si face[F]va di ce[G7]rto spenna[F]re
+[C]voleva esser[F] libera [G7]con ogni mezzo
 {end_of_verse}
 
 {start_of_verse}
 [Dm]si rallegrò fin dal primo momento
 [Am]nel vedere tutto quel fermento
-[E7]di animali contenti e [G7]felici
-[C]che corrono insieme come vecchi [C7]amici
+[E7]di animali contenti [G7]e felici
+[C]che corrono insie[C7]me come vecchi amici
 [F]era quasi commossa di nuovo
-come la volta [C]del suo primo uovo
-disse "venite[G7] da me senza indugio!
+come la [C]volta del suo primo uovo
+disse "[G7]venite da me senza indugio!
 [G7]potremo vivere liberi insieme per sempre
 [C/G7]nel nostro stupendo [C]rifugio"
 {end_of_verse}
