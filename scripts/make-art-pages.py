@@ -259,6 +259,7 @@ def make_toc(output, cfg, entries):
     left = (PAGE_W - (number_w + gap + title_w)) / 2
 
     y = title_baseline - head_gap
+    rows = []
     for track, title in entries:
         c.setFont(number_font, size)
         c.setFillColor(HexColor(conf["number_color"]))
@@ -266,10 +267,36 @@ def make_toc(output, cfg, entries):
         c.setFont(entry_font, size)
         c.setFillColor(HexColor(conf["entry_color"]))
         c.drawString(left + number_w + gap, y, title)
+        # Clickable band for this row: full number-to-title width, one
+        # leading tall, so the merged booklet can carry a link annotation.
+        rows.append((left, y - size * 0.3,
+                     left + number_w + gap + title_w, y + size))
         y -= leading
 
     c.showPage()
     c.save()
+    return rows
+
+
+def write_toc_links(output, rows):
+    """Emit a ghostscript pdfmark file linking each index row to its song.
+
+    The booklet is merged from single-page PDFs, so the index cannot carry
+    working GoTo links of its own -- annotations added by ReportLab would
+    point inside a one-page document. Instead the Makefile hands this file
+    to the very gs run that concatenates the booklet; page numbers refer to
+    the merged output: cover 1, blank 2, index 3, then art/song pairs, so
+    song i sits on page 2*i + 3.
+    """
+    marks = []
+    for i, (x1, y1, x2, y2) in enumerate(rows, start=1):
+        marks.append(
+            "[ /Rect [%.2f %.2f %.2f %.2f]\n"
+            "  /SrcPg 3 /Page %d /View [/XYZ null null null]\n"
+            "  /Border [0 0 0] /Subtype /Link /ANN pdfmark\n"
+            % (x1, y1, x2, y2, 2 * i + 3))
+    with open(output, "w", encoding="utf-8") as fh:
+        fh.write("".join(marks))
 
 
 def make_art_page(output, cfg, image_path):
@@ -319,7 +346,8 @@ def generate_art_pages(sb_dir, out_dir):
 
     entries = [song_entry(path) for path in sources]
     make_blank(os.path.join(out_dir, f"{slug}-blank.pdf"))
-    make_toc(os.path.join(out_dir, f"{slug}-toc.pdf"), cfg, entries)
+    rows = make_toc(os.path.join(out_dir, f"{slug}-toc.pdf"), cfg, entries)
+    write_toc_links(os.path.join(out_dir, f"{slug}-toc-links.ps"), rows)
 
     mapping = cfg["songs"] or {}
     pages = {}
