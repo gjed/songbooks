@@ -3,19 +3,23 @@
 {album: Bricioline}
 {key: C}
 
-{comment: Arpeggio: 6 note — 1,2,3,4,3,4}
-{comment: Accordi: [Am7] e [G7sus2]}
+{start_of_verse}
+[Am7]Arpeggio: 6 note — [G7sus2]1,2,3,4,3,4
+{end_of_verse}
+
+{start_of_verse}
+{end_of_verse}
 
 {start_of_verse}
 [C]con le dita [G7]sfioro la tua mano
 [G7]e ti soffio [C]bricioline tra i capelli
-[C]se ci pensi non sei [G7]poi così lontanǝ
-[G7]fidati di me, [C]fai sogni belli
+[C]se ci pensi [G7]non sei poi così lontanǝ
+[G7]fidati di me, fai sogni [C]belli
 {end_of_verse}
 
 {start_of_verse}
-[C]servirà del tempo [G7]quindi prendi fiato
+[C]servirà del te[G7]mpo quindi prendi fiato
 [G7]un passetto dopo [C]l'altro non farà più male tanto
-[C]se ti va io resto, [G7]no non me ne vado
-[G7]al ritorno la mia [C]mano stringerà la tua
+[C]se ti va io re[G7]sto, no non me ne vado
+[G7]al ritorno la mia mano stringerà la [C]tua
 {end_of_verse}
