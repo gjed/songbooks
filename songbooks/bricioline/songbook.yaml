@@ -30,7 +30,7 @@ cover:
   # the image, image-to-title, title-to-bottom-band -- are equal. This makes
   # title_offset and logo_offset unused for this cover.
   title_below: true
-  logo: images/07-bricioline-art.jpg
+  logo: images/00-cover-art.png
   logo_width: 460
   strip_top: null
   strip_bottom: null
@@ -103,8 +103,8 @@ intro:
     - { color: "#D6A8A1", y: 30, height: 9 }
 
 back:
-  image: back-poster.png
-  image_width: 360
+  image: images/99-back-cover-art.png
+  image_width: 460
   caption: "bricioline  ·  canzoni per chi cresce"
   caption_font: Courier
   caption_size: 10
