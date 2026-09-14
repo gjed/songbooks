@@ -106,12 +106,18 @@ back:
   image: images/99-back-cover-art.png
   image_width: 460
   caption: "bricioline  ·  canzoni per chi cresce"
-  caption_font: Courier
-  caption_size: 10
+  caption_font: Courier-Bold
+  caption_size: 13
   caption_color: "#3F7779"
+  caption_y: 83.35   # matches the cover subtitle's baseline (MARGIN + 55)
   spotify: false
   rules:
-    - { color: "#3F7779", y: 30, height: 9 }
+    - { color: "#92C7C8", y: 790, height: 9 }
+    - { color: "#3F7779", y: 777, height: 9 }
+    - { color: "#D6A8A1", y: 764, height: 9 }
+    - { color: "#92C7C8", y: 56, height: 9 }
+    - { color: "#3F7779", y: 43, height: 9 }
+    - { color: "#D6A8A1", y: 30, height: 9 }
 
 # Presence of `art:` is what enables the art edition (`make bricioline-art`):
 # a duplex booklet where every song sits on a recto with its album artwork
