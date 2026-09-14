@@ -47,6 +47,13 @@ sections live as YAML in songbook.yaml):
       "description_leading": 15,
       "description_width": 380,
       "description_y": null,
+      "source": { "label": "Fonte originale:",
+                  "text": "\"Article title\" di Author Name",
+                  "url": "https://example.com/article" },
+      "source_font": "Courier",
+      "source_size": 8,
+      "source_color": null,
+      "source_leading": null,
       "spotify": true,
       "spotify_label": "Ascolta su Spotify",
       "spotify_font": "Courier-Bold",
@@ -97,6 +104,14 @@ sections live as YAML in songbook.yaml):
 paragraph; each paragraph is wrapped to `description_width` and centred.
 `description_y` is the first baseline and defaults to just below the back
 image, so the block follows whatever `image_width` the songbook uses.
+
+`source` credits where the description comes from: a `{label, text, url}`
+object drawn as a small centred footnote under the description, with the
+URL on its own clickable line. The credit belongs on the same page as the
+text it covers rather than in a repo file no reader ever opens, so it
+travels with the description into every edition that prints it.
+Typography comes from the `source_*` keys and falls back to the
+description's own colour.
 
 The Spotify block is automatic: the back page reads the songbook's own
 `spotify.yaml` manifest and, when the songbook has a resolved album or
@@ -203,6 +218,11 @@ DEFAULTS = {
         "description_leading": None,
         "description_width": 380,
         "description_y": None,
+        "source": None,
+        "source_font": "Courier",
+        "source_size": 8,
+        "source_color": None,
+        "source_leading": None,
         "spotify": True,
         "spotify_label": {"it": "Ascolta su Spotify",
                           "en": "Open with Spotify"},
@@ -451,6 +471,50 @@ def _description_height(c, conf):
     lines = sum(len(_wrap(c, p, font, size, max_width)) for p in paragraphs)
     gaps = leading * 0.6 * max(len(paragraphs) - 1, 0)
     return lines * leading + gaps
+
+
+def _draw_source(c, conf, top_y):
+    """Draw the attribution footnote under the description.
+
+    One or more wrapped lines of `label` + `text`, then the URL alone on
+    a clickable line. Set smaller than the description so it reads as a
+    credit rather than a further paragraph. Returns the last baseline
+    used, so the link stack below can be placed against it.
+    """
+    source = conf.get("source")
+    if not isinstance(source, dict):
+        return top_y
+    text = source.get("text")
+    url = source.get("url")
+    if not text and not url:
+        return top_y
+
+    font = conf["source_font"]
+    size = conf["source_size"]
+    leading = conf.get("source_leading") or size * 1.5
+    color = (conf.get("source_color") or conf.get("description_color")
+             or "#000000")
+    max_width = min(conf["description_width"], PAGE_W - 2 * MARGIN)
+
+    c.saveState()
+    c.setFont(font, size)
+    c.setFillColor(HexColor(color))
+    y = top_y
+    if text:
+        label = source.get("label")
+        line = f"{label} {text}" if label else str(text)
+        for wrapped in _wrap(c, line, font, size, max_width):
+            c.drawCentredString(PAGE_W / 2, y, wrapped)
+            y -= leading
+    if url:
+        c.drawCentredString(PAGE_W / 2, y, url)
+        width = c.stringWidth(url, font, size)
+        c.linkURL(url, ((PAGE_W - width) / 2, y - size * 0.3,
+                        (PAGE_W + width) / 2, y + size),
+                  relative=0, thickness=0)
+        y -= leading
+    c.restoreState()
+    return y + leading
 
 
 def _draw_qr(c, url, x, y, size, color):
@@ -713,6 +777,8 @@ def make_intro(sb_dir, output, cfg):
         text_top = title_baseline - title_size * 2.3
 
     text_bottom = _draw_description(c, conf, text_top)
+    text_bottom = _draw_source(
+        c, conf, text_bottom - conf["description_size"] * 2.2)
 
     auto_url = spotify_url(sb_dir) if conf.get("spotify") else None
     rows = _link_rows(conf, auto_url)

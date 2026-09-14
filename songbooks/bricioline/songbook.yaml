@@ -78,6 +78,13 @@ intro:
         choose for ourselves — crumbs dropped along the path to remember the way
         back, and where a hand will hold yours.
       - A gentle utopia that could yet come true.
+  # Where the description above comes from; the credit prints with it
+  # rather than living in a file no reader opens.
+  source:
+    label: "Fonte originale:"
+    text: "\"Bricioline \u2013 Queen of Saba\" di Alessia Palermo"
+    url: https://the-beat.it/2026/06/11/bricioline-queen-of-saba/
+  source_color: "#3F7779"
   description_color: "#3F7779"
   spotify_color: "#3F7779"
   spotify_qr_color: "#3F7779"
