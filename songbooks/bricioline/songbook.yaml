@@ -140,6 +140,11 @@ art:
   # in the songbook proper — `make bricioline` still prints it.
   exclude:
     - 08-come-una-foglia-seconda-voce
+  # The description page is the songbook's own `intro:` section. This
+  # edition is a printed object, so the streaming row has nowhere useful
+  # to send a reader -- the Bandcamp rows, which buy the record, stay.
+  intro:
+    spotify: false
   toc:
     title: indice
     title_font: Courier-Bold

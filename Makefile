@@ -95,8 +95,11 @@ $(foreach sb,$(SONGBOOKS),$(eval $(call SONGBOOK_RULE,$(sb))))
 
 # Art edition: a duplex booklet where every song sits on a recto with its
 # album artwork facing it on the opposing verso. Page order is
-#   cover, blank, index, (artwork, song) × N, back cover
+#   cover, blank, [description, blank,] index, (artwork, song) × N, back
 # so every artwork lands on an even page and every song on an odd one.
+# The description page is the songbook's own `intro:` section and appears
+# when it has one; the blank leaves that flank it are also what keep the
+# booklet a multiple of four pages, which a print binding needs.
 # Enabled per songbook by an `art:` section in its songbook.yaml (see
 # scripts/make-art-pages.py); this leaves `make <slug>` untouched.
 #
@@ -125,7 +128,11 @@ $(PDF_DIR)/$(1)-art.pdf: $$(ART_SONGS_$(1)) $(ART_SCRIPTS) $(PROJECT_CFG) \
 	$(MAKE_COVER) songbooks/$(1) $(PDF_DIR)
 	$(MAKE_ART) songbooks/$(1) $(PDF_DIR)
 	@set -e ; \
-	parts="$(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-blank.pdf $(PDF_DIR)/$(1)-toc.pdf" ; \
+	parts="$(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-blank.pdf" ; \
+	if [ -f $(PDF_DIR)/$(1)-front.pdf ] ; then \
+	  parts="$$$$parts $(PDF_DIR)/$(1)-front.pdf $(PDF_DIR)/$(1)-blank.pdf" ; \
+	fi ; \
+	parts="$$$$parts $(PDF_DIR)/$(1)-toc.pdf" ; \
 	while read -r stem ; do \
 	  : "art editions print Italian chord names (the only art songbook is Italian)" ; \
 	  $(CHORDPRO) $$(CFG_FLAGS_$(1)) --transcode=latin songbooks/$(1)/$$$$stem.cho \
@@ -139,6 +146,7 @@ $(PDF_DIR)/$(1)-art.pdf: $$(ART_SONGS_$(1)) $(ART_SCRIPTS) $(PROJECT_CFG) \
 	rm -f $(PDF_DIR)/$(1)-cover.pdf $(PDF_DIR)/$(1)-intro.pdf \
 	  $(PDF_DIR)/$(1)-chart.pdf $(PDF_DIR)/$(1)-back.pdf \
 	  $(PDF_DIR)/$(1)-blank.pdf $(PDF_DIR)/$(1)-toc.pdf \
+	  $(PDF_DIR)/$(1)-front.pdf \
 	  $(PDF_DIR)/$(1)-art-*.pdf $(PDF_DIR)/$(1)-song-*.pdf \
 	  $(PDF_DIR)/$(1)-art-manifest.txt $(PDF_DIR)/$(1)-toc-links.ps
 endef

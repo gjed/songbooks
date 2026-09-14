@@ -11,11 +11,18 @@ artwork -- and leaves the song pages and the final merge to the Makefile.
 Emitted files, all in <output-dir>:
 
   <slug>-blank.pdf            one empty A4 page
+  <slug>-front.pdf            the description page, when the songbook has
+                              one (see `art.intro` below)
   <slug>-toc.pdf              the index
   <slug>-art-<stem>.pdf       one page per song, <stem> being the song's
                               filename without .cho
   <slug>-art-manifest.txt     the songs to bind, one stem per line, in
                               page order
+
+A print run is bound in sheets of four pages, so the booklet's page count
+has to be a multiple of four. The blank leaf is what buys that: one blank
+facing the description, another facing the index, which is also what puts
+every artwork on a verso and every song on the recto opposite it.
 
 The manifest exists so the Makefile need not re-derive the edition's
 contents from the songbook directory. Track order, and which songs the
@@ -30,6 +37,8 @@ Layout comes from the `art` section of the songbook's songbook.yaml:
     offset: 10                # optical lift above the frame's centre
     rules: []                 # defaults to the cover's rules
     exclude: []               # song stems the art edition leaves out
+    intro: {spotify: false}   # overrides for this edition's description
+                              # page; `intro: false` drops the page
     toc:
       title: indice
       title_font: Courier-Bold
@@ -57,6 +66,13 @@ page, no song page, no index entry. That way a print edition carrying a
 subset of the songbook stays one hard error away from a song dropped by
 accident. Excluding a song affects only the art edition; `make <slug>`
 still renders every song the songbook has.
+
+`art.intro` is the same bargain for the description page. The page itself
+is the songbook's own `intro:` section -- one description, printed by
+every edition -- and this key only says how *this* edition differs. The
+art booklet is a printed object a reader holds, so a streaming link has
+nowhere useful to send them and `spotify: false` drops that row while the
+Bandcamp rows, which buy the physical record, stay.
 
 Index entries are read straight from the songs' `{title: ...}` headers,
 in track order, numbered from the `NN-` filename prefix, so the printed
@@ -211,6 +227,32 @@ def make_blank(output):
     c.save()
 
 
+def make_intro(sb_dir, output, art_cfg):
+    """Draw this edition's description page; return the path, or None.
+
+    The page is the songbook's own `intro:` section, so the description a
+    reader gets is the same one every other edition prints. `art.intro`
+    holds only the differences -- the art booklet is a printed object, so
+    it drops the streaming row and keeps the ones that buy the record.
+    A songbook with no `intro:` section simply has no such page, and
+    `art.intro: false` refuses it for this edition alone.
+    """
+    # A leftover page from an earlier build would be bound silently by the
+    # Makefile's own existence check, so clear it before deciding.
+    if os.path.exists(output):
+        os.remove(output)
+    override = art_cfg.get("intro", {})
+    if override is False:
+        return None
+    cfg = make_cover.load_config(sb_dir)
+    if not cfg["intro"].get("_declared"):
+        return None
+    if isinstance(override, dict):
+        cfg["intro"].update(override)
+    make_cover.make_intro(sb_dir, output, cfg)
+    return output
+
+
 def make_toc(output, cfg, entries):
     """Draw the index: track number and title, one row per song.
 
@@ -278,23 +320,29 @@ def make_toc(output, cfg, entries):
     return rows
 
 
-def write_toc_links(output, rows):
+def write_toc_links(output, rows, front_pages):
     """Emit a ghostscript pdfmark file linking each index row to its song.
 
     The booklet is merged from single-page PDFs, so the index cannot carry
     working GoTo links of its own -- annotations added by ReportLab would
     point inside a one-page document. Instead the Makefile hands this file
-    to the very gs run that concatenates the booklet; page numbers refer to
-    the merged output: cover 1, blank 2, index 3, then art/song pairs, so
-    song i sits on page 2*i + 3.
+    to the very gs run that concatenates the booklet.
+
+    `front_pages` is how many leaves precede the first artwork, the index
+    itself being the last of them: cover, blank, description, blank, index
+    is five, and a songbook without a description page is three. Page
+    numbers here refer to the merged output, so song i sits on page
+    `front_pages + 2 * i` and the index is `front_pages` itself. Taking it
+    as an argument is what keeps these links pointing at the right leaves
+    when the front matter grows.
     """
     marks = []
     for i, (x1, y1, x2, y2) in enumerate(rows, start=1):
         marks.append(
             "[ /Rect [%.2f %.2f %.2f %.2f]\n"
-            "  /SrcPg 3 /Page %d /View [/XYZ null null null]\n"
+            "  /SrcPg %d /Page %d /View [/XYZ null null null]\n"
             "  /Border [0 0 0] /Subtype /Link /ANN pdfmark\n"
-            % (x1, y1, x2, y2, 2 * i + 3))
+            % (x1, y1, x2, y2, front_pages, front_pages + 2 * i))
     with open(output, "w", encoding="utf-8") as fh:
         fh.write("".join(marks))
 
@@ -334,8 +382,9 @@ def _band_edges(rules):
 def generate_art_pages(sb_dir, out_dir):
     """Write the blank, index, and per-song artwork PDFs.
 
-    Returns the artwork page paths keyed by song stem; the Makefile pairs
-    each with the song ChordPro renders for it.
+    Returns the artwork page paths keyed by song stem, and how many leaves
+    precede the first artwork; the Makefile pairs each artwork with the
+    song ChordPro renders for it.
     """
     os.makedirs(out_dir, exist_ok=True)
     cfg = load_art_config(sb_dir)
@@ -346,8 +395,14 @@ def generate_art_pages(sb_dir, out_dir):
 
     entries = [song_entry(path) for path in sources]
     make_blank(os.path.join(out_dir, f"{slug}-blank.pdf"))
+    intro = make_intro(sb_dir, os.path.join(out_dir, f"{slug}-front.pdf"),
+                       cfg)
+    # cover, blank, index -- plus the description page and the blank
+    # facing it, when this edition carries one.
+    front_pages = 5 if intro else 3
     rows = make_toc(os.path.join(out_dir, f"{slug}-toc.pdf"), cfg, entries)
-    write_toc_links(os.path.join(out_dir, f"{slug}-toc-links.ps"), rows)
+    write_toc_links(os.path.join(out_dir, f"{slug}-toc-links.ps"), rows,
+                    front_pages)
 
     mapping = cfg["songs"] or {}
     pages = {}
@@ -369,7 +424,17 @@ def generate_art_pages(sb_dir, out_dir):
     with open(os.path.join(out_dir, f"{slug}-art-manifest.txt"),
               "w", encoding="utf-8") as fh:
         fh.write("".join(f"{stem}\n" for stem in pages))
-    return pages
+
+    # A booklet is bound in sheets of four, so a page count that is not a
+    # multiple of four cannot be printed as one. Every part of the count is
+    # decided here, so this is the one place that can refuse it.
+    total = front_pages + 2 * len(pages) + 1
+    if total % 4:
+        raise SystemExit(
+            f"{slug} art edition is {total} pages, which a four-page "
+            "binding signature cannot hold -- add or drop a leaf (see "
+            "`art.exclude` and `art.intro` in songbook.yaml)")
+    return pages, front_pages
 
 
 if __name__ == "__main__":
@@ -377,8 +442,10 @@ if __name__ == "__main__":
         print("Usage: make-art-pages.py <songbook-dir> <output-dir>",
               file=sys.stderr)
         sys.exit(1)
-    written = generate_art_pages(sys.argv[1], sys.argv[2])
+    written, front = generate_art_pages(sys.argv[1], sys.argv[2])
     for stem, path in written.items():
         print(f"Art   → {path}")
-    print(f"{len(written)} artwork page(s), plus blank and index")
-    print(f"Booklet: {2 * len(written) + 4} pages")
+    front_desc = ("cover, blank, description, blank and index" if front == 5
+                  else "cover, blank and index")
+    print(f"{len(written)} artwork page(s), plus {front_desc}")
+    print(f"Booklet: {front + 2 * len(written) + 1} pages")
