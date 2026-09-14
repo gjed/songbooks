@@ -70,6 +70,7 @@ sections live as YAML in songbook.yaml):
       "caption_font": "Courier",
       "caption_size": 11,
       "caption_color": "#000000",
+      "caption_y": null,
       "description": ["paragraph one", "paragraph two"],
       "description_font": "Courier",
       "description_size": 9,
@@ -223,6 +224,7 @@ DEFAULTS = {
         "caption_font": "Courier",
         "caption_size": 11,
         "caption_color": "#000000",
+        "caption_y": None,
         "description": None,
         "description_font": "Courier",
         "description_size": 9,
@@ -843,7 +845,10 @@ def make_back_cover(sb_dir, output, cfg):
     if conf.get("caption"):
         c.setFont(conf["caption_font"], conf["caption_size"])
         c.setFillColor(HexColor(conf["caption_color"]))
-        c.drawCentredString(PAGE_W / 2, MARGIN + 40, conf["caption"])
+        caption_y = conf.get("caption_y")
+        if caption_y is None:
+            caption_y = MARGIN + 40
+        c.drawCentredString(PAGE_W / 2, caption_y, conf["caption"])
 
     text_bottom = _draw_description(
         c, conf, img_bottom - 22 - conf["description_size"])
