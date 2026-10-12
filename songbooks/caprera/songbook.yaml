@@ -1,0 +1,61 @@
+# Songbook metadata + print layout. Human-authored.
+# spotify.yaml is machine-written (spotify_playlists.py) and stays separate.
+slug: caprera
+title: Caprera
+language: it        # primary language — drives the printed pages
+notation: common    # chord names used in the .cho files (C D E …)
+
+blurb:
+  it: Centro Velico Caprera — canzoni da cantare tutti insieme
+  en: Centro Velico Caprera — songs for singing together
+
+description:
+  it: >-
+    Canzoniere del Centro Velico Caprera: cantautori italiani, pop e rock da
+    cantare tutti insieme, più qualche classico in inglese. Ukulele, accordi
+    in notazione inglese.
+  en: >-
+    Songbook of the Centro Velico Caprera sailing school: Italian
+    singer-songwriters, pop and rock for singing together, plus a few English
+    classics. Ukulele, English chord notation.
+
+# Print layout — presence of `cover:` is what enables cover pages.
+# Palette sampled from the artwork: the CVC burgee's navy and red, which
+# also give the rules their blue-red-blue stripe.
+cover:
+  title: caprera
+  title_font: Courier-Bold
+  title_size: 30
+  title_color: "#1C346E"
+  title_below: true
+  logo: images/00-cover-art.jpeg
+  logo_width: 380
+  strip_top: null
+  strip_bottom: null
+  subtitle: "canzoniere  ·  ukulele"
+  subtitle_font: Courier-Bold
+  subtitle_size: 13
+  subtitle_color: "#1C346E"
+  rules:
+    - { color: "#1C346E", y: 790, height: 9 }
+    - { color: "#961A1C", y: 777, height: 9 }
+    - { color: "#1C346E", y: 764, height: 9 }
+    - { color: "#1C346E", y: 56, height: 9 }
+    - { color: "#961A1C", y: 43, height: 9 }
+    - { color: "#1C346E", y: 30, height: 9 }
+
+back:
+  image: images/99-back-cover-art.jpeg
+  image_width: 380
+  caption: "centro velico caprera"
+  caption_font: Courier-Bold
+  caption_size: 13
+  caption_color: "#1C346E"
+  caption_y: 83.35   # matches the cover subtitle's baseline (MARGIN + 55)
+  rules:
+    - { color: "#1C346E", y: 790, height: 9 }
+    - { color: "#961A1C", y: 777, height: 9 }
+    - { color: "#1C346E", y: 764, height: 9 }
+    - { color: "#1C346E", y: 56, height: 9 }
+    - { color: "#961A1C", y: 43, height: 9 }
+    - { color: "#1C346E", y: 30, height: 9 }

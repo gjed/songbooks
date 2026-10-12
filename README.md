@@ -22,6 +22,7 @@ Browse all songbooks online: **[https://gjed.github.io/songbooks/](https://gjed.
 | ------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
 | [Bricioline](songbooks/bricioline/)                                            | Queen of Saba — Italian children's music                              |
 | [Canzoni Ribelli](songbooks/canzoni-ribelli/)                                  | Italian rebel and protest songs                                       |
+| [Caprera](songbooks/caprera/)                                                  | Centro Velico Caprera — songs for singing together                    |
 | [Diplomatico e il Collettivo Ninco Nanco](songbooks/diplomatico-e-collettivo/) | È tutto un falso, Ho visto il mondo, Troppe Parole                    |
 | [España Circo Este](songbooks/espana-circo-este/)                              | Italian reggae/indie band, Italian and Spanish lyrics                 |
 | [faccianuvola](songbooks/faccianuvola/)                                        | Italian indie-pop singer-songwriter faccianuvola                      |
