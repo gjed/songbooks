@@ -1,0 +1,43 @@
+// Layout overlay for the Caprera songbook.
+// Merged on top of chordpro-ukulele.json by the Makefile.
+{
+  // `genre` and `tema` are custom metadata: songs tag themselves with
+  // `{meta: genre Rock}` / `{meta: tema Mare}`. Non-strict lets ChordPro
+  // accept keys it doesn't know; no key list is needed.
+  "metadata": { "strict": false },
+
+  // Four tables of contents: by title, artist, genre and theme. The `break`
+  // template prints a group heading whenever its value changes between
+  // entries (ChordPro >= 6.10x; older releases list the entries sorted but
+  // without headings). A song with two `tema` values appears under both;
+  // a song with no value lands in the "Altro" group.
+  "contents": [
+    {
+      "fields": [ "sorttitle" ],
+      "label": "Indice",
+      "line": "%{title}",
+      "pageno": "%{page}"
+    },
+    {
+      "fields": [ "sortartist", "sorttitle" ],
+      "label": "Per artista",
+      "line": "%{title}",
+      "pageno": "%{page}",
+      "break": "%{artist}"
+    },
+    {
+      "fields": [ "genre", "sorttitle" ],
+      "label": "Per genere",
+      "line": "%{title}",
+      "pageno": "%{page}",
+      "break": "%{genre|%{}|Altro}"
+    },
+    {
+      "fields": [ "tema", "sorttitle" ],
+      "label": "Per tema",
+      "line": "%{title}",
+      "pageno": "%{page}",
+      "break": "%{tema|%{}|Altro}"
+    }
+  ]
+}
