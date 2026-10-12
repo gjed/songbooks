@@ -153,6 +153,7 @@ def main():
     cho.append('')
 
     in_section = None
+    has_sections = any(t == 'section' for t, _ in result)
     for item_type, val in result:
         if item_type == 'section':
             if in_section:
@@ -164,7 +165,11 @@ def main():
                 cho.append('{start_of_verse}')
             in_section = val
         elif item_type == 'line':
-            cho.append(val)
+            if not in_section and has_sections:
+                cho.append('{start_of_verse}')  # text before the first header
+                in_section = 'Verse'
+            if in_section or has_sections:
+                cho.append(val)
 
     if in_section:
         cho.append('{end_of_chorus}' if in_section == 'Chorus' else '{end_of_verse}')
