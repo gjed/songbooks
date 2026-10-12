@@ -316,7 +316,7 @@ other = "fret %s"
 
 # Chord transposition. The control sits in .chordbox__head alongside the
 # instrument switch. The down/up buttons transpose by semitones; the offset
-# display is clamped to ±6. A reset affordance is the display itself, which
+# display is clamped to ±11 (12 would be the same key). A reset affordance is the display itself, which
 # is a button; tapping it returns offset to 0. The status sentence announces
 # transposition changes via aria-live, like autoscroll.
 

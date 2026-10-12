@@ -1277,7 +1277,7 @@
       }
 
       function setOffset(delta) {
-        var newOffset = Math.max(-6, Math.min(6, state.offset + delta));
+        var newOffset = Math.max(-11, Math.min(11, state.offset + delta));
         if (newOffset === state.offset) return;
         state.offset = newOffset;
         applyTransposition();

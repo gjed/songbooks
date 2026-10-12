@@ -318,7 +318,7 @@ other = "tasto %s"
 
 # Trasposizione degli accordi. Il controllo è nella barra .chordbox__head
 # accanto allo switch dello strumento. I pulsanti −/+ trasportano di
-# semitoni; l'offset è limitato a ±6. Il reset è il display stesso, che è
+# semitoni; l'offset è limitato a ±11 (12 sarebbe la stessa tonalità). Il reset è il display stesso, che è
 # un pulsante: toccarlo riporta l'offset a 0. La frase di stato annuncia il
 # cambio via aria-live, come lo scorrimento automatico.
 
