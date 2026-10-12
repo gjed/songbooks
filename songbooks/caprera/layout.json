@@ -53,6 +53,22 @@
   // built-in "courier" family resolves to FreeMono in the AppImage, and a
   // `file`-only font has no family, so bold would fall back to DejaVuSans.
   "pdf": {
+    // Repeated choruses are collapsed to {chorus} recalls; tag the recall
+    // with the same RIT marker the inline chorus comments use.
+    "chorus": { "recall": { "tag": "RIT" } },
+
+    // One song = one page. Reclaimed from margins first (defaults are 40pt
+    // on every side), then the blank-line spacing; type stays at 11pt. The
+    // longest song needs all of it: any three of the four leave it on two
+    // pages.
+    "marginleft": 25,
+    "marginright": 25,
+    "margintop": 30,
+    "headspace": 20,
+    "marginbottom": 25,
+    "footspace": 10,
+    "spacing": { "lyrics": 1.0, "chords": 1.0, "empty": 0.5 },
+
     "fontconfig": {
       "cvc-courier": {
         "":     "/usr/share/fonts/truetype/msttcorefonts/cour.ttf",
