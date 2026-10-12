@@ -34,6 +34,10 @@ def is_chord_line(line: str) -> bool:
     pat = rf"^{root}(?:m|maj|min|dim|aug|sus\d?|add\d+|\d+|-|\+|\(\w+\))*(?:/{root})?$"
     return all(re.match(pat, t) for t in tokens)
 
+def minor_token(tok: str) -> str:
+    """Common-notation page: G- -> Gm, A#-/C -> A#m/C (never leave a dash minor)."""
+    return re.sub(r'^([A-G][#b]?)-', r'\1m', tok)
+
 def convert_token(tok: str) -> str:
     """Italian chord token -> common (SOL7 -> G7, LA- -> Am, DO/MI -> C/E)."""
     def one(part):
@@ -73,7 +77,7 @@ def process_content(text: str):
             if i + 1 < len(lines):
                 next_line = lines[i + 1]
                 if next_line.strip() and not re.match(r'\[', next_line) and not is_chord_line(next_line):
-                    conv = convert_token if has_italian else (lambda t: t)
+                    conv = convert_token if has_italian else minor_token
                     merged = merge(line, next_line, conv)
                     if not roundtrip_ok(line, next_line, merged, conv):
                         return None, None, 7
@@ -81,7 +85,7 @@ def process_content(text: str):
                     pair_count += 1
                     i += 2
                     continue
-            conv = convert_token if has_italian else (lambda t: t)
+            conv = convert_token if has_italian else minor_token
             result.append(('line', ' '.join(f"[{conv(t)}]" for t in re.findall(r"\S+", line))))
             pair_count += 1
             i += 1
