@@ -151,18 +151,61 @@
       data-label-open="{{ i18n "chord_string_open" }}"
       data-label-muted="{{ i18n "chord_string_muted" }}"
       data-label-fret="{{ i18n "chord_string_fret" }}">
+      {{- /* Label on the left, controls on the right — TWO children, not
+             three. When the transpose control arrived it went in as a third
+             peer of a `justify-content: space-between` row, which left it
+             stranded mid-row belonging to neither neighbour, and at phone
+             widths pushed the instrument switch off the sheet edge. The two
+             controls are now grouped in .chordbox__tools so the row stays a
+             two-part "heading / its controls" shape at every width, and the
+             pair wraps as one block instead of shredding. */ -}}
       <div class="chordbox__head">
         <p class="chordbox__label" id="chordbox-label">{{ i18n "chords_row_label" }}</p>
-        {{- /* Two plain buttons with aria-pressed rather than a radiogroup:
-               the pair is a either/or filter over content that is already on
-               the page, which is exactly the pattern the home page's sort
-               chips use (data-role="sort-chip"). site.js hides whichever
-               button has no JSON table behind it. */ -}}
-        <div class="chordbox__switch" role="group" aria-label="{{ i18n "chord_instrument_label" }}">
-          <button type="button" class="chordbox__inst" data-role="chord-instrument"
-            data-instrument="ukulele" aria-pressed="true">{{ i18n "instrument_ukulele" }}</button>
-          <button type="button" class="chordbox__inst" data-role="chord-instrument"
-            data-instrument="guitar" aria-pressed="false">{{ i18n "instrument_guitar" }}</button>
+        <div class="chordbox__tools">
+          {{- /* Transposition control: shift every chord by ±N semitones.
+                 Shipped `hidden` so with JS off there is no dead control or
+                 reserved space, same contract as the autoscroll and instrument
+                 controls. site.js unhides it and wires up the logic. */ -}}
+          <div class="transpose" data-role="transpose" hidden>
+            <p class="transpose__sr" data-role="transpose-status" aria-live="polite"
+              data-status-template="{{ i18n "transpose_status" }}"></p>
+            {{- /* A visible word, because "− 0 +" on its own says nothing:
+                   this was the only unlabelled control on the page, and the
+                   one sitting next to a switch whose buttons name themselves.
+                   aria-hidden because every button here already carries a
+                   full aria-label — the word is chrome for the eye only, and
+                   announcing it would just double up. */ -}}
+            <span class="transpose__label" aria-hidden="true">{{ i18n "transpose_label" }}</span>
+            <div class="transpose__row">
+              <button type="button" class="transpose__btn transpose__btn--step"
+                data-role="transpose-down" aria-label="{{ i18n "transpose_down" }}">
+                <span aria-hidden="true">−</span>
+              </button>
+              {{- /* The readout is also the reset button. It ships "±0" (not
+                     a bare "0") so it reads as a signed semitone offset from
+                     the written key rather than as an anonymous counter;
+                     site.js keeps that signed shape as the value changes. */ -}}
+              <button type="button" class="transpose__btn transpose__btn--offset"
+                data-role="transpose-offset"
+                aria-label="{{ i18n "transpose_reset" }}"
+                title="{{ i18n "transpose_reset" }}">±0</button>
+              <button type="button" class="transpose__btn transpose__btn--step"
+                data-role="transpose-up" aria-label="{{ i18n "transpose_up" }}">
+                <span aria-hidden="true">+</span>
+              </button>
+            </div>
+          </div>
+          {{- /* Two plain buttons with aria-pressed rather than a radiogroup:
+                 the pair is a either/or filter over content that is already on
+                 the page, which is exactly the pattern the home page's sort
+                 chips use (data-role="sort-chip"). site.js hides whichever
+                 button has no JSON table behind it. */ -}}
+          <div class="chordbox__switch" role="group" aria-label="{{ i18n "chord_instrument_label" }}">
+            <button type="button" class="chordbox__inst" data-role="chord-instrument"
+              data-instrument="ukulele" aria-pressed="true">{{ i18n "instrument_ukulele" }}</button>
+            <button type="button" class="chordbox__inst" data-role="chord-instrument"
+              data-instrument="guitar" aria-pressed="false">{{ i18n "instrument_guitar" }}</button>
+          </div>
         </div>
       </div>
       {{- /* Horizontally scrollable, using the same scrolling-shadow recipe

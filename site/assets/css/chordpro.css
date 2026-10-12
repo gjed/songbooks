@@ -692,11 +692,23 @@
   color: var(--cp-chord);
 }
 
+/* Heading on one side, its controls on the other. `space-between` only ever
+   describes this row honestly while it holds exactly TWO children — with
+   three it distributes the gaps evenly and the middle child reads as
+   belonging to neither end. The controls are therefore grouped in
+   .chordbox__tools below rather than added as further peers here; if a
+   third control ever arrives, it goes in that group too, not in this row.
+
+   `flex-wrap` plus a label that is allowed to shrink is what replaces a
+   breakpoint: below roughly 560px the tools drop to their own line as one
+   block, still right-aligned under the label, and the row needs no media
+   query of its own to survive a phone. */
 .chordbox__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px 14px;
   margin-bottom: 9px;
 }
 
@@ -711,6 +723,26 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ink2);
+}
+
+/* The controls, grouped as one object so the head stays a two-part row.
+   `margin-left: auto` rather than relying on the head's `space-between`:
+   once the group wraps onto its own line it is the only item on that line,
+   space-between has nothing to push it against, and it would snap back to
+   the left under the label. The auto margin keeps it hard right on both
+   the one-line and the wrapped layout.
+
+   It wraps internally too. Two clusters plus a word is a lot for a 320px
+   phone, and a group that can break between its own children degrades far
+   better than one that overflows the sheet — which is exactly what the
+   instrument switch did before this existed. */
+.chordbox__tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 12px;
+  margin-left: auto;
 }
 
 /* The instrument switch. Two buttons hairlined together into one object,
@@ -759,6 +791,183 @@
 /* Inset, like .autoscroll__btn's: the outside-drawn global ring would be
    clipped by the group's own border on the end buttons. */
 .chordbox__inst:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+
+/* ── chord transposition control ───────────────────────────────────────
+   Client-side control to shift every chord by ±N semitones. Ships `hidden`
+   from song.html and is unhidden by site.js — with JS off there is no
+   control and this whole section never paints, same contract as autoscroll.
+
+   PLACEMENT: inside .chordbox__tools, to the LEFT of the instrument switch,
+   so the pair reads left-to-right as "change the song, then change the
+   instrument you are reading it on" — the transposition is a fact about the
+   music, the switch is a fact about the reader.
+
+   TIER: the chordbox tier, 30px, matching .chordbox__inst exactly rather
+   than autoscroll's 44px. Deliberate, and the reason is placement, not
+   consistency for its own sake: .chordbox is NOT sticky, so this control
+   scrolls away with the header. It is set once before you start playing, in
+   the same breath as picking ukulele or guitar — never reached mid-song
+   with an instrument in your hands, which is the situation the 44px floor
+   exists for. Anything you do need mid-song lives in the sticky autoscroll
+   bar, at 44px, where it belongs. Height is locked to the switch's because
+   the two sit shoulder to shoulder: a 4px difference between neighbouring
+   clusters reads as a rendering bug, not as hierarchy.
+
+   TELLING THE TWO CLUSTERS APART is the real problem this block solves.
+   Before, the transpose row and the instrument switch were the same height,
+   the same hairline, the same border, the same card fill, sitting adjacent —
+   they fused into one unreadable six-button blob. Three things separate
+   them now, none of which touch the switch:
+     - a visible word in front of the cluster, so it names itself the way
+       UKULELE / CHITARRA already do;
+     - a step/readout split — the ± keys stay quiet and the centre is the
+       only thing carrying weight, against a switch where one of two equal
+       halves is filled;
+     - a real active state (see .is-transposed), which the switch has no
+       equivalent of because "some instrument is selected" is always true
+       while "this song is transposed" usually is not.
+
+   The offset display button is the reset affordance — clicking it returns
+   the offset to 0. It is the only readout on the page that is also a
+   control, so it is the one that carries the box shading and the strong
+   ink: it has to invite a tap without being mistaken for the primary
+   action, which is the ± on either side of it. */
+
+/* The author display below would beat the UA's `[hidden] { display: none }`,
+   which is the whole no-JS contract — restate it at higher specificity. */
+.transpose[hidden] { display: none; }
+
+.transpose {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Visually-hidden live region for aria-live announcements. Copied from
+   .autoscroll__sr — same clip pattern used throughout the site. */
+.transpose__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The cluster's name, in .chordbox__label's chrome one notch down: same
+   uppercase small-caps family as every other piece of furniture in this
+   header, so it joins the row rather than introducing a fourth voice.
+   `flex: none` because a two-letter word must never be the thing that
+   wraps when the row gets tight — the cluster it labels should move first. */
+.transpose__label {
+  flex: none;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+
+/* The button cluster itself. Hairlined together, same idiom as
+    .chordbox__switch and .autoscroll__row — three buttons read as a single
+    control rather than three loose chips. */
+.transpose__row {
+  display: flex;
+  flex: none;
+  border: 1px solid var(--rule);
+  background: var(--card);
+}
+
+/* Individual buttons: −, offset readout, +. Same 30px tier as
+    .chordbox__inst, not autoscroll's 44px — see the note above. */
+.transpose__btn {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  background: transparent;
+  border: 0;
+  color: var(--ink2);
+  font: inherit;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* Hairline dividers between buttons, same pattern as .chordbox__inst. */
+.transpose__btn + .transpose__btn { border-left: 1px solid var(--rule); }
+
+.transpose__btn:hover { color: var(--ink); background: var(--paper); }
+
+/* The ± glyphs are typographic, not text: bigger and unspaced like
+    .autoscroll__btn--step so they stay legible as targets at a glance.
+    min-width 32px, above the 30px height, because a glyph this narrow
+    would otherwise give a fingertip a target barely wider than the stroke
+    itself — the cheapest tappability win available inside this tier. */
+.transpose__btn--step {
+  min-width: 32px;
+  padding: 0;
+  font-size: 17px;
+  letter-spacing: 0;
+}
+
+/* The readout, which is also the reset button. It must not read as a label
+    wedged between two buttons, so it takes the strong ink and a faint fill
+    the flanking keys do not have — the same "this one is different" move
+    the filled instrument makes, at a fraction of the volume.
+
+    tabular-nums keeps the cluster from flinching one pixel wider when the
+    value goes from ±0 to −6; letter-spacing is dropped because tracking
+    designed for uppercase words pulls a signed number apart. */
+.transpose__btn--offset {
+  min-width: 42px;
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  color: var(--ink);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.transpose__btn--offset:hover {
+  background: color-mix(in srgb, var(--ink) 11%, transparent);
+  color: var(--ink);
+}
+
+/* Transposed = the chords on screen are NOT the chords in the file, and
+   that has to be impossible to miss: someone glancing at this page mid-song
+   must not play a transposed sheet believing it is the written key. So the
+   readout fills with accent ink the moment the offset leaves zero — the
+   loudest thing this quiet tier is allowed to do, and the same filled-means-
+   active idiom as .chordbox__inst[aria-pressed="true"]. Driven off a class
+   site.js puts on the wrapper rather than aria-pressed: this button's job is
+   "reset", not "toggle", so a pressed state would misdescribe it. */
+.transpose.is-transposed .transpose__btn--offset {
+  background: var(--accent-text);
+  color: var(--accent-ink);
+}
+
+.transpose.is-transposed .transpose__btn--offset:hover {
+  background: var(--accent-text);
+  color: var(--accent-ink);
+  filter: brightness(var(--hover-lift));
+}
+
+/* And the word in front of it comes up to full ink to match, so the pair
+   reads as one lit-up object from a distance rather than a lit number next
+   to a greyed label. */
+.transpose.is-transposed .transpose__label { color: var(--ink); }
+
+/* Inset focus ring, same as .chordbox__inst to stay in the same visual tier. */
+.transpose__btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: -3px;
 }
@@ -899,6 +1108,18 @@
 @media (max-height: 520px) and (orientation: landscape) {
   .chordbox { margin-bottom: 12px; padding-bottom: 10px; }
   .chordbox__figure { height: 42px; }
+
+  /* The head is now two clusters plus a heading, and if it wraps here it
+     costs a whole extra line of the ~390px the viewport has. A landscape
+     phone is wide, so the row almost always fits on one line — pull the
+     gaps in and let the heading shrink so it keeps fitting, and trim the
+     controls by 2px each. Not down to autoscroll's 40px: these are set
+     before you play, not reached during, so height here buys lyrics rather
+     than costing reach. */
+  .chordbox__head { gap: 6px 10px; margin-bottom: 7px; }
+  .chordbox__tools { gap: 6px 9px; }
+  .chordbox__inst,
+  .transpose__btn { min-height: 28px; }
 }
 
 /* ── tappable chords in the lyrics ───────────────────────────────────────
