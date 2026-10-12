@@ -612,13 +612,36 @@
      });
      if (!available.length) return;
 
+      var state = {
+        instrument: available.indexOf("ukulele") !== -1 ? "ukulele" : available[0],
+        anchor: null
+      };
+      var tables = {};   /* instrument -> parsed JSON, or null once it failed */
+
+      try {
+        var saved = localStorage.getItem("chord-instrument");
+        if (saved && available.indexOf(saved) !== -1) state.instrument = saved;
+      } catch (e) {
+        /* storage unavailable — ukulele it is */
+      }
+
      /* Distinct chords, first-appearance order. The span text carries a
         trailing no-break space from the ChordPro renderer; empty spans sit
         on unchorded lines (every line gets a chord row, chorded or not) and
         N.C. is an instruction, not a chord. */
      var chords = [];
      var seen = {};
-     var spans = toArray(lyrics.querySelectorAll(".ch"));
+      var tiles = {};
+      /* Outer scope on purpose: the tappable-chord pass at the end of this
+         function reads it too, and transposition re-runs recollectChords()
+         against a fresh span list. */
+      var spans = [];
+
+      function recollectChords() {
+        chords = [];
+        seen = {};
+        tiles = {};
+        spans = toArray(lyrics.querySelectorAll(".ch"));
      spans.forEach(function (span) {
        var text = (span.textContent || "").replace(/[\s\u00a0]+/g, " ").trim();
        if (!text || text === "N.C." || text === "NC") return;
@@ -627,20 +650,10 @@
        seen[text] = true;
        chords.push(text);
      });
-     if (!chords.length) return;
-
-     var state = {
-       instrument: available.indexOf("ukulele") !== -1 ? "ukulele" : available[0],
-       anchor: null
-     };
-     var tables = {};   /* instrument -> parsed JSON, or null once it failed */
-
-     try {
-       var saved = localStorage.getItem("chord-instrument");
-       if (saved && available.indexOf(saved) !== -1) state.instrument = saved;
-     } catch (e) {
-       /* storage unavailable — ukulele it is */
      }
+
+      recollectChords();
+      if (!chords.length) return;
 
      /* ---- lookup ---- */
 
@@ -655,14 +668,30 @@
        return !!(entry && entry.frets && entry.frets.length);
      }
 
-     function entryFor(name) {
-       var table = tables[state.instrument];
-       if (!table) return null;
-       var byName = table.chords || {};
-       if (usable(byName[name])) return byName[name];
-       var alias = (table.aliases || {})[name];
-       return (alias && usable(byName[alias]) && byName[alias]) || null;
-     }
+      /* Transposition spells every black key as a sharp, but the generated
+         tables are patchy about it: ukulele has "A#" yet only "Bbm", so A#m
+         found nothing and the tile fell back to the placeholder. Retry with
+         the enharmonic flat spelling of the root and of a slash bass. */
+      var FLAT_OF = { "A#": "Bb", "C#": "Db", "D#": "Eb", "F#": "Gb", "G#": "Ab" };
+      function flatSpelling(name) {
+        return name.replace(/(^|\/)([A-G]#)/g, function (_, sep, note) {
+          return sep + FLAT_OF[note];
+        });
+      }
+
+      function entryFor(name) {
+        var table = tables[state.instrument];
+        if (!table) return null;
+        var byName = table.chords || {};
+        var aliases = table.aliases || {};
+        var candidates = [name, flatSpelling(name)];
+        for (var i = 0; i < candidates.length; i++) {
+          var alias = aliases[candidates[i]];
+          if (usable(byName[candidates[i]])) return byName[candidates[i]];
+          if (alias && usable(byName[alias])) return byName[alias];
+        }
+        return null;
+      }
 
      function figureHtml(name) {
        var table = tables[state.instrument];
@@ -706,9 +735,10 @@
         diagrams when the fetch resolves repaints inside the tiles and never
         moves the lyrics. One reveal, one shift, same as the autoscroll bar
         above it. */
-     var tiles = {};
 
      function buildStrip() {
+        strip.innerHTML = "";
+        tiles = {};
        chords.forEach(function (name) {
          var li = document.createElement("li");
          li.className = "chordbox__tile";
@@ -729,6 +759,15 @@
          tiles[name] = { li: li, fig: fig, spoken: spoken };
        });
      }
+
+      /* Called by transposition to rebuild the chord row after chords change. */
+      window.__chordDiagramsRebuild = function () {
+        recollectChords();
+        if (!chords.length) return;
+        closePop();
+        buildStrip();
+        paintStrip();
+      };
 
      function paintStrip() {
        /* The table itself failed to load or arrived malformed. Every tile
@@ -983,11 +1022,280 @@
      load(state.instrument, paintStrip);
    }
 
+    function initTranspose() {
+      var box = document.querySelector('[data-role="transpose"]');
+      var lyrics = document.querySelector(".chordpro");
+      if (!box || !lyrics) return;
+
+      var downBtn = box.querySelector('[data-role="transpose-down"]');
+      var upBtn = box.querySelector('[data-role="transpose-up"]');
+      var offsetBtn = box.querySelector('[data-role="transpose-offset"]');
+      var statusEl = box.querySelector('[data-role="transpose-status"]');
+      var statusTemplate = box.getAttribute("data-status-template") || "Transposed %s semitones";
+
+      var state = {
+        offset: 0,
+        chords: []  /* array of {span, original} */
+      };
+
+      /* Detect notation at runtime from chord names. Latin notation uses
+         roots: DO, RE, MI, FA, SOL, LA, SI (2-3 letters). Common uses A-G
+         (single letter). These do not overlap. */
+      function isLatin(chordName) {
+        var roots = ["DO", "RE", "MI", "FA", "SOL", "LA", "SI"];
+        for (var i = 0; i < roots.length; i++) {
+          if (chordName.indexOf(roots[i]) === 0) return true;
+        }
+        return false;
+      }
+
+      /* Parse chord: root, optional accidental, remainder, optional bass.
+         Returns { root, accidental, remainder, bass } or null.
+         Try latin roots first (to avoid matching D from DO as common D).
+         For latin notation, match longest root first (SOL before SI/SO). */
+      function parseChord(name) {
+        if (!name || name === "N.C." || name === "NC") return null;
+
+        var root = null;
+        /* Try latin roots first, longest first to avoid prefix issues.
+           SOL is 3 letters, DO/RE/MI/FA/LA/SI are 2. */
+        var latinLong = ["SOL", "DO", "RE", "MI", "FA", "LA", "SI"];
+        for (var i = 0; i < latinLong.length; i++) {
+          if (name.indexOf(latinLong[i]) === 0) {
+            root = latinLong[i];
+            break;
+          }
+        }
+
+        /* If no latin root, try common roots (single letter A-G). */
+        if (!root && /^[A-G]/.test(name)) {
+          root = name.charAt(0);
+        }
+
+        if (!root) return null;
+
+        var after = name.slice(root.length);
+        var accidental = "";
+        if (/^[#b]/.test(after)) {
+          accidental = after.charAt(0);
+          after = after.slice(1);
+        }
+
+        var bass = "";
+        var slashIdx = after.indexOf("/");
+        var remainder = after;
+        if (slashIdx !== -1) {
+          remainder = after.slice(0, slashIdx);
+          bass = after.slice(slashIdx + 1);
+        }
+
+        return {
+          root: root,
+          accidental: accidental,
+          remainder: remainder,
+          bass: bass
+        };
+      }
+
+       /* Common roots in semitone order: C, C#, D, D#, E, F, F#, G, G#, A, A#, B */
+       var commonRoots = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+       var commonMap = {};
+       commonRoots.forEach(function (r, i) {
+         commonMap[r] = i;
+       });
+       /* Add flat enharmonic spellings: Db=C#, Eb=D#, Gb=F#, Ab=G#, Bb=A# */
+       commonMap["Db"] = commonMap["C#"];
+       commonMap["Eb"] = commonMap["D#"];
+       commonMap["Gb"] = commonMap["F#"];
+       commonMap["Ab"] = commonMap["G#"];
+       commonMap["Bb"] = commonMap["A#"];
+
+       /* Latin roots: DO, RE, MI, FA, SOL, LA, SI
+          Mapped to semitone indices: DO=0 (C), RE=2 (D), MI=4 (E), FA=5 (F),
+          SOL=7 (G), LA=9 (A), SI=11 (B). */
+       var latinRoots = ["DO", "RE", "MI", "FA", "SOL", "LA", "SI"];
+       var latinSemitones = [0, 2, 4, 5, 7, 9, 11];  /* semitone index for each root */
+       var latinMap = {};
+       latinRoots.forEach(function (r, i) {
+         latinMap[r] = latinSemitones[i];
+       });
+       /* Add accidentals: sharps go up a semitone, flats go down. */
+       latinRoots.forEach(function (r, i) {
+         latinMap[r + "#"] = (latinSemitones[i] + 1) % 12;
+         latinMap[r + "b"] = (latinSemitones[i] - 1 + 12) % 12;
+       });
+
+       /* Output spelling, semitone -> latin name. The naturals only cover the
+          seven white keys; transposing onto a black key used to find no name,
+          return null, and silently leave the chord untransposed — which put
+          the song in two keys at once. Sharp-preferred, matching the common
+          notation side, so the five black keys spell DO#, RE#, FA#, SOL#, LA#. */
+       var latinSpell = [];
+       latinRoots.forEach(function (r, i) {
+         latinSpell[latinSemitones[i]] = r;
+       });
+       latinRoots.forEach(function (r, i) {
+         var sharp = (latinSemitones[i] + 1) % 12;
+         if (!latinSpell[sharp]) latinSpell[sharp] = r + "#";
+       });
+
+      function transposeCommon(parsed, offset) {
+        /* Combine root + accidental for lookup in commonMap, which expects
+           the full pitch name (C, C#, Db, D, D#, etc.). */
+        var rootWithAccidental = parsed.root + parsed.accidental;
+        var idx = commonMap[rootWithAccidental];
+        if (idx === undefined) return null;
+        var newIdx = (idx + offset + 120) % 12;  /* +120 to handle negatives */
+        var newRoot = commonRoots[newIdx];
+        if (!newRoot) return null;
+
+        /* Transpose the bass note if present. */
+        var newBass = "";
+        if (parsed.bass) {
+          var bassParsed = parseChord(parsed.bass);
+          if (bassParsed) {
+            newBass = transposeCommon(bassParsed, offset);
+            if (newBass) {
+              newBass = "/" + newBass;
+            }
+          }
+        }
+
+        return newRoot + parsed.remainder + newBass;
+      }
+
+       function transposeLatin(parsed, offset) {
+         /* Combine root + accidental for lookup, same as common. */
+         var rootWithAccidental = parsed.root + parsed.accidental;
+         var semiIdx = latinMap[rootWithAccidental];
+         if (semiIdx === undefined) return null;
+         var newSemiIdx = (semiIdx + offset + 120) % 12;
+
+         var newRoot = latinSpell[newSemiIdx];
+         if (!newRoot) return null;
+
+        /* In latin notation, minor is a suffix: LA- = Am, MI-7 = Em7.
+           Parse the remainder to extract and re-attach the minor marker. */
+        var remainder = parsed.remainder;
+        var minor = "";
+        if (remainder.indexOf("-") === 0) {
+          minor = "-";
+          remainder = remainder.slice(1);
+        }
+
+        /* Bass in latin: same transposition logic. */
+        var newBass = "";
+        if (parsed.bass) {
+          var bassParsed = parseChord(parsed.bass);
+          if (bassParsed) {
+            newBass = transposeLatin(bassParsed, offset);
+            if (newBass) {
+              newBass = "/" + newBass;
+            }
+          }
+        }
+
+        return newRoot + minor + remainder + newBass;
+      }
+
+      function transposeChord(name, offset) {
+        if (offset === 0) return name;
+        var parsed = parseChord(name);
+        if (!parsed) return name;
+
+        if (isLatin(name)) {
+          return transposeLatin(parsed, offset) || name;
+        } else {
+          return transposeCommon(parsed, offset) || name;
+        }
+      }
+
+      function captureChords() {
+        state.chords = [];
+        var spans = toArray(lyrics.querySelectorAll(".ch"));
+        spans.forEach(function (span) {
+          var text = (span.textContent || "").replace(/[\s\u00a0]+/g, " ").trim();
+          if (text && text !== "N.C." && text !== "NC") {
+            state.chords.push({
+              span: span,
+              original: text
+            });
+          }
+        });
+      }
+
+      function applyTransposition() {
+        state.chords.forEach(function (item) {
+          var transposed = transposeChord(item.original, state.offset);
+          var span = item.span;
+          /* Preserve the trailing no-break space from the original markup. */
+          var text = span.textContent || "";
+          var trailingSpace = /[\s\u00a0]$/.test(text) ? "\u00a0" : "";
+          span.textContent = transposed + trailingSpace;
+          span.setAttribute("data-chord", transposed);
+        });
+      }
+
+      function updateDisplay() {
+        if (offsetBtn) {
+          /* Always signed. A bare "2" in a row of buttons reads as a count
+             of something; "+2" reads as a shift, which is what it is. Zero
+             gets "±0" rather than "0" for the same reason — it has to say
+             "no shift applied" rather than look like an idle counter. The
+             template in song.html ships this same shape so the control does
+             not visibly rewrite itself on init. */
+          offsetBtn.textContent = state.offset > 0 ? "+" + state.offset
+            : state.offset < 0 ? String(state.offset)
+            : "\u00b10";
+        }
+        /* Drives the accent fill that says the sheet is no longer in its
+           written key — see .transpose.is-transposed in chordpro.css. Not
+           aria-pressed: this button's action is "reset", not "toggle". */
+        box.classList.toggle("is-transposed", state.offset !== 0);
+        if (statusEl) {
+          statusEl.textContent = statusTemplate.replace("%s", state.offset);
+        }
+      }
+
+      function setOffset(delta) {
+        var newOffset = Math.max(-6, Math.min(6, state.offset + delta));
+        if (newOffset === state.offset) return;
+        state.offset = newOffset;
+        applyTransposition();
+        updateDisplay();
+        /* Call the helper set up by initChordDiagrams to rebuild the strip. */
+        if (window.__chordDiagramsRebuild) {
+          window.__chordDiagramsRebuild();
+        }
+      }
+
+      function resetOffset() {
+        if (state.offset === 0) return;
+        state.offset = 0;
+        applyTransposition();
+        updateDisplay();
+        /* Call the helper set up by initChordDiagrams to rebuild the strip. */
+        if (window.__chordDiagramsRebuild) {
+          window.__chordDiagramsRebuild();
+        }
+      }
+
+      if (downBtn) downBtn.addEventListener("click", function () { setOffset(-1); });
+      if (upBtn) upBtn.addEventListener("click", function () { setOffset(1); });
+      if (offsetBtn) offsetBtn.addEventListener("click", resetOffset);
+
+      /* Capture chords on init. */
+      captureChords();
+      box.removeAttribute("hidden");
+      updateDisplay();
+    }
+
    document.addEventListener("DOMContentLoaded", function () {
      initTheme();
      initHome();
      initSongIndex();
      initAutoscroll();
      initChordDiagrams();
+      initTranspose();
    });
 })();
