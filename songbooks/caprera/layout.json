@@ -58,9 +58,8 @@
     "chorus": { "recall": { "tag": "RIT" } },
 
     // One song = one page. Reclaimed from margins first (defaults are 40pt
-    // on every side), then the blank-line spacing; type stays at 11pt. The
-    // longest song needs all of it: any three of the four leave it on two
-    // pages.
+    // on every side), then the blank-line spacing, and only then type size
+    // (10.5pt instead of 11pt). The longest song needs all of it.
     "marginleft": 25,
     "marginright": 25,
     "margintop": 30,
@@ -76,6 +75,8 @@
       }
     },
     "fonts": {
+      "text":  { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf", "size": 10.5 },
+      "chord": { "file": "/usr/share/fonts/truetype/msttcorefonts/cour.ttf", "size": 10.5, "color": "blue" },
       "toc": { "description": "cvc-courier 11", "color": "#1C346E" }
     }
   }
