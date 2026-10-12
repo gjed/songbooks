@@ -106,6 +106,24 @@ All four headers are required. `{key: ...}` always uses common note names
 | Invent missing lyrics or chords                               | Never. Transcribe only what the source provides                                                                         |
 | Source notes capo as text ("capotasto III")                   | Use `{capo: 3}`, not `{comment: capotasto III}`                                                                         |
 
+## Caprera: genre and theme tags
+
+The `caprera` songbook prints four tables of contents (title, artist, genre,
+theme). Genre and theme are custom metadata, tagged in the song header:
+
+```text
+{meta: genre Cantautorato}
+{meta: tema Mare}
+{meta: tema Amore}
+```
+
+- Both keys are optional. One `{meta: tema ...}` line per theme: a song with
+  two themes is listed under both. Untagged songs land in the "Altro" group.
+- Spelling is the grouping key, case-sensitive: `Rock` and `rock` become two
+  groups. Reuse an existing value before inventing one.
+- Group headings need ChordPro 6.101 (CI). The older local 6.070 sorts the
+  entries but prints no headings, so check TOCs with the CI build.
+
 ## Steps
 
 1. Read 1–2 sibling `.cho` files in the target songbook to confirm local
