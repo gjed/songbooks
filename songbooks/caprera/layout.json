@@ -1,15 +1,15 @@
 // Layout overlay for the Caprera songbook.
 // Merged on top of chordpro-ukulele.json by the Makefile.
 {
-  // `genre` and `tema` are custom metadata: songs tag themselves with
-  // `{meta: genre Rock}` / `{meta: tema Mare}`. Non-strict lets ChordPro
+  // `genre` and `mood` are custom metadata: songs tag themselves with
+  // `{meta: genre Rock}` / `{meta: mood Happy}`. Non-strict lets ChordPro
   // accept keys it doesn't know; no key list is needed.
   "metadata": { "strict": false },
 
   // Four tables of contents: by title, artist, genre and theme. The `break`
   // template prints a group heading whenever its value changes between
   // entries (ChordPro >= 6.10x; older releases list the entries sorted but
-  // without headings). A song with two `tema` values appears under both;
+  // without headings). A song with two `mood` values appears under both;
   // a song with no value lands in the "Altro" group.
   //
   // Styling follows the cover: navy #1C346E text, burgee red #961A1C as
@@ -40,11 +40,11 @@
       "break": "\n<span color=\"#961A1C\" face=\"cvc-courier\" weight=\"bold\">%{genre|%{}|Altro}</span>"
     },
     {
-      "fields": [ "tema", "sorttitle" ],
-      "label": "<span size=\"18\" color=\"#1C346E\" underline=\"double\" underline_color=\"#961A1C\">Per tema</span>",
+      "fields": [ "mood", "sorttitle" ],
+      "label": "<span size=\"18\" color=\"#1C346E\" underline=\"double\" underline_color=\"#961A1C\">Per mood</span>",
       "line": "%{title}",
       "pageno": "<span weight=\"bold\" face=\"cvc-courier\">%{page}</span>",
-      "break": "\n<span color=\"#961A1C\" face=\"cvc-courier\" weight=\"bold\">%{tema|%{}|Altro}</span>"
+      "break": "\n<span color=\"#961A1C\" face=\"cvc-courier\" weight=\"bold\">%{mood|%{}|Altro}</span>"
     }
   ],
 
