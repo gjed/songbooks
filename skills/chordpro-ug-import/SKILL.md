@@ -138,7 +138,9 @@ fix only when the intended syllable is unambiguous, and say so.
 
 - **Notation**: all `.cho` in this repo are common (`C Am G7`). UG pages for
   Italian songs are normally already common; if you see `DO`/`SOL`/`LA-`,
-  map to common before writing (never mix notations).
+  map to common before writing (never mix notations). `-` is minor, and the
+  repo writes minor as `m` (`A-` → `Am`, `F#-7` → `F#m7`) even in a page that
+  is otherwise common; `scripts/ug-import.py` does both conversions.
 - **Headers**: `{title}` and `{artist}` from `tab`. `{album}` and `{key}` are
   required but not on UG — look the album up (Spotify/MusicBrainz) and take
   the key from the first chord of the song or the UG tonality when present.

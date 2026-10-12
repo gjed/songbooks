@@ -78,7 +78,8 @@ Input: a link to an album, artist page, or tracklist.
   same progression".
 - Chords from Italian sources (`DO`, `SOL-`) are converted to common
   notation at transcription time — the mapping is in
-  `chordpro-song-authoring`.
+  `chordpro-song-authoring`. A `-` suffix is minor and is always written
+  `m` (`A-` → `Am`), in any source.
 - When several versions exist on the page (e.g. UG has multiple ratings),
   say which one was used.
 - Record uncertainty inline with a `# TODO` comment line rather than
