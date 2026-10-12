@@ -400,7 +400,7 @@
    var FB_CELL = 10;     /* string spacing, and one fret row's height */
    var FB_HEAD = 11;     /* the ○/× band above the nut */
    var FB_PAD = 5;       /* side gutters, enough for a marker's radius */
-   var FB_LABEL = 11;    /* extra left gutter for the "3fr" base-fret label */
+   var FB_LABEL = 26;    /* extra left gutter for the "3fr" base-fret label */
    var FB_MIN_ROWS = 4;  /* a 4-row grid is the norm; see below */
 
    function fretboxSvg(entry, strings) {
@@ -462,9 +462,9 @@
 
      if (base > 1) {
        svg.push(
-         '<text x="' + (padL - 3.5) + '" y="' + (top + FB_CELL * 0.5) + '" ' +
-           'text-anchor="end" dominant-baseline="central" font-size="5.4" ' +
-           'fill="var(--ink2)" font-family="inherit">' + base + "fr</text>"
+'<text x="' + (padL - 3) + '" y="' + (top + FB_CELL * 0.5) + '" ' +
+            'text-anchor="end" dominant-baseline="central" font-size="9" font-weight="700" ' +
+            'fill="var(--ink)" font-family="inherit">' + base + "fr</text>"
        );
      }
 
