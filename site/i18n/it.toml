@@ -315,3 +315,28 @@ other = "non suonata"
 
 [chord_string_fret]
 other = "tasto %s"
+
+# Trasposizione degli accordi. Il controllo è nella barra .chordbox__head
+# accanto allo switch dello strumento. I pulsanti −/+ trasportano di
+# semitoni; l'offset è limitato a ±6. Il reset è il display stesso, che è
+# un pulsante: toccarlo riporta l'offset a 0. La frase di stato annuncia il
+# cambio via aria-live, come lo scorrimento automatico.
+
+# Il nome visibile del gruppo, davanti ai pulsanti − / display / +.
+# Una parola sola: divide la riga con lo switch dello strumento e deve
+# starci accanto anche su un telefono. "Tono" e non "Tonalità": più corto
+# e, in italiano musicale corrente, è quello che si alza o si abbassa.
+[transpose_label]
+other = "Tono"
+
+[transpose_down]
+other = "Trasporta in basso"
+
+[transpose_up]
+other = "Trasporta in alto"
+
+[transpose_status]
+other = "Trasportato di %s semitoni"
+
+[transpose_reset]
+other = "Ripristina la trasposizione"
