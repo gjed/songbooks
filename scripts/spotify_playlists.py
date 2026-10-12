@@ -91,7 +91,10 @@ API_BASE = "https://api.spotify.com/v1"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 # playlist-read-private is required by the exact-name lookup (GET
 # /me/playlists) that sync uses to avoid creating duplicate playlists.
-SCOPES = "playlist-read-private playlist-modify-public playlist-modify-private"
+SCOPES = (
+    "playlist-read-private playlist-modify-public playlist-modify-private "
+    "ugc-image-upload"  # PUT /playlists/{id}/images (playlist cover)
+)
 
 SEARCH_LIMIT = 10  # Spotify caps /search at 10 results per request.
 BATCH_SIZE = 100  # Spotify caps playlist item writes at 100 URIs.
