@@ -313,3 +313,27 @@ other = "not played"
 
 [chord_string_fret]
 other = "fret %s"
+
+# Chord transposition. The control sits in .chordbox__head alongside the
+# instrument switch. The down/up buttons transpose by semitones; the offset
+# display is clamped to ±6. A reset affordance is the display itself, which
+# is a button; tapping it returns offset to 0. The status sentence announces
+# transposition changes via aria-live, like autoscroll.
+
+# The visible name of the cluster, sat in front of the − / readout / +
+# buttons. Kept to one short word: it shares a header row with the
+# instrument switch and has to fit beside it on a phone.
+[transpose_label]
+other = "Key"
+
+[transpose_down]
+other = "Transpose down"
+
+[transpose_up]
+other = "Transpose up"
+
+[transpose_status]
+other = "Transposed %s semitones"
+
+[transpose_reset]
+other = "Reset transposition"
