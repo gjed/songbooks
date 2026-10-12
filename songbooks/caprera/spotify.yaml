@@ -22,17 +22,17 @@
 $schema_version: 1
 mode: playlist
 playlist_name: Caprera
-playlist_id: null
+playlist_id: 2sDkiZozgIkAsrw4qL5cSs
 tracks:
-  01-il-rock-di-capitan-ivo: ''
-  02-maddalena: ''
+  01-il-rock-di-capitan-ivo: spotify:track:0hQwK2xN3VxsifhVdnB4FL
+  02-maddalena: spotify:track:30oMPoUlS7RamkXXQ6TlxY
   03-il-bar-della-rabbia: spotify:track:3q00NthjYpYetlFXbap1tM
-  04-babalu: ''
-  05-marylou: ''
-  06-statte-zitta: ''
+  04-babalu: spotify:track:3ZJMC7MWRtDxZfwVIeUtsq
+  05-marylou: spotify:track:0jmlr4s46HBohH95A6O5O0
+  06-statte-zitta: spotify:track:7IyklFD2lDjHEWxYVixQqv
   07-scetate-vajo: spotify:track:4JA54D9OUKBGYkwANKSozM
-  08-merlo-rosso: ''
-  09-tevere-grand-hotel: ''
-  10-osso-di-seppia: ''
-  11-vivere-la-vita: ''
-  12-la-strega-e-il-diamante: ''
+  08-merlo-rosso: spotify:track:5dptvy9GlIxiJghsYWDoie
+  09-tevere-grand-hotel: spotify:track:6wIOMVGFIRhdF2VTOUBCn4
+  10-osso-di-seppia: spotify:track:41F4bygNhjShlcdyRIPVHP
+  11-vivere-la-vita: spotify:track:4e2LlObWWxvG0pk4jdbiPy
+  12-la-strega-e-il-diamante: spotify:track:0BqSrLumbh858RaaMkO1MS
