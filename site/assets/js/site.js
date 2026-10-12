@@ -679,12 +679,31 @@
         });
       }
 
+      /* The tables are keyed in common notation and alias only a handful of
+         latin names (the naturals), so a transposed latin chord like LA#- or
+         SOL#7 found nothing. Spell it in common notation instead: root letter
+         for solfège root, and latin's "-" suffix back to "m". */
+      var LATIN_ROOT = { SOL: "G", DO: "C", RE: "D", MI: "E", FA: "F", LA: "A", SI: "B" };
+      function latinToCommon(name) {
+        var m = /^(SOL|DO|RE|MI|FA|LA|SI)([#b]?)(-?)([^\/]*)(?:\/(.+))?$/.exec(name);
+        if (!m) return null;
+        var out = LATIN_ROOT[m[1]] + m[2] + (m[3] ? "m" : "") + m[4];
+        if (m[5]) {
+          var bass = latinToCommon(m[5]);
+          if (!bass) return null;
+          out += "/" + bass;
+        }
+        return out;
+      }
+
       function entryFor(name) {
         var table = tables[state.instrument];
         if (!table) return null;
         var byName = table.chords || {};
         var aliases = table.aliases || {};
+        var common = latinToCommon(name);
         var candidates = [name, flatSpelling(name)];
+        if (common) candidates.push(common, flatSpelling(common));
         for (var i = 0; i < candidates.length; i++) {
           var alias = aliases[candidates[i]];
           if (usable(byName[candidates[i]])) return byName[candidates[i]];
