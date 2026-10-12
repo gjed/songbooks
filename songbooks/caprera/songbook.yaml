@@ -6,18 +6,18 @@ language: it        # primary language — drives the printed pages
 notation: common    # chord names used in the .cho files (C D E …)
 
 blurb:
-  it: Centro Velico Caprera — canzoni da cantare tutti insieme
-  en: Centro Velico Caprera — songs for singing together
+  it: Centro Velico Caprera — canzoni da cantare insieme in terrazza
+  en: Centro Velico Caprera — songs to sing together on the terrace
 
 description:
   it: >-
-    Canzoniere del Centro Velico Caprera: cantautori italiani, pop e rock da
-    cantare tutti insieme, più qualche classico in inglese. Ukulele, accordi
-    in notazione inglese.
+    Canzoniere del Centro Velico Caprera: canzoni da cantare insieme in
+    terrazza. Cantautori italiani, un po' di pop e rock, qualche pezzo in
+    inglese. Ukulele, accordi in notazione inglese.
   en: >-
-    Songbook of the Centro Velico Caprera sailing school: Italian
-    singer-songwriters, pop and rock for singing together, plus a few English
-    classics. Ukulele, English chord notation.
+    Songbook of the Centro Velico Caprera sailing school: songs to sing
+    together on the terrace. Italian singer-songwriters, some pop and rock, a
+    few songs in English. Ukulele, English chord notation.
 
 # Print layout — presence of `cover:` is what enables cover pages.
 # Palette sampled from the CVC burgee painted on the hut in the cover art:
@@ -67,23 +67,19 @@ intro:
   description:
     it:
       - >-
-        Questo è il canzoniere del Centro Velico Caprera: le canzoni che si
-        cantano a fine giornata, quando le barche sono a terra e si sta tutti
-        insieme.
+        Il canzoniere del Centro Velico Caprera: canzoni da cantare insieme in
+        terrazza.
       - >-
-        Ci sono cantautori italiani, pop e rock, e qualche classico in
-        inglese. Generi ed epoche diversi, tenuti insieme da una cosa sola:
-        sono canzoni da cantare in coro.
+        Cantautori italiani, un po' di pop e rock, qualche pezzo in inglese.
+        Ognuno canta come gli viene.
       - Accordi per ukulele, in notazione inglese.
     en:
       - >-
-        This is the songbook of the Centro Velico Caprera: the songs that get
-        sung at the end of the day, once the boats are ashore and everyone is
-        together.
+        The songbook of the Centro Velico Caprera: songs to sing together on
+        the terrace.
       - >-
-        Italian singer-songwriters, pop and rock, and a few English classics.
-        Different genres and decades, held together by one thing: they are
-        songs for singing in chorus.
+        Italian singer-songwriters, some pop and rock, a few songs in English.
+        Everyone sings however they sing.
       - Ukulele chords, in English notation.
   rules:
     - { color: "#1C346E", y: 805, height: 7 }
