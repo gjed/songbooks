@@ -5,6 +5,19 @@ description: Use when converting a chords page from tabs.ultimate-guitar.com (Ul
 
 # Importing a song from Ultimate Guitar
 
+## Source status
+
+THE LYRICS AND CHORDS ON ULTIMATE GUITAR ARE USER-GENERATED CONTENT:
+TRANSCRIPTIONS UPLOADED BY SITE USERS, NOT OFFICIAL MATERIAL FROM THE ARTIST
+OR PUBLISHER. THE SONGS THEMSELVES REMAIN COPYRIGHTED BY THEIR AUTHORS.
+
+Consequences for this workflow:
+
+- Treat the page as an unverified, possibly wrong transcription: check the
+  chords and words against a recording before trusting them.
+- Credit it in the hand-off (URL and UG version number), as step 5 says.
+- Do not publish the result outside this repo's songbook workflow.
+
 ## When to use
 
 A user gives a `tabs.ultimate-guitar.com/tab/...-chords-<id>` URL and wants
