@@ -11,33 +11,56 @@
   // entries (ChordPro >= 6.10x; older releases list the entries sorted but
   // without headings). A song with two `tema` values appears under both;
   // a song with no value lands in the "Altro" group.
+  //
+  // Styling follows the cover: navy #1C346E text, burgee red #961A1C as
+  // the single accent. Titles are navy Courier-Bold with a red double
+  // rule, group headings are red bold (the leading \n adds a blank line
+  // above each), page numbers are navy bold. All of it is inline markup
+  // or the `toc` font, which only the contents pages use: song pages
+  // stay untouched.
   "contents": [
     {
       "fields": [ "sorttitle" ],
-      "label": "Indice",
+      "label": "<span size=\"18\" color=\"#1C346E\" underline=\"double\" underline_color=\"#961A1C\">Indice</span>",
       "line": "%{title}",
-      "pageno": "%{page}"
+      "pageno": "<span weight=\"bold\" face=\"cvc-courier\">%{page}</span>"
     },
     {
       "fields": [ "sortartist", "sorttitle" ],
-      "label": "Per artista",
+      "label": "<span size=\"18\" color=\"#1C346E\" underline=\"double\" underline_color=\"#961A1C\">Per artista</span>",
       "line": "%{title}",
-      "pageno": "%{page}",
-      "break": "%{artist}"
+      "pageno": "<span weight=\"bold\" face=\"cvc-courier\">%{page}</span>",
+      "break": "\n<span color=\"#961A1C\" face=\"cvc-courier\" weight=\"bold\">%{artist}</span>"
     },
     {
       "fields": [ "genre", "sorttitle" ],
-      "label": "Per genere",
+      "label": "<span size=\"18\" color=\"#1C346E\" underline=\"double\" underline_color=\"#961A1C\">Per genere</span>",
       "line": "%{title}",
-      "pageno": "%{page}",
-      "break": "%{genre|%{}|Altro}"
+      "pageno": "<span weight=\"bold\" face=\"cvc-courier\">%{page}</span>",
+      "break": "\n<span color=\"#961A1C\" face=\"cvc-courier\" weight=\"bold\">%{genre|%{}|Altro}</span>"
     },
     {
       "fields": [ "tema", "sorttitle" ],
-      "label": "Per tema",
+      "label": "<span size=\"18\" color=\"#1C346E\" underline=\"double\" underline_color=\"#961A1C\">Per tema</span>",
       "line": "%{title}",
-      "pageno": "%{page}",
-      "break": "%{tema|%{}|Altro}"
+      "pageno": "<span weight=\"bold\" face=\"cvc-courier\">%{page}</span>",
+      "break": "\n<span color=\"#961A1C\" face=\"cvc-courier\" weight=\"bold\">%{tema|%{}|Altro}</span>"
     }
-  ]
+  ],
+
+  // A named family for the cour.ttf / courbd.ttf files the global config
+  // already uses, so markup `weight="bold"` finds Courier New Bold. The
+  // built-in "courier" family resolves to FreeMono in the AppImage, and a
+  // `file`-only font has no family, so bold would fall back to DejaVuSans.
+  "pdf": {
+    "fontconfig": {
+      "cvc-courier": {
+        "":     "/usr/share/fonts/truetype/msttcorefonts/cour.ttf",
+        "bold": "/usr/share/fonts/truetype/msttcorefonts/courbd.ttf"
+      }
+    },
+    "fonts": {
+      "toc": { "description": "cvc-courier 11", "color": "#1C346E" }
+    }
+  }
 }
