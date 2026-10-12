@@ -89,4 +89,5 @@ Vendor-neutral skills (Agent Skills / SKILL.md standard) live in
 
 - `skills/chordpro-song-authoring` — writing or fixing `.cho` files
 - `skills/chordpro-songbook-management` — songbook structure, builds, chord config
+- `skills/chordpro-ug-import` — fetching a chord sheet from Ultimate Guitar and placing chords
 - `skills/atomic-conventional-commits` — committing and PR hygiene
