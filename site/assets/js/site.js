@@ -1168,16 +1168,14 @@
         var newRoot = commonRoots[newIdx];
         if (!newRoot) return null;
 
-        /* Transpose the bass note if present. */
+        /* Transpose the bass note if present. A suffix that is not a note —
+           the 9 of D6/9, the 5b of A7/5b — is part of the chord, not a bass,
+           and is kept as written. */
         var newBass = "";
         if (parsed.bass) {
           var bassParsed = parseChord(parsed.bass);
-          if (bassParsed) {
-            newBass = transposeCommon(bassParsed, offset);
-            if (newBass) {
-              newBass = "/" + newBass;
-            }
-          }
+          var shiftedBass = bassParsed && transposeCommon(bassParsed, offset);
+          newBass = "/" + (shiftedBass || parsed.bass);
         }
 
         return newRoot + parsed.remainder + newBass;
@@ -1202,16 +1200,12 @@
           remainder = remainder.slice(1);
         }
 
-        /* Bass in latin: same transposition logic. */
+        /* Bass in latin: same transposition logic, same keep-if-not-a-note. */
         var newBass = "";
         if (parsed.bass) {
           var bassParsed = parseChord(parsed.bass);
-          if (bassParsed) {
-            newBass = transposeLatin(bassParsed, offset);
-            if (newBass) {
-              newBass = "/" + newBass;
-            }
-          }
+          var shiftedBass = bassParsed && transposeLatin(bassParsed, offset);
+          newBass = "/" + (shiftedBass || parsed.bass);
         }
 
         return newRoot + minor + remainder + newBass;
