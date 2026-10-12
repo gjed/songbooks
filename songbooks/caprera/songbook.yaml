@@ -47,12 +47,12 @@ cover:
   subtitle_size: 13
   subtitle_color: "#961A1C"   # burgee red as the single accent
   rules:
-    - { color: "#1C346E", y: 803, height: 9 }
-    - { color: "#961A1C", y: 790, height: 9 }
-    - { color: "#1C346E", y: 777, height: 9 }
-    - { color: "#1C346E", y: 56, height: 9 }
-    - { color: "#961A1C", y: 43, height: 9 }
-    - { color: "#1C346E", y: 30, height: 9 }
+    - { color: "#1C346E", y: 805, height: 7 }
+    - { color: "#961A1C", y: 791, height: 7 }
+    - { color: "#1C346E", y: 777, height: 7 }
+    - { color: "#1C346E", y: 58, height: 7 }
+    - { color: "#961A1C", y: 44, height: 7 }
+    - { color: "#1C346E", y: 30, height: 7 }
 
 # Presence of `intro:` is what enables the intro page.
 intro:
@@ -86,12 +86,12 @@ intro:
         songs for singing in chorus.
       - Ukulele chords, in English notation.
   rules:
-    - { color: "#1C346E", y: 803, height: 9 }
-    - { color: "#961A1C", y: 790, height: 9 }
-    - { color: "#1C346E", y: 777, height: 9 }
-    - { color: "#1C346E", y: 56, height: 9 }
-    - { color: "#961A1C", y: 43, height: 9 }
-    - { color: "#1C346E", y: 30, height: 9 }
+    - { color: "#1C346E", y: 805, height: 7 }
+    - { color: "#961A1C", y: 791, height: 7 }
+    - { color: "#1C346E", y: 777, height: 7 }
+    - { color: "#1C346E", y: 58, height: 7 }
+    - { color: "#961A1C", y: 44, height: 7 }
+    - { color: "#1C346E", y: 30, height: 7 }
 
 # The back art is narrower than the cover's so the bottom-right corner
 # stays free for the automatic Spotify block (QR at x 495-567, y ~109-181,
@@ -110,9 +110,9 @@ back:
   spotify_color: "#1C346E"
   spotify_qr_color: "#1C346E"
   rules:
-    - { color: "#1C346E", y: 803, height: 9 }
-    - { color: "#961A1C", y: 790, height: 9 }
-    - { color: "#1C346E", y: 777, height: 9 }
-    - { color: "#1C346E", y: 56, height: 9 }
-    - { color: "#961A1C", y: 43, height: 9 }
-    - { color: "#1C346E", y: 30, height: 9 }
+    - { color: "#1C346E", y: 805, height: 7 }
+    - { color: "#961A1C", y: 791, height: 7 }
+    - { color: "#1C346E", y: 777, height: 7 }
+    - { color: "#1C346E", y: 58, height: 7 }
+    - { color: "#961A1C", y: 44, height: 7 }
+    - { color: "#1C346E", y: 30, height: 7 }
