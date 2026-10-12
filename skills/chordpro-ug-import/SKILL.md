@@ -31,6 +31,8 @@ pages: tablature is not a chord sheet and `-pro-` data is not plain text.
 
 ## 1. Fetch
 
+Script: `scripts/ug-import.py`.
+
 Plain HTTP works with a desktop User-Agent; no login, no browser needed:
 
 ```bash
