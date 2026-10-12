@@ -1298,10 +1298,13 @@
       if (upBtn) upBtn.addEventListener("click", function () { setOffset(1); });
       if (offsetBtn) offsetBtn.addEventListener("click", resetOffset);
 
-      /* Capture chords on init. */
+      /* Capture chords on init. No updateDisplay() here: the markup already
+         ships the ±0 readout and the inactive state, and writing the status
+         region now would make screen readers announce "Transposed 0
+         semitones" on every song page load. It stays empty until the user
+         changes or resets the offset, like the autoscroll status. */
       captureChords();
       box.removeAttribute("hidden");
-      updateDisplay();
     }
 
    document.addEventListener("DOMContentLoaded", function () {
