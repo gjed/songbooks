@@ -1050,7 +1050,8 @@
       var upBtn = box.querySelector('[data-role="transpose-up"]');
       var offsetBtn = box.querySelector('[data-role="transpose-offset"]');
       var statusEl = box.querySelector('[data-role="transpose-status"]');
-      var statusTemplate = box.getAttribute("data-status-template") || "Transposed %s semitones";
+      var statusTemplate = (statusEl && statusEl.getAttribute("data-status-template")) ||
+        "Transposed %s semitones";
 
       var state = {
         offset: 0,
