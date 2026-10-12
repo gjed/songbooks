@@ -34,13 +34,16 @@ def is_chord_line(line: str) -> bool:
     pat = rf"^{root}(?:m|maj|min|dim|aug|sus\d?|add\d+|\d+|-|\+|\(\w+\))*(?:/{root})?$"
     return all(re.match(pat, t) for t in tokens)
 
+def minor_to_m(tok: str) -> str:
+    """`-` is minor (A- = Am, F#-7 = F#m7). The repo writes it `m`."""
+    return re.sub(r'^([A-G][#b]?)-', r'\1m', tok)
+
 def convert_token(tok: str) -> str:
     """Italian chord token -> common (SOL7 -> G7, LA- -> Am, DO/MI -> C/E)."""
     def one(part):
         m = re.match(r'^(DO|RE|MI|FA|SOL|LA|SI)(.*)$', part)
         return (ITALIAN[m.group(1)] + m.group(2)) if m else part
-    tok = '/'.join(one(p) for p in tok.split('/'))
-    return re.sub(r'^([A-G][#b]?)-', r'\1m', tok)
+    return minor_to_m('/'.join(one(p) for p in tok.split('/')))
 
 def extract_ug(html_content: str):
     match = re.search(r'class="js-store"\s+data-content="([^"]+)"', html_content)
@@ -73,7 +76,7 @@ def process_content(text: str):
             if i + 1 < len(lines):
                 next_line = lines[i + 1]
                 if next_line.strip() and not re.match(r'\[', next_line) and not is_chord_line(next_line):
-                    conv = convert_token if has_italian else (lambda t: t)
+                    conv = convert_token if has_italian else minor_to_m
                     merged = merge(line, next_line, conv)
                     if not roundtrip_ok(line, next_line, merged, conv):
                         return None, None, 7
@@ -81,7 +84,7 @@ def process_content(text: str):
                     pair_count += 1
                     i += 2
                     continue
-            conv = convert_token if has_italian else (lambda t: t)
+            conv = convert_token if has_italian else minor_to_m
             result.append(('line', ' '.join(f"[{conv(t)}]" for t in re.findall(r"\S+", line))))
             pair_count += 1
             i += 1
