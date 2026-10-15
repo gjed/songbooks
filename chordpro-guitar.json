@@ -307,6 +307,12 @@
     {"name": "Gsus", "base": 1, "frets": [3, 3, 0, 0, 1, 3], "fingers": [2, 3, 0, 0, 1, 4]},  // G sus4
     {"name": "Gsus2", "base": 1, "frets": [3, 0, 0, 0, 3, 3], "fingers": [1, 0, 0, 0, 2, 3]},  // G sus2
     {"name": "Gø", "base": 1, "frets": [3, -1, -1, 3, 2, 1], "fingers": [3, 0, 0, 4, 2, 1]},  // G m7b5
-    {"name": "G⁰", "base": 1, "frets": [3, 1, -1, 3, 2, -1], "fingers": [3, 1, 0, 4, 2, 0]}  // G dim
+    {"name": "G⁰", "base": 1, "frets": [3, 1, -1, 3, 2, -1], "fingers": [3, 1, 0, 4, 2, 0]},  // G dim
+    // Supplied by hand (not in chords-db).
+    {"name": "Dm7/C", "base": 1, "frets": [-1, 3, 0, 2, 1, 1]},  // x30211
+    {"name": "G7sus2", "base": 1, "frets": [3, 0, 0, 0, 3, 1]},  // 300031
+    {"name": "E7b13", "base": 1, "frets": [0, 2, 0, 1, 1, 0]},  // 020110
+    {"name": "C/G7", "base": 3, "frets": [-1, 1, 1, 2, 1, 1]},  // x33433
+    {"name": "C(sus9)", "base": 3, "frets": [-1, 1, 1, 1, 1, 1]}  // x33333
   ]
 }
