@@ -29,8 +29,10 @@ SITE_ASSETS_DIR = REPO_ROOT / "site" / "assets" / "chords"
 # this path does not exist there — see find_chordpro_res_dir().
 DISTRO_RES_DIR = Path("/usr/share/perl5/ChordPro/res")
 
-# Project override for ukulele (no guitar override yet)
+# Project overrides, merged over ChordPro's builtin instrument configs.
 PROJECT_UKULELE_OVERRIDE = REPO_ROOT / "chordpro-ukulele.json"
+# Guitar: fingerings ChordPro lacks (slash chords) or only spells as "copy".
+PROJECT_GUITAR_OVERRIDE = REPO_ROOT / "chordpro-guitar.json"
 
 # Regex to extract chord tokens from .cho files: [CHORD]
 CHORD_TOKEN_RE = re.compile(r"\[([^\]\s]+)\]")
@@ -325,7 +327,7 @@ def build_aliases(
     aliases = {}
     unresolved = set()
     
-    for token in corpus_tokens:
+    for token in sorted(corpus_tokens):
         if token in chords_map:
             # Already in map, no alias needed
             continue
@@ -449,7 +451,10 @@ def main() -> int:
         
         # Merge guitar configs
         print("Merging guitar configs...", file=sys.stderr)
-        guitar_chords, guitar_tuning = merge_chord_configs(builtin_guitar, None)
+        guitar_override = load_json_config(PROJECT_GUITAR_OVERRIDE)
+        guitar_chords, guitar_tuning = merge_chord_configs(
+            builtin_guitar, guitar_override
+        )
         guitar_aliases, guitar_unresolved = build_aliases(
             guitar_chords, corpus_tokens
         )
