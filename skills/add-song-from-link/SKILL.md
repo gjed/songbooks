@@ -88,6 +88,8 @@ Input: a link to an album, artist page, or tracklist.
 
 - **Link behind a paywall/JS wall**: report what could not be read; ask
   the user to paste the sheet rather than scraping around it.
+- **No chord sheet exists anywhere** (only audio): use `chordify-import`
+  to draft chords from Chordify plus local audio analysis.
 - **Song already exists in another songbook**: songs are per-songbook
   files; copying is allowed but say so, and re-check notation and page
   fit under the target songbook's layout.
