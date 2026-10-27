@@ -1,0 +1,84 @@
+# Songbook metadata + print layout. Human-authored.
+# spotify.yaml is machine-written (spotify_playlists.py) and stays separate.
+slug: medusa
+title: Medusa
+artist: Queen of Saba
+language: it        # primary language — drives the printed intro page (#36)
+notation: common    # chord names used in the .cho files (C D E …)
+
+blurb: Queen of Saba — Medusa (2023)
+
+# Sources for the description and intro text below (facts, quotes):
+# - "I Queen of Saba presentano il nuovo album Medusa ad Argo16" (release
+#   announcement, band quotes), VeneziaToday, 2023-10-11
+#   https://www.veneziatoday.it/eventi/queen-of-saba-medusa-argo16.html
+# - Queen of Saba event page (English band text), Covo Club, 2024-01-20
+#   https://covoclub.it/en/evento/queen-of-saba/
+# - Album tracklist and credits, Bandcamp
+#   https://queenofsaba.bandcamp.com/album/medusa
+description:
+  it: >-
+    Canzoniere di *Medusa* (2023), secondo album dei Queen of Saba, duo
+    elettronico veneziano formato da Sara Santi e Lorenzo Battistel: un mondo
+    fuori dal binario, tra trans joy, salute mentale e attivismo, con BigMama,
+    Ganoona e Willie Peyote come ospiti. Ukulele, accordi in notazione
+    inglese.
+  en: >-
+    Songbook for *Medusa* (2023), the second album by Queen of Saba, the
+    Venetian electronic duo of Sara Santi and Lorenzo Battistel: a world
+    outside the binary, of trans joy, mental health and activism, with BigMama,
+    Ganoona and Willie Peyote as guests. Ukulele, English chord notation.
+
+# Presence of `intro:` is what enables the intro page (printed once the
+# songbook gets a `cover:` section; the site reads `links` right away).
+intro:
+  title: medusa
+  # Printed page: only the locale matching `language:` above is rendered.
+  description:
+    it:
+      - >-
+        Medusa arriva a più di due anni da Fatamorgana, l'album d'esordio dei
+        Queen of Saba: una nuova avventura musicale all'insegna
+        dell'evoluzione, sempre con lo stesso principio in mente, quello per
+        cui i limiti sono fatti per essere superati.
+      - >-
+        «Medusa è una menade danzante che ci invita in un mondo fuori dal
+        binario, dove si celebra la trans joy e la salute mentale non è un
+        argomento tabù. Un mondo verde acido e rosa shocking, affastellato di
+        figure scontornate, vegetazione prepotente e atti contro natura.
+        Medusa è il mostruoso che da dentro di noi scalpita e sibila e cerca
+        di tracciare una strada mai percorsa prima.»
+      - >-
+        Al disco partecipano BigMama in Cagne Vere, Ganoona in Pesca Noche e
+        Willie Peyote in ACAB (Amami Come Ameresti Bambi), dedica d'amore a
+        una persona e a una città, Torino, che resiste.
+    en:
+      - >-
+        Medusa arrives more than two years after Fatamorgana, Queen of Saba's
+        debut album: a new musical adventure in the name of evolution, always
+        with the same principle in mind, that limits are made to be overcome.
+      - >-
+        "Medusa is a dancing maenad who invites us into a world outside the
+        binary, where trans joy is celebrated and mental health is not a taboo
+        topic. An acid green and shocking pink world, crowded with silhouetted
+        figures, overbearing vegetation and unnatural acts. Medusa is the
+        monstrosity that stamps and hisses from within us and tries to trace a
+        path never travelled before."
+      - >-
+        Guests on the record are BigMama on Cagne Vere, Ganoona on Pesca Noche
+        and Willie Peyote on ACAB (Amami Come Ameresti Bambi), a love song to
+        a person and to a city, Turin, that holds out.
+  # Where the description above comes from; the credit prints with it.
+  source:
+    label: "Fonte originale:"
+    text: "\"I Queen of Saba presentano il nuovo album Medusa ad Argo16\", VeneziaToday"
+    url: https://www.veneziatoday.it/eventi/queen-of-saba-medusa-argo16.html
+  links:
+    - label:
+        it: Compra l'album
+        en: Buy the album
+      url: https://queenofsaba.bandcamp.com/album/medusa
+    - label:
+        it: Supporta gli artisti
+        en: Support the artists
+      url: https://queenofsaba.bandcamp.com/music

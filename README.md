@@ -30,6 +30,7 @@ Browse all songbooks online: **[https://gjed.github.io/songbooks/](https://gjed.
 | [Good Songs](songbooks/good-songs/)                                            | A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …)              |
 | [HBS Songbook — Italiano](songbooks/hbs-ita/)                                  | Italian songs, with cover and chord chart                             |
 | [HBS Songbook — English](songbooks/hsb-eng/)                                   | 100+ English songs, with cover and chord chart                        |
+| [Medusa](songbooks/medusa/)                                                    | Queen of Saba — Medusa (2023)                                         |
 | [Nené](songbooks/nene/)                                                        | Homemade Italian singles, phone-recorded                              |
 | [Rareș](songbooks/rares/)                                                      | Rareș, cantautore di Marghera — Curriculum Vitae, Folk_2021, Sincero! |
 | [Wanderwaal](songbooks/wanderwaal/)                                            | Grace VanderWaal — Perfectly Imperfect & Just the Beginning           |
