@@ -1,0 +1,84 @@
+# Songbook metadata + print layout. Human-authored.
+# spotify.yaml is machine-written (spotify_playlists.py) and stays separate.
+slug: fatamorgana
+title: Fatamorgana
+artist: Queen of Saba
+language: it        # primary language — drives the printed intro page (#36)
+notation: common    # chord names used in the .cho files (C D E …)
+
+blurb: Queen of Saba — Fatamorgana (2021)
+
+# Sources for the description and intro text below (facts, quotes):
+# - Giulio Pons, "Queen of Saba: Fatamorgana" (review), Rockit, 2021-06-25
+#   https://www.rockit.it/recensione/53948/queenofsaba-fatamorgana
+# - Claudia Mazziotta, "Queen of Saba, la musica è il nostro coming out",
+#   Rockit, 2020-11-10
+#   https://www.rockit.it/intervista/queen-of-saba-musica-nostro-coming-out
+# - "I Queen of Saba presentano il nuovo album Medusa ad Argo16" (band bio),
+#   VeneziaToday, 2023-10-11
+#   https://www.veneziatoday.it/eventi/queen-of-saba-medusa-argo16.html
+# - Album credits, Bandcamp
+#   https://queenofsaba.bandcamp.com/album/fatamorgana
+description:
+  it: >-
+    Canzoniere di *Fatamorgana* (2021), album d'esordio dei Queen of Saba, duo
+    veneziano formato da Sara Santi (voce e testi) e Lorenzo Battistel (musica
+    e produzione). Nove brani in italiano tra elettronica, R&B e disco pop,
+    sfacciati e ironici, con spazio per l'introspezione di *La Periferia* e
+    *Fulmini*. Ukulele, accordi in notazione inglese.
+  en: >-
+    Songbook for *Fatamorgana* (2021), the debut album by Queen of Saba, the
+    Venetian duo of Sara Santi (vocals, lyrics) and Lorenzo Battistel (music,
+    production). Nine Italian-language songs of electronica, R&B and disco
+    pop, brash and ironic, with room for the introspection of *La Periferia*
+    and *Fulmini*. Ukulele, English chord notation.
+
+# Presence of `intro:` is what enables the intro page (printed once the
+# songbook gets a `cover:` section; the site reads `links` right away).
+intro:
+  title: fatamorgana
+  # Printed page: only the locale matching `language:` above is rendered.
+  description:
+    it:
+      - >-
+        Fatamorgana è il primo album dei Queen of Saba, il duo veneziano di
+        Sara Santi e Lorenzo Battistel: dopo cinque singoli in inglese, nove
+        brani in italiano registrati e missati da Battistel al Mud Sound di
+        Malcontenta e pubblicati da La Colletta Dischi, l'etichetta
+        indipendente veneziana di cui il duo è co-fondatore.
+      - >-
+        Un album che «prima suona come una girlband postatomica e poi come
+        una confessione a tarda notte»: un basso d'oro e una cassa che non
+        lascia tregua, suonini 8-bit e un'ironia sfacciata in pezzi come
+        Chiodo Fisso, Alghe Guam e Supplì. Poi l'introspezione prende il
+        sopravvento: La Periferia cambia l'ottica del disco e Fulmini
+        sorprende con un r'n'b elettronico fragile come una confessione
+        notturna.
+    en:
+      - >-
+        Fatamorgana is the first album by Queen of Saba, the Venetian duo of
+        Sara Santi and Lorenzo Battistel: after five English-language singles,
+        nine songs in Italian, recorded and mixed by Battistel at Mud Sound in
+        Malcontenta and released on La Colletta Dischi, the independent
+        Venetian label the duo co-founded.
+      - >-
+        An album that "first sounds like a post-atomic girl band and then like
+        a late-night confession": a golden bass line and a kick drum that
+        never lets up, 8-bit blips and brazen irony in songs like Chiodo
+        Fisso, Alghe Guam and Supplì. Then introspection takes over: La
+        Periferia shifts the record's point of view, and Fulmini surprises
+        with fragile electronic R&B, like a confession in the night.
+  # Where the description above comes from; the credit prints with it.
+  source:
+    label: "Fonte originale:"
+    text: "\"Queen of Saba: Fatamorgana\" di Giulio Pons, Rockit"
+    url: https://www.rockit.it/recensione/53948/queenofsaba-fatamorgana
+  links:
+    - label:
+        it: Compra l'album
+        en: Buy the album
+      url: https://queenofsaba.bandcamp.com/album/fatamorgana
+    - label:
+        it: Supporta gli artisti
+        en: Support the artists
+      url: https://queenofsaba.bandcamp.com/music
