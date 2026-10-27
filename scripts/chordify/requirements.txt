@@ -10,6 +10,6 @@ faster-whisper
 numpy<2
 cython
 wheel
-setuptools<70
+setuptools<71
 mido
 yt-dlp
