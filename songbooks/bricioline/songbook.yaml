@@ -127,7 +127,7 @@ back:
     - { color: "#3F7779", y: 43, height: 9 }
     - { color: "#D6A8A1", y: 30, height: 9 }
 
-# Presence of `art:` is what enables the art edition (`make bricioline-art`):
+# Presence of `art:` makes the songbook's PDF (`make bricioline`) an art edition:
 # a duplex booklet where every song sits on a recto with its album artwork
 # facing it. Rules are omitted on purpose — the art pages and the index
 # inherit the cover's triple-rule motif, so the frame stays in one place.
@@ -137,8 +137,8 @@ art:
   # The alternate take is a companion to track 01, not a piece of the
   # album: it has no artwork of its own, and pairing it with a second
   # print of 01's cover would repeat a spread the reader just turned
-  # past. The art edition therefore closes on the title track. It stays
-  # in the songbook proper — `make bricioline` still prints it.
+  # past. The booklet therefore closes on the title track; the take stays
+  # on the online read view only.
   exclude:
     - 08-come-una-foglia-seconda-voce
   # The description page is the songbook's own `intro:` section. This

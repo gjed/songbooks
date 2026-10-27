@@ -64,8 +64,8 @@ artwork of the song it belongs to keeps the spread pairing intact.
 omits on purpose has to say so, and is then dropped whole -- no artwork
 page, no song page, no index entry. That way a print edition carrying a
 subset of the songbook stays one hard error away from a song dropped by
-accident. Excluding a song affects only the art edition; `make <slug>`
-still renders every song the songbook has.
+accident. The art edition is the songbook's only PDF (`make <slug>`),
+so an excluded song is left to the online read view.
 
 `art.intro` is the same bargain for the description page. The page itself
 is the songbook's own `intro:` section -- one description, printed by

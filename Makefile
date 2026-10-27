@@ -30,7 +30,7 @@ COVER_EXISTS = $(wildcard $(1)/$(2))
 
 # Cover layout inputs: images plus the songbook.yaml layout sections.
 # images/* is tracked too because a cover `logo:` may point at an artwork
-# there (bricioline's cover reuses the art edition's album image), so a
+# there (bricioline's cover reuses an album image from its art pages), so a
 # cover rebuilds when that file's contents change, not only when a
 # cover-*.png does.
 COVER_ASSETS = $(wildcard $(1)/cover-*.png $(1)/cover-*.jpeg $(1)/back-*.png \
@@ -54,13 +54,18 @@ HAS_CHART_$(1)  := $$(wildcard songbooks/$(1)/chords.png)
 # The intro page (album description + Spotify link) exists only when the
 # songbook.yaml declares an `intro:` section.
 HAS_INTRO_$(1)  := $$(shell grep -ls '^intro:' songbooks/$(1)/songbook.yaml 2>/dev/null)
+# A songbook with an `art:` section is printed as an art edition instead;
+# ART_RULE below owns its PDF.
+HAS_ART_$(1)    := $$(shell grep -ls '^art:' songbooks/$(1)/songbook.yaml 2>/dev/null)
 
 # Real song sources for this songbook: every .cho file except optional
 # .site.cho variants, which the PDF build never reads (HTML-only — see
 # AGENTS.md / skills/chordpro-song-authoring).
 SONG_ALL_$(1) := $$(filter-out %.site.cho,$$(wildcard songbooks/$(1)/*.cho))
 
-ifeq ($$(strip $$(HAS_COVER_$(1))),)
+ifneq ($$(strip $$(HAS_ART_$(1))),)
+# Art edition — the PDF rule is ART_RULE's
+else ifeq ($$(strip $$(HAS_COVER_$(1))),)
 # No cover — render everything normally
 $(PDF_DIR)/$(1).pdf: $$(SONG_ALL_$(1)) $(PROJECT_CFG) $$(wildcard songbooks/$(1)/layout.json) | $(PDF_DIR)
 	$(CHORDPRO) $$(CFG_FLAGS_$(1)) $$(filter %.cho,$$^) -o $$@
@@ -101,7 +106,8 @@ $(foreach sb,$(SONGBOOKS),$(eval $(call SONGBOOK_RULE,$(sb))))
 # when it has one; the blank leaves that flank it are also what keep the
 # booklet a multiple of four pages, which a print binding needs.
 # Enabled per songbook by an `art:` section in its songbook.yaml (see
-# scripts/make-art-pages.py); this leaves `make <slug>` untouched.
+# scripts/make-art-pages.py), and then it IS the songbook's PDF:
+# `make <slug>` builds this instead of the two-column songbook.
 #
 # Each song is rendered on its own rather than as one ChordPro document:
 # one song = one page is a repo constraint, and rendering singly is what
@@ -119,9 +125,7 @@ ART_SCRIPTS := scripts/make-art-pages.py $(COVER_SCRIPTS)
 define ART_RULE
 ART_SONGS_$(1) := $$(sort $$(filter-out $$(addprefix songbooks/$(1)/,$(COVER_FILES)),$$(filter-out %.site.cho,$$(wildcard songbooks/$(1)/*.cho))))
 
-$(1)-art: $(PDF_DIR)/$(1)-art.pdf
-
-$(PDF_DIR)/$(1)-art.pdf: $$(ART_SONGS_$(1)) $(ART_SCRIPTS) $(PROJECT_CFG) \
+$(PDF_DIR)/$(1).pdf: $$(ART_SONGS_$(1)) $(ART_SCRIPTS) $(PROJECT_CFG) \
     $$(call COVER_ASSETS,songbooks/$(1)) \
     $$(wildcard songbooks/$(1)/images/*) \
     $$(wildcard songbooks/$(1)/layout.json) | $(PDF_DIR)
@@ -134,8 +138,7 @@ $(PDF_DIR)/$(1)-art.pdf: $$(ART_SONGS_$(1)) $(ART_SCRIPTS) $(PROJECT_CFG) \
 	fi ; \
 	parts="$$$$parts $(PDF_DIR)/$(1)-toc.pdf" ; \
 	while read -r stem ; do \
-	  : "art editions print Italian chord names (the only art songbook is Italian)" ; \
-	  $(CHORDPRO) $$(CFG_FLAGS_$(1)) --transcode=latin songbooks/$(1)/$$$$stem.cho \
+	  $(CHORDPRO) $$(CFG_FLAGS_$(1)) songbooks/$(1)/$$$$stem.cho \
 	    -o $(PDF_DIR)/$(1)-song-$$$$stem.pdf ; \
 	  parts="$$$$parts $(PDF_DIR)/$(1)-art-$$$$stem.pdf $(PDF_DIR)/$(1)-song-$$$$stem.pdf" ; \
 	done < $(PDF_DIR)/$(1)-art-manifest.txt ; \
@@ -153,7 +156,6 @@ endef
 
 ART_SONGBOOKS := $(sort $(notdir $(patsubst %/,%,$(dir $(wildcard songbooks/*/songbook.yaml)))))
 ART_ENABLED   := $(foreach sb,$(ART_SONGBOOKS),$(if $(shell grep -ls '^art:' songbooks/$(sb)/songbook.yaml 2>/dev/null),$(sb)))
-.PHONY: $(addsuffix -art,$(ART_ENABLED))
 $(foreach sb,$(ART_ENABLED),$(eval $(call ART_RULE,$(sb))))
 
 # HTML render for the online read view: one file per song, so editing one
@@ -228,7 +230,7 @@ clean:
 	rm -f $(PDFS) $(PDF_DIR)/*-cover.pdf $(PDF_DIR)/*-intro.pdf \
 	  $(PDF_DIR)/*-chart.pdf $(PDF_DIR)/*-songs.pdf $(PDF_DIR)/*-back.pdf \
 	  $(PDF_DIR)/*-guitar-ita.pdf $(PDF_DIR)/*-guitar-eng.pdf \
-	  $(PDF_DIR)/*-art.pdf $(PDF_DIR)/*-art-*.pdf $(PDF_DIR)/*-song-*.pdf \
+	  $(PDF_DIR)/*-art-*.pdf $(PDF_DIR)/*-song-*.pdf \
 	  $(PDF_DIR)/*-blank.pdf $(PDF_DIR)/*-toc.pdf
 	rm -rf $(HTML_DIR)
 
