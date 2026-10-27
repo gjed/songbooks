@@ -29,10 +29,65 @@ description:
     outside the binary, of trans joy, mental health and activism, with BigMama,
     Ganoona and Willie Peyote as guests. Ukulele, English chord notation.
 
+# Palette sampled from the album art, "verde acido e rosa shocking" in
+# the band's own words:
+#   #52FF71  acid green -- the artwork's flat background, exact edge pixel
+#   #F237CE  shocking pink -- the "queen of saba / medusa" lettering
+#   #7A0A5C  the same pink pushed deep; carries small text on green, where
+#            shocking pink at 13pt sits at ~1.6:1 and stops being legible
+cover:
+  # The artwork already spells "queen of saba / medusa" in its liquid
+  # lettering; a typeset title would print the name twice. The page is
+  # painted the artwork's own green so the square has no edge and the
+  # figure and the dogs stand straight on the page.
+  title: null
+  background: "#52FF71"
+  logo: images/00-cover-art.jpg
+  logo_width: 538     # full printable width (PAGE_W - 2 * MARGIN)
+  logo_offset: 13     # centres the art's content between rules and subtitle
+  strip_top: null
+  strip_bottom: null
+  subtitle: "canzoniere  ·  ukulele"
+  subtitle_font: Courier-Bold
+  subtitle_size: 13
+  subtitle_color: "#7A0A5C"
+  rules:
+    - { color: "#F237CE", y: 805, height: 7 }
+    - { color: "#7A0A5C", y: 791, height: 7 }
+    - { color: "#F237CE", y: 777, height: 7 }
+    - { color: "#F237CE", y: 58, height: 7 }
+    - { color: "#7A0A5C", y: 44, height: 7 }
+    - { color: "#F237CE", y: 30, height: 7 }
+
 # Presence of `intro:` is what enables the intro page (printed once the
 # songbook gets a `cover:` section; the site reads `links` right away).
+# The reading page stays on white: three paragraphs of body text and the
+# QR codes read better, and print cheaper, off a flood of green. The
+# rules carry the cover's colours over instead.
 intro:
   title: medusa
+  title_color: "#F237CE"
+  title_size: 24
+  # Three long paragraphs plus three link rows: at the stock 380pt measure
+  # the text ran into the QR stack. A wider measure keeps it at 11pt, and
+  # the link stack is pinned just above the bottom rules (spotify_y) with
+  # smaller codes -- 60pt still scans comfortably from print.
+  description_color: "#7A0A5C"
+  description_size: 11
+  description_width: 470
+  description_leading: 15
+  source_color: "#7A0A5C"
+  spotify_color: "#7A0A5C"
+  spotify_qr_color: "#7A0A5C"
+  spotify_qr_size: 60
+  spotify_y: 88
+  rules:
+    - { color: "#F237CE", y: 805, height: 7 }
+    - { color: "#52FF71", y: 791, height: 7 }
+    - { color: "#F237CE", y: 777, height: 7 }
+    - { color: "#F237CE", y: 58, height: 7 }
+    - { color: "#52FF71", y: 44, height: 7 }
+    - { color: "#F237CE", y: 30, height: 7 }
   # Printed page: only the locale matching `language:` above is rendered.
   description:
     it:
@@ -78,7 +133,34 @@ intro:
         it: Compra l'album
         en: Buy the album
       url: https://queenofsaba.bandcamp.com/album/medusa
+      color: "#7A0A5C"
+      qr_color: "#7A0A5C"
     - label:
         it: Supporta gli artisti
         en: Support the artists
       url: https://queenofsaba.bandcamp.com/music
+      color: "#7A0A5C"
+      qr_color: "#7A0A5C"
+
+# Back art: the "Rave in the Casba" single sleeve (Bandcamp original).
+# Text-free, so no other song's title lands on the album's last page, and
+# it is the band itself -- the duo with eyes projected over their faces,
+# which is Medusa's own motif, the gaze. Same green field and rules as
+# the cover so the two read as one sleeve.
+back:
+  background: "#52FF71"
+  image: images/99-back-cover-art.jpg
+  image_width: 400
+  caption: "queen of saba  ·  medusa  ·  2023"
+  caption_font: Courier-Bold
+  caption_size: 13
+  caption_color: "#7A0A5C"
+  caption_y: 83.35   # matches the cover subtitle's baseline (MARGIN + 55)
+  spotify: false
+  rules:
+    - { color: "#F237CE", y: 805, height: 7 }
+    - { color: "#7A0A5C", y: 791, height: 7 }
+    - { color: "#F237CE", y: 777, height: 7 }
+    - { color: "#F237CE", y: 58, height: 7 }
+    - { color: "#7A0A5C", y: 44, height: 7 }
+    - { color: "#F237CE", y: 30, height: 7 }
