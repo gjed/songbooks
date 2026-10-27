@@ -33,10 +33,54 @@ description:
     pop, brash and ironic, with room for the introspection of *La Periferia*
     and *Fulmini*. Ukulele, English chord notation.
 
+# Print layout — presence of `cover:` is what enables cover pages.
+# Palette from the album art: the title's signal yellow (#FCEC00, sampled
+# from the lettering) and the grey of the photo backdrop carry the rules;
+# yellow is far too light to read as text on white, so all type sits in a
+# warm shadow brown taken from the skin tones. Headings use Helvetica-Bold,
+# the closest built-in face to the cover's heavy grotesque; running text
+# stays in the series' Courier.
+cover:
+  # The artwork already prints FATAMORGANA in huge yellow caps, plus the
+  # band name; a second title under it would only repeat it, smaller.
+  title: null
+  logo: images/00-cover-art.jpg
+  logo_width: 500
+  logo_offset: 21   # centres the art between the top rules and subtitle
+  strip_top: null
+  strip_bottom: null
+  subtitle: "canzoniere  ·  ukulele"
+  subtitle_font: Helvetica-Bold
+  subtitle_size: 12
+  subtitle_color: "#5B4840"
+  rules:
+    - { color: "#FCEC00", y: 798, height: 14 }
+    - { color: "#A9A9A9", y: 789, height: 3 }
+    - { color: "#A9A9A9", y: 50, height: 3 }
+    - { color: "#FCEC00", y: 30, height: 14 }
+
 # Presence of `intro:` is what enables the intro page (printed once the
 # songbook gets a `cover:` section; the site reads `links` right away).
 intro:
   title: fatamorgana
+  title_font: Helvetica-Bold
+  title_size: 26
+  title_color: "#5B4840"
+  # Two long paragraphs plus three link rows (2 Bandcamp + Spotify): at
+  # 12pt the text runs into the QR stack, so set it a touch smaller and
+  # wider than the siblings' 13pt/380 to leave the rows their room.
+  description_size: 10.5
+  description_width: 430
+  description_color: "#5B4840"
+  source_color: "#8C7268"
+  spotify_font: Helvetica-Bold
+  spotify_color: "#5B4840"
+  spotify_qr_color: "#5B4840"
+  rules:
+    - { color: "#FCEC00", y: 798, height: 14 }
+    - { color: "#A9A9A9", y: 789, height: 3 }
+    - { color: "#A9A9A9", y: 50, height: 3 }
+    - { color: "#FCEC00", y: 30, height: 14 }
   # Printed page: only the locale matching `language:` above is rendered.
   description:
     it:
@@ -78,7 +122,30 @@ intro:
         it: Compra l'album
         en: Buy the album
       url: https://queenofsaba.bandcamp.com/album/fatamorgana
+      color: "#5B4840"
+      qr_color: "#5B4840"
     - label:
         it: Supporta gli artisti
         en: Support the artists
       url: https://queenofsaba.bandcamp.com/music
+      color: "#5B4840"
+      qr_color: "#5B4840"
+
+# Back art: band photo of Sara Santi and Lorenzo Battistel (source:
+# https://www.anordestdiche.com/wp-content/uploads/2022/02/queen-of-saba.jpg,
+# 1500x1000, kept at native size). The Spotify link already lives on the
+# intro page; printing the same QR twice would only add noise.
+back:
+  image: images/99-back-cover-art.jpg
+  image_width: 460
+  caption: "queen of saba  ·  fatamorgana  ·  2021"
+  caption_font: Helvetica-Bold
+  caption_size: 12
+  caption_color: "#5B4840"
+  caption_y: 83.35   # matches the cover subtitle's baseline (MARGIN + 55)
+  spotify: false
+  rules:
+    - { color: "#FCEC00", y: 798, height: 14 }
+    - { color: "#A9A9A9", y: 789, height: 3 }
+    - { color: "#A9A9A9", y: 50, height: 3 }
+    - { color: "#FCEC00", y: 30, height: 14 }
