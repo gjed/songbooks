@@ -1,0 +1,15 @@
+# Local analysis venv for scripts/chordify/analyze.py — Python 3.11.
+# torch CPU wheels: --index-url https://download.pytorch.org/whl/cpu
+# madmom has no wheel for 3.11: install it last, from git, with
+#   --no-build-isolation (needs cython, wheel, numpy<2 already present).
+torch
+torchaudio
+demucs
+stable-ts
+faster-whisper
+numpy<2
+cython
+wheel
+setuptools<70
+mido
+yt-dlp
