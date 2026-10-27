@@ -7,7 +7,7 @@ torchaudio
 demucs
 stable-ts
 faster-whisper
-numpy<2
+numpy<3
 cython
 wheel
 setuptools<70
