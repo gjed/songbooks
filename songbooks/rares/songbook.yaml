@@ -6,7 +6,9 @@ artist: Rareș
 language: it
 notation: common
 
-blurb: Rareș, cantautore di Marghera — Curriculum Vitae, Folk_2021, Sincero!
+blurb:
+  it: "Rareș, cantautore di Marghera — Curriculum Vitae, Folk_2021, Sincero!"
+  en: "Rareș, singer-songwriter from Marghera — Curriculum Vitae, Folk_2021, Sincero!"
 
 description:
   it: >-

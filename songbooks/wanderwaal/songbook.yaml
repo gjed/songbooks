@@ -7,7 +7,9 @@ artist: Grace VanderWaal
 language: en        # primary language — drives the printed intro page (#36)
 notation: common    # chord names used in the .cho files (C D E …)
 
-blurb: Grace VanderWaal — Perfectly Imperfect & Just the Beginning
+blurb:
+  it: "Grace VanderWaal — Perfectly Imperfect & Just the Beginning"
+  en: "Grace VanderWaal — Perfectly Imperfect & Just the Beginning"
 
 description:
   it: >-

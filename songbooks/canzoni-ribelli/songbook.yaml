@@ -6,7 +6,9 @@ title: Canzoni Ribelli
 language: it        # primary language — drives the printed intro page (#36)
 notation: latin     # chord names used in the .cho files (DO RE MI …)
 
-blurb: Italian rebel and protest songs
+blurb:
+  it: "Canzoni ribelli e di protesta italiane"
+  en: "Italian rebel and protest songs"
 
 description:
   it: >-

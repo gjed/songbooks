@@ -7,7 +7,9 @@ language: it        # primary language — drives the printed intro page (#36)
 notation: common    # chord names used in the .cho files (C D E …)
 status: done        # site home section: done | wip | experimental
 
-blurb: Queen of Saba — Italian children's music
+blurb:
+  it: "Queen of Saba — Italian children's music"
+  en: "Queen of Saba — Italian children's music"
 
 description:
   it: >-

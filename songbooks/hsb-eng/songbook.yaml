@@ -7,7 +7,9 @@ title: HBS Songbook — English
 language: en        # primary language — drives the printed intro page (#36)
 notation: common    # chord names used in the .cho files (C D E …)
 
-blurb: 100+ English songs, with cover and chord chart
+blurb:
+  it: "Oltre 100 canzoni inglesi, con copertina e tabella accordi"
+  en: "100+ English songs, with cover and chord chart"
 
 description:
   it: >-
