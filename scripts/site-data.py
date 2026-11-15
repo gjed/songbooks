@@ -298,23 +298,33 @@ def make_thumbnail(
     cover = meta.get("cover") or {}
     logo = cover.get("logo")
     if logo and (songbook_dir / logo).is_file():
-        art = Image.open(songbook_dir / logo).convert("RGBA")
-        art.thumbnail((THUMB_PX, THUMB_PX), Image.LANCZOS)
-        canvas = Image.new("RGB", (THUMB_PX, THUMB_PX), cover.get("background") or "#FFFFFF")
-        canvas.paste(
-            art, ((THUMB_PX - art.width) // 2, (THUMB_PX - art.height) // 2), art
-        )
-        name = f"{slug}.jpg"
-        canvas.save(out_dir / name, "JPEG", quality=85, optimize=True)
-        return name
-
-    if logo:
+        try:
+            art = Image.open(songbook_dir / logo).convert("RGBA")
+            art.thumbnail((THUMB_PX, THUMB_PX), Image.LANCZOS)
+            canvas = Image.new(
+                "RGB", (THUMB_PX, THUMB_PX), cover.get("background") or "#FFFFFF"
+            )
+            canvas.paste(
+                art, ((THUMB_PX - art.width) // 2, (THUMB_PX - art.height) // 2), art
+            )
+            name = f"{slug}.jpg"
+            canvas.save(out_dir / name, "JPEG", quality=85, optimize=True)
+            return name
+        except (OSError, ValueError) as exc:
+            print(
+                f"warning: {slug}: cover.logo {logo} unusable ({exc}) — placeholder",
+                file=sys.stderr,
+            )
+    elif logo:
         print(f"warning: {slug}: cover.logo {logo} not found — placeholder", file=sys.stderr)
     name = f"{slug}.png"
     placeholder_cover(title).save(out_dir / name, "PNG", optimize=True)
     return name
 
 
+# SIMPLIFIED: first font found wins, so the placeholder's face differs per host
+# (Courier New with msttcorefonts, Liberation/DejaVu Mono elsewhere). Upgrade
+# path: commit one open-licensed mono bold TTF and load it from there.
 PLACEHOLDER_FONTS = (
     "/usr/share/fonts/truetype/msttcorefonts/Courier_New_Bold.ttf",
     "/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf",

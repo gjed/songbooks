@@ -1,7 +1,7 @@
 # Helper scripts only — not needed for building songbooks with ChordPro
 
 # Cover / chord-chart page generation (scripts/make-cover.py)
-Pillow
+Pillow>=10.1  # ImageFont.load_default(size) in scripts/site-data.py
 reportlab
 
 # songbook.yaml loading (make-cover.py, readme-table.py,
