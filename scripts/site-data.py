@@ -2,7 +2,7 @@
 """Generate Hugo content and assets from songbooks.
 
 Converts songbook folders into Hugo markdown files with YAML front matter,
-extracts PDF thumbnails, and copies PDFs for download.
+builds cover-art thumbnails, and copies PDFs for download.
 
 Usage:
   python3 scripts/site-data.py [--version TAG] [--pdf-dir pdf] [--site-dir site]
@@ -13,10 +13,11 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import colorsys
+import hashlib
 import html as html_module
 import re
 import shutil
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -29,6 +30,14 @@ except ModuleNotFoundError:  # pragma: no cover - dependency guard
         "  fix: pip install PyYAML   (or: pip install -r requirements.txt)"
     )
 
+try:
+    from PIL import Image, ImageDraw, ImageFont
+except ModuleNotFoundError:  # pragma: no cover - dependency guard
+    sys.exit(
+        "error: Pillow is required.\n"
+        "  fix: pip install Pillow   (or: pip install -r requirements.txt)"
+    )
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 # Import the shared metadata module
@@ -38,6 +47,9 @@ from songbook_meta import LOCALES, load_metadata, localize, language_of
 SONGBOOKS_DIR = REPO_ROOT / "songbooks"
 HEADER_RE = re.compile(r"^\{(?P<key>[a-z_]+):\s*(?P<value>.*?)\s*\}\s*$")
 PSEUDO_SONGS = {"00-cover.cho", "01-chord-chart.cho", "99-back-cover.cho"}
+
+# Square thumbnail edge, px: 2x the widest slot it fills (the desktop tile).
+THUMB_PX = 600
 
 # ChordPro's HTML backend emits a standalone document per song; the site only
 # wants the body, minus the <style> block (it carries @page print rules).
@@ -267,35 +279,96 @@ def parse_headers(path: Path) -> dict[str, str]:
     return headers
 
 
-def extract_thumbnail(pdf_path: Path, thumb_path: Path) -> bool:
-    """Extract first page of PDF as PNG thumbnail.
-    
-    Returns True if successful, False if extraction failed.
+def make_thumbnail(
+    songbook_dir: Path, meta: dict[str, Any], title: str, out_dir: Path
+) -> str:
+    """Write the songbook's home/detail thumbnail; return its filename.
+
+    The thumbnail is the cover artwork (`cover.logo`), not a render of the
+    cover page: the site prints title and blurb under the image already.
+    The art is fitted, uncropped, into a square on `cover.background` (white
+    when unset) so transparent logos stay legible on the dark theme too.
+    Songbooks without artwork get a placeholder cover set from their title.
     """
-    try:
-        subprocess.run(
-            [
-                "gs",
-                "-q",
-                "-dBATCH",
-                "-dNOPAUSE",
-                "-r72",
-                "-dFirstPage=1",
-                "-dLastPage=1",
-                "-sDEVICE=png16m",
-                f"-sOutputFile={thumb_path}",
-                str(pdf_path),
-            ],
-            check=True,
-            capture_output=True,
+    slug = songbook_dir.name
+    cover = meta.get("cover") or {}
+    logo = cover.get("logo")
+    if logo and (songbook_dir / logo).is_file():
+        art = Image.open(songbook_dir / logo).convert("RGBA")
+        art.thumbnail((THUMB_PX, THUMB_PX), Image.LANCZOS)
+        canvas = Image.new("RGB", (THUMB_PX, THUMB_PX), cover.get("background") or "#FFFFFF")
+        canvas.paste(
+            art, ((THUMB_PX - art.width) // 2, (THUMB_PX - art.height) // 2), art
         )
-        return True
-    except (subprocess.CalledProcessError, FileNotFoundError) as exc:
-        print(
-            f"warning: {pdf_path.name}: thumbnail extraction failed — {exc}",
-            file=sys.stderr,
-        )
-        return False
+        name = f"{slug}.jpg"
+        canvas.save(out_dir / name, "JPEG", quality=85, optimize=True)
+        return name
+
+    if logo:
+        print(f"warning: {slug}: cover.logo {logo} not found — placeholder", file=sys.stderr)
+    name = f"{slug}.png"
+    placeholder_cover(title).save(out_dir / name, "PNG", optimize=True)
+    return name
+
+
+PLACEHOLDER_FONTS = (
+    "/usr/share/fonts/truetype/msttcorefonts/Courier_New_Bold.ttf",
+    "/usr/share/fonts/truetype/liberation/LiberationMono-Bold.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf",
+)
+
+
+def placeholder_font(size: int) -> ImageFont.ImageFont:
+    for path in PLACEHOLDER_FONTS:
+        if Path(path).is_file():
+            return ImageFont.truetype(path, size)
+    return ImageFont.load_default(size)
+
+
+def placeholder_cover(text: str) -> Image.Image:
+    """Typewriter-style stand-in cover for a songbook with no artwork.
+
+    Mirrors the printed covers: ink title in a bold mono face on white,
+    between two triple rule bands. Band colour is hashed from the title so
+    each songbook gets its own, stable one.
+    """
+    digest = hashlib.sha1(text.encode("utf-8")).digest()
+    hue = int.from_bytes(digest[-2:], "big") / 0xFFFF
+    bands = []
+    for light in (0.62, 0.45, 0.75):
+        r, g, b = colorsys.hls_to_rgb((hue + (0.0 if light != 0.75 else 0.08)) % 1, light, 0.6)
+        bands.append((int(r * 255), int(g * 255), int(b * 255)))
+    ink = (0x1B, 0x23, 0x38)
+    img = Image.new("RGB", (THUMB_PX, THUMB_PX), "#FFFFFF")
+    draw = ImageDraw.Draw(img)
+    band_h, gap, edge = THUMB_PX // 60, THUMB_PX // 60, THUMB_PX // 14
+    for i, color in enumerate(bands):
+        for y in (edge + i * (band_h + gap), THUMB_PX - edge - band_h - i * (band_h + gap)):
+            draw.rectangle((edge, y, THUMB_PX - edge, y + band_h - 1), fill=color)
+
+    box = THUMB_PX - 2 * (edge + 3 * (band_h + gap) + gap * 4)
+    size = THUMB_PX // 6
+    while True:  # largest face whose wrapped title fits the box
+        font = placeholder_font(size)
+        lines, line = [], ""
+        for word in text.split():
+            trial = f"{line} {word}".strip()
+            if draw.textlength(trial, font=font) <= box or not line:
+                line = trial
+            else:
+                lines.append(line)
+                line = word
+        lines.append(line)
+        height = len(lines) * int(size * 1.2)
+        widest = max(draw.textlength(l, font=font) for l in lines)
+        if (widest <= box and height <= box) or size <= 12:
+            break
+        size -= 2
+    y = (THUMB_PX - height) // 2
+    for l in lines:
+        draw.text(((THUMB_PX - draw.textlength(l, font=font)) / 2, y), l, font=font, fill=ink)
+        y += int(size * 1.2)
+    return img
 
 
 def parse_tracklist(slug: str) -> tuple[list[dict[str, str]], int, bool]:
@@ -420,7 +493,7 @@ def generate_songbook_content(
     tracks: list[dict[str, str]],
     song_count: int,
     chart_only: bool,
-    thumb_exists: bool,
+    thumb: str,
     pdf_exists: bool,
     version: str,
     lang: str,
@@ -447,9 +520,7 @@ def generate_songbook_content(
     if meta.get("cover", {}).get("subtitle_color"):
         front_matter["accent"] = meta["cover"]["subtitle_color"]
     
-    # Thumbnail
-    if thumb_exists:
-        front_matter["thumb"] = f"thumbs/{slug}.png"
+    front_matter["thumb"] = f"thumbs/{thumb}"
     
     # PDF
     if pdf_exists:
@@ -657,9 +728,12 @@ def main() -> int:
             )
             continue
         
-        # Extract thumbnail
-        thumb_path = static_thumbs_dir / f"{slug}.png"
-        thumb_ok = extract_thumbnail(pdf_path, thumb_path)
+        thumb = make_thumbnail(
+            songbook_dir,
+            meta,
+            localize(meta, LOCALES[0]).get("title") or slug,
+            static_thumbs_dir,
+        )
         
         # Copy PDF
         shutil.copy2(pdf_path, static_pdf_dir / f"{slug}.pdf")
@@ -700,7 +774,7 @@ def main() -> int:
                 tracks=tracks,
                 song_count=song_count,
                 chart_only=chart_only,
-                thumb_exists=thumb_ok,
+                thumb=thumb,
                 pdf_exists=True,
                 version=args.version,
                 lang=lang,
@@ -732,7 +806,7 @@ def main() -> int:
         total_songbooks += 1
         
         # Status line
-        thumb_status = "thumb ok" if thumb_ok else "thumb skip"
+        thumb_status = "thumb art" if thumb.endswith(".jpg") else "thumb placeholder"
         read_status = f"read {len(readable)}" if readable else "read none"
         spotify_manifest = load_spotify_manifest(slug)
         spotify_status = "spotify yes" if has_spotify_link(spotify_manifest) else "spotify no"

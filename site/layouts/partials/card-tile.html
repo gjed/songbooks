@@ -17,12 +17,8 @@
 <div class="tile{{ with $accent }} has-accent{{ end }}" data-title="{{ .Title }}" data-desc="{{ .Params.blurb }}" data-count="{{ $count }}" data-lang="{{ $lang }}"
   {{- with $accent }} style="--accent-raw: {{ . }};"{{ end }}>
   <a class="tile__hit" href="{{ .RelPermalink }}" aria-label="{{ .Title }}"></a>
-  {{- if $thumb }}
   <img class="tile__cover" src="{{ $thumb | relURL }}" alt="{{ i18n "cover_alt" .Title }}"
-       width="595" height="842" loading="lazy" decoding="async">
-  {{- else }}
-  <span class="tile__cover tile__cover--empty" aria-hidden="true">{{ substr .Title 0 1 | upper }}</span>
-  {{- end }}
+       width="600" height="600" loading="lazy" decoding="async">
   <span class="tile__title">{{ .Title }}</span>
   {{- with .Params.blurb }}
   <span class="tile__desc">{{ . }}</span>
