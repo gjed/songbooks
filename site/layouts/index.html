@@ -2,6 +2,17 @@
 {{- $books := where .Site.RegularPages "Section" "songbooks" -}}
 {{- $sorted := sort $books "Title" -}}
 {{- $n := len $sorted -}}
+{{- /* Songbooks are grouped by their songbook.yaml `status:`, in this order;
+       a status with no songbooks renders no section and no filter chip. */ -}}
+{{- $statuses := slice -}}
+{{- range slice "done" "wip" "experimental" -}}
+  {{- if where $sorted "Params.status" . -}}{{- $statuses = $statuses | append . -}}{{- end -}}
+{{- end -}}
+{{- $tags := slice -}}
+{{- range $sorted -}}{{- range .Params.tags -}}{{- $tags = $tags | append . -}}{{- end -}}{{- end -}}
+{{- $tags = sort (uniq $tags) -}}
+
+{{- $filterCtx := dict "statuses" $statuses "tags" $tags -}}
 
 <div class="home-mobile">
   <div>
@@ -16,6 +27,7 @@
       <input class="search__input" type="search" id="book-search-m" data-role="book-search"
         placeholder="{{ i18n "search_placeholder_books" }}" autocomplete="off">
     </div>
+    {{ partial "home-filter.html" $filterCtx }}
     <div class="sort" role="group" aria-label="{{ i18n "sort_label" }}">
       <button type="button" class="sort__chip" data-role="sort-chip" data-sort="alpha" aria-pressed="true">{{ i18n "sort_alpha" }}</button>
       <button type="button" class="sort__chip" data-role="sort-chip" data-sort="count" aria-pressed="false">{{ i18n "sort_song_count" }}</button>
@@ -29,11 +41,16 @@
       <span class="section-head__count" data-role="book-result-count"
         data-tmpl-one="{{ i18n "result_count_books_tmpl" 1 }}" data-tmpl-other="{{ i18n "result_count_books_tmpl" 2 }}">{{ i18n "result_count_books" $n }}</span>
     </div>
-    <div class="rows" data-role="book-rows">
-      {{- range $sorted }}
-      {{ partial "card.html" . }}
-      {{- end }}
-    </div>
+    {{- range $statuses }}
+    <section class="status-group" data-role="book-section">
+      <h2 class="status-head">{{ i18n (printf "status_%s" .) }}</h2>
+      <div class="rows" data-role="book-rows">
+        {{- range where $sorted "Params.status" . }}
+        {{ partial "card.html" . }}
+        {{- end }}
+      </div>
+    </section>
+    {{- end }}
     <p class="empty-state" data-role="book-empty" hidden>{{ i18n "empty_search_books" }}</p>
   </div>
 </div>
@@ -67,13 +84,21 @@
         <button type="button" class="sort__chip" data-role="sort-chip" data-sort="lang" aria-pressed="false">{{ i18n "sort_language" }}</button>
       </div>
     </div>
+    <div class="controls-row__filter">
+      {{ partial "home-filter.html" $filterCtx }}
+    </div>
   </div>
 
-  <div class="cover-grid" data-role="book-tiles">
-    {{- range $sorted }}
-    {{ partial "card-tile.html" . }}
-    {{- end }}
-  </div>
+  {{- range $statuses }}
+  <section class="status-group" data-role="book-section">
+    <h2 class="status-head status-head--desktop">{{ i18n (printf "status_%s" .) }}</h2>
+    <div class="cover-grid" data-role="book-tiles">
+      {{- range where $sorted "Params.status" . }}
+      {{ partial "card-tile.html" . }}
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
   <p class="desktop-empty" data-role="book-empty" hidden>{{ i18n "empty_search_books" }}</p>
 </div>
 {{ end }}

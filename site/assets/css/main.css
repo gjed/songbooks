@@ -468,6 +468,24 @@ img { max-width: 100%; height: auto; display: block; }
   box-shadow: 2px 2px 0 var(--teal);
 }
 
+/* One group per songbook.yaml `status:` on the home page. */
+.status-group[hidden] { display: none; }
+
+.status-head {
+  margin: 18px 0 0;
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+.status-head--desktop {
+  margin: 0;
+  padding: 30px 52px 0;
+  font-size: 11.5px;
+}
+
 .row__body {
   display: flex;
   flex-direction: column;
@@ -629,6 +647,8 @@ img { max-width: 100%; height: auto; display: block; }
   flex-wrap: wrap;
 }
 
+.controls-row__filter { flex-basis: 100%; }
+
 .controls-row__count {
   font-size: 10.5px;
   letter-spacing: 0.2em;
@@ -637,7 +657,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .cover-grid {
-  padding: 36px 52px 44px;
+  padding: 20px 52px 24px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 34px 30px;

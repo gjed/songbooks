@@ -15,6 +15,7 @@
   {{- $countLabel = i18n "song_count" $count -}}
 {{- end -}}
 <div class="tile{{ with $accent }} has-accent{{ end }}" data-title="{{ .Title }}" data-desc="{{ .Params.blurb }}" data-count="{{ $count }}" data-lang="{{ $lang }}"
+  data-status="{{ .Params.status }}" data-tags="{{ delimit (.Params.tags | default slice) "|" }}"
   {{- with $accent }} style="--accent-raw: {{ . }};"{{ end }}>
   <a class="tile__hit" href="{{ .RelPermalink }}" aria-label="{{ .Title }}"></a>
   <img class="tile__cover" src="{{ $thumb | relURL }}" alt="{{ i18n "cover_alt" .Title }}"

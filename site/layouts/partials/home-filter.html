@@ -1,0 +1,13 @@
+{{- /* Home filter chips: one exclusive choice among all / a status / a tag.
+       Context: dict "statuses" (present statuses, section order) "tags"
+       (sorted unique tags). Rendered once per home layout; site.js keeps
+       both in sync. Without JS the chips do nothing and every book shows. */ -}}
+<div class="sort" role="group" aria-label="{{ i18n "filter_label" }}">
+  <button type="button" class="sort__chip" data-role="filter-chip" data-filter="" aria-pressed="true">{{ i18n "filter_all" }}</button>
+  {{- range .statuses }}
+  <button type="button" class="sort__chip" data-role="filter-chip" data-filter="status:{{ . }}" aria-pressed="false">{{ i18n (printf "status_%s" .) }}</button>
+  {{- end }}
+  {{- range .tags }}
+  <button type="button" class="sort__chip" data-role="filter-chip" data-filter="tag:{{ . }}" aria-pressed="false">#{{ . }}</button>
+  {{- end }}
+</div>

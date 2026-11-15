@@ -105,19 +105,32 @@
     render();
   }
 
-  /* ---- home: search + sort, mirrored across mobile rows & desktop tiles */
+  /* ---- home: search + filter + sort, mirrored across mobile rows & desktop
+     tiles. Books sit in one section per status; a section with no match
+     hides. */
 
   function initHome() {
-    var rowsWrap = document.querySelector('[data-role="book-rows"]');
-    var tilesWrap = document.querySelector('[data-role="book-tiles"]');
-    if (!rowsWrap && !tilesWrap) return;
+    var rowWraps = toArray(document.querySelectorAll('[data-role="book-rows"]'));
+    var tileWraps = toArray(document.querySelectorAll('[data-role="book-tiles"]'));
+    if (!rowWraps.length && !tileWraps.length) return;
 
     var searches = toArray(document.querySelectorAll('[data-role="book-search"]'));
     var chips = toArray(document.querySelectorAll('[data-role="sort-chip"]'));
+    var filterChips = toArray(document.querySelectorAll('[data-role="filter-chip"]'));
+    var sections = toArray(document.querySelectorAll('[data-role="book-section"]'));
     var counts = toArray(document.querySelectorAll('[data-role="book-result-count"]'));
     var emptyStates = toArray(document.querySelectorAll('[data-role="book-empty"]'));
 
-    var state = { query: "", sort: "alpha", visible: 0 };
+    var state = { query: "", filter: "", sort: "alpha", visible: 0 };
+
+    function matchesFilter(el) {
+      if (!state.filter) return true;
+      var sep = state.filter.indexOf(":");
+      var kind = state.filter.slice(0, sep);
+      var value = state.filter.slice(sep + 1);
+      if (kind === "status") return el.getAttribute("data-status") === value;
+      return (el.getAttribute("data-tags") || "").split("|").indexOf(value) !== -1;
+    }
 
     function sortItems(items) {
       items.sort(function (a, b) {
@@ -142,13 +155,12 @@
       var q = state.query.trim().toLowerCase();
       var visible = 0;
 
-      [rowsWrap, tilesWrap].forEach(function (wrap) {
-        if (!wrap) return;
+      rowWraps.concat(tileWraps).forEach(function (wrap) {
         var items = toArray(wrap.children);
         items.forEach(function (el) {
           var title = (el.getAttribute("data-title") || "").toLowerCase();
           var desc = (el.getAttribute("data-desc") || "").toLowerCase();
-          var match = !q || title.indexOf(q) !== -1 || desc.indexOf(q) !== -1;
+          var match = (!q || title.indexOf(q) !== -1 || desc.indexOf(q) !== -1) && matchesFilter(el);
           el.hidden = !match;
           if (match) visible += 1;
         });
@@ -157,8 +169,12 @@
         });
       });
 
-      /* both lists hold the same set, so halve the double count when both exist */
-      if (rowsWrap && tilesWrap) visible = Math.round(visible / 2);
+      sections.forEach(function (section) {
+        section.hidden = !section.querySelector(".row:not([hidden]), .tile:not([hidden])");
+      });
+
+      /* both layouts hold the same set, so halve the double count when both exist */
+      if (rowWraps.length && tileWraps.length) visible = Math.round(visible / 2);
       state.visible = visible;
 
       counts.forEach(function (el) {
@@ -180,6 +196,17 @@
           apply();
         }, 60)
       );
+    });
+
+    filterChips.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var key = btn.getAttribute("data-filter");
+        state.filter = key;
+        filterChips.forEach(function (c) {
+          c.setAttribute("aria-pressed", c.getAttribute("data-filter") === key ? "true" : "false");
+        });
+        apply();
+      });
     });
 
     chips.forEach(function (btn) {
