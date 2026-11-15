@@ -6,7 +6,9 @@ artist: Diplomatico e il Collettivo Ninco Nanco
 language: it        # primary language — drives the printed intro page (#36)
 notation: common    # chord names used in the .cho files (C D E …)
 
-blurb: È tutto un falso, Ho visto il mondo, Troppe Parole
+blurb:
+  it: "È tutto un falso, Ho visto il mondo, Troppe Parole"
+  en: "È tutto un falso, Ho visto il mondo, Troppe Parole"
 
 description:
   it: >-

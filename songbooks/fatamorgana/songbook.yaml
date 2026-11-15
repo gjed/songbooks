@@ -6,7 +6,9 @@ artist: Queen of Saba
 language: it        # primary language — drives the printed intro page (#36)
 notation: common    # chord names used in the .cho files (C D E …)
 
-blurb: Queen of Saba — Fatamorgana (2021)
+blurb:
+  it: "Queen of Saba — Fatamorgana (2021)"
+  en: "Queen of Saba — Fatamorgana (2021)"
 
 # Sources for the description and intro text below (facts, quotes):
 # - Giulio Pons, "Queen of Saba: Fatamorgana" (review), Rockit, 2021-06-25

@@ -6,7 +6,9 @@ artist: Nené
 language: it        # primary language — drives the printed intro page (#36)
 notation: common    # chord names used in the .cho files (C D E …)
 
-blurb: Homemade Italian singles, phone-recorded
+blurb:
+  it: "Singoli italiani fatti in casa, registrati con il telefono"
+  en: "Homemade Italian singles, phone-recorded"
 
 description:
   it: >-

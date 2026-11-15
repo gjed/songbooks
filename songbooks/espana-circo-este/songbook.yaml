@@ -6,7 +6,9 @@ artist: España Circo Este
 language: it        # primary language — drives the printed intro page (#36)
 notation: common    # chord names used in the .cho files (C D E …)
 
-blurb: Italian reggae/indie band, Italian and Spanish lyrics
+blurb:
+  it: "Band reggae/indie italiana, testi in italiano e spagnolo"
+  en: "Italian reggae/indie band, Italian and Spanish lyrics"
 
 description:
   it: >-

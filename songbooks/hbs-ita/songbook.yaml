@@ -7,7 +7,9 @@ title: HBS Songbook — Italiano
 language: it        # primary language — drives the printed intro page (#36)
 notation: latin     # chord names used in the .cho files (DO RE MI …)
 
-blurb: Italian songs, with cover and chord chart
+blurb:
+  it: "Canzoni italiane, con copertina e tabella accordi"
+  en: "Italian songs, with cover and chord chart"
 
 description:
   it: >-

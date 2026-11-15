@@ -6,7 +6,9 @@ artist: Queen of Saba
 language: it        # primary language — drives the printed intro page (#36)
 notation: common    # chord names used in the .cho files (C D E …)
 
-blurb: Queen of Saba — Medusa (2023)
+blurb:
+  it: "Queen of Saba — Medusa (2023)"
+  en: "Queen of Saba — Medusa (2023)"
 
 # Sources for the description and intro text below (facts, quotes):
 # - "I Queen of Saba presentano il nuovo album Medusa ad Argo16" (release

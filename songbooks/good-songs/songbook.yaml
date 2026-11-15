@@ -6,7 +6,9 @@ title: Good Songs
 language: en        # primary language — drives the printed intro page (#36)
 notation: common    # chord names used in the .cho files (C D E …)
 
-blurb: A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …)
+blurb:
+  it: "Un miscuglio di preferite (Ed Sheeran, Anna Kendrick, …)"
+  en: "A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …)"
 
 description:
   it: >-

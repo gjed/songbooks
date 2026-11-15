@@ -18,22 +18,22 @@ Browse all songbooks online: **[https://gjed.github.io/songbooks/](https://gjed.
 
 <!-- songbooks:begin -->
 
-| Songbook                                                                       | What's inside                                                         |
-| ------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| [Bricioline](songbooks/bricioline/)                                            | Queen of Saba — Italian children's music                              |
-| [Canzoni Ribelli](songbooks/canzoni-ribelli/)                                  | Italian rebel and protest songs                                       |
-| [Caprera](songbooks/caprera/)                                                  | Centro Velico Caprera — songs to sing together on the terrace         |
-| [Diplomatico e il Collettivo Ninco Nanco](songbooks/diplomatico-e-collettivo/) | È tutto un falso, Ho visto il mondo, Troppe Parole                    |
-| [España Circo Este](songbooks/espana-circo-este/)                              | Italian reggae/indie band, Italian and Spanish lyrics                 |
-| [faccianuvola](songbooks/faccianuvola/)                                        | Italian indie-pop singer-songwriter faccianuvola                      |
-| [Fatamorgana](songbooks/fatamorgana/)                                          | Queen of Saba — Fatamorgana (2021)                                    |
-| [Good Songs](songbooks/good-songs/)                                            | A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …)              |
-| [HBS Songbook — Italiano](songbooks/hbs-ita/)                                  | Italian songs, with cover and chord chart                             |
-| [HBS Songbook — English](songbooks/hsb-eng/)                                   | 100+ English songs, with cover and chord chart                        |
-| [Medusa](songbooks/medusa/)                                                    | Queen of Saba — Medusa (2023)                                         |
-| [Nené](songbooks/nene/)                                                        | Homemade Italian singles, phone-recorded                              |
-| [Rareș](songbooks/rares/)                                                      | Rareș, cantautore di Marghera — Curriculum Vitae, Folk_2021, Sincero! |
-| [Wanderwaal](songbooks/wanderwaal/)                                            | Grace VanderWaal — Perfectly Imperfect & Just the Beginning           |
+| Songbook                                                                       | What's inside                                                                  |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| [Bricioline](songbooks/bricioline/)                                            | Queen of Saba — Italian children's music                                       |
+| [Canzoni Ribelli](songbooks/canzoni-ribelli/)                                  | Italian rebel and protest songs                                                |
+| [Caprera](songbooks/caprera/)                                                  | Centro Velico Caprera — songs to sing together on the terrace                  |
+| [Diplomatico e il Collettivo Ninco Nanco](songbooks/diplomatico-e-collettivo/) | È tutto un falso, Ho visto il mondo, Troppe Parole                             |
+| [España Circo Este](songbooks/espana-circo-este/)                              | Italian reggae/indie band, Italian and Spanish lyrics                          |
+| [faccianuvola](songbooks/faccianuvola/)                                        | Italian indie-pop singer-songwriter faccianuvola                               |
+| [Fatamorgana](songbooks/fatamorgana/)                                          | Queen of Saba — Fatamorgana (2021)                                             |
+| [Good Songs](songbooks/good-songs/)                                            | A mixed bag of favourites (Ed Sheeran, Anna Kendrick, …)                       |
+| [HBS Songbook — Italiano](songbooks/hbs-ita/)                                  | Italian songs, with cover and chord chart                                      |
+| [HBS Songbook — English](songbooks/hsb-eng/)                                   | 100+ English songs, with cover and chord chart                                 |
+| [Medusa](songbooks/medusa/)                                                    | Queen of Saba — Medusa (2023)                                                  |
+| [Nené](songbooks/nene/)                                                        | Homemade Italian singles, phone-recorded                                       |
+| [Rareș](songbooks/rares/)                                                      | Rareș, singer-songwriter from Marghera — Curriculum Vitae, Folk_2021, Sincero! |
+| [Wanderwaal](songbooks/wanderwaal/)                                            | Grace VanderWaal — Perfectly Imperfect & Just the Beginning                    |
 
 <!-- songbooks:end -->
 
