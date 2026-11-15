@@ -35,6 +35,8 @@ title: Bricioline         # display name (README table, Spotify playlists)
 artist: Queen of Saba     # optional — single-artist songbooks only
 language: it              # primary language — picks the printed locale
 notation: common          # chord names in the .cho files: common | latin
+status: done              # site home section: done | wip | experimental (default wip)
+tags: [kids]              # optional — free-form filter chips on the site home
 
 blurb: Queen of Saba — Italian children's music   # one line, README table
 

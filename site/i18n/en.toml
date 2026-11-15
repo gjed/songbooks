@@ -44,6 +44,21 @@ other = "Search for a songbook"
 [search_placeholder_books]
 other = "search a songbook"
 
+[filter_label]
+other = "Filter by"
+
+[filter_all]
+other = "all"
+
+[status_done]
+other = "done"
+
+[status_wip]
+other = "in progress"
+
+[status_experimental]
+other = "experimental"
+
 [sort_label]
 other = "Sort by"
 

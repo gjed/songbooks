@@ -51,6 +51,10 @@ PSEUDO_SONGS = {"00-cover.cho", "01-chord-chart.cho", "99-back-cover.cho"}
 # Square thumbnail edge, px: 2x the widest slot it fills (the desktop tile).
 THUMB_PX = 600
 
+# songbook.yaml `status:` values, in home-page section order.
+STATUSES = ("done", "wip", "experimental")
+DEFAULT_STATUS = "wip"
+
 # ChordPro's HTML backend emits a standalone document per song; the site only
 # wants the body, minus the <style> block (it carries @page print rules).
 BODY_RE = re.compile(r"<body[^>]*>(?P<body>.*)</body>", re.DOTALL | re.IGNORECASE)
@@ -521,6 +525,9 @@ def generate_songbook_content(
         front_matter["accent"] = meta["cover"]["subtitle_color"]
     
     front_matter["thumb"] = f"thumbs/{thumb}"
+    front_matter["status"] = meta.get("status") or DEFAULT_STATUS
+    if meta.get("tags"):
+        front_matter["tags"] = [str(t) for t in meta["tags"]]
     
     # PDF
     if pdf_exists:
@@ -728,6 +735,20 @@ def main() -> int:
             )
             continue
         
+        status = meta.get("status") or DEFAULT_STATUS
+        if status not in STATUSES:
+            print(
+                f"error: {slug}: status {status!r} not one of {', '.join(STATUSES)}",
+                file=sys.stderr,
+            )
+            errors = True
+            continue
+        tags = meta.get("tags") or []
+        if not isinstance(tags, list):
+            print(f"error: {slug}: tags must be a list", file=sys.stderr)
+            errors = True
+            continue
+
         thumb = make_thumbnail(
             songbook_dir,
             meta,
@@ -811,7 +832,7 @@ def main() -> int:
         spotify_manifest = load_spotify_manifest(slug)
         spotify_status = "spotify yes" if has_spotify_link(spotify_manifest) else "spotify no"
         print(
-            f"{slug}: {song_count} songs, {thumb_status}, {read_status}, "
+            f"{slug}: {status}, {song_count} songs, {thumb_status}, {read_status}, "
             f"{spotify_status}"
         )
     

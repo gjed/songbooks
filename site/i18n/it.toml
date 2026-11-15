@@ -44,6 +44,21 @@ other = "Cerca un canzoniere"
 [search_placeholder_books]
 other = "cerca un canzoniere"
 
+[filter_label]
+other = "Filtra per"
+
+[filter_all]
+other = "tutti"
+
+[status_done]
+other = "completi"
+
+[status_wip]
+other = "in lavorazione"
+
+[status_experimental]
+other = "sperimentali"
+
 [sort_label]
 other = "Ordina per"
 
