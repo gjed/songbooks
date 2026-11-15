@@ -55,8 +55,11 @@ python3 scripts/readme-table.py
 Never edit the table by hand.
 
 The optional `cover:`, `intro:`, and `back:` sections of the same file
-drive the printed cover pages (next section). `spotify.yaml` stays a
-separate file because it is machine-written: `spotify_playlists.py resolve` rewrites it wholesale.
+drive the printed cover pages (next section). The site thumbnail is the
+`cover.logo` artwork fitted into a square on `cover.background`; a
+songbook without one gets a typewriter-style placeholder cover with its title.
+`spotify.yaml` stays a separate file because it is machine-written:
+`spotify_playlists.py resolve` rewrites it wholesale.
 
 ### Bilingual strings
 

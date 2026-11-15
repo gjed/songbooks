@@ -14,7 +14,7 @@
   <div class="book__head">
     {{- with .Params.thumb }}
     <img class="book__cover" src="{{ . | relURL }}" alt="{{ i18n "cover_alt" $.Title }}"
-         width="595" height="842" loading="lazy" decoding="async">
+         width="600" height="600" loading="lazy" decoding="async">
     {{- end }}
     <div class="book__intro">
       <h1 class="book__title">{{ .Title }}</h1>

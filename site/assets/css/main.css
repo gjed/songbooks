@@ -202,9 +202,9 @@ input::placeholder { color: var(--ink2); opacity: 0.75; }
 ::selection { background: var(--accent-text); color: var(--accent-ink); }
 
 /* height: auto is load-bearing. The cover <img>s carry width/height
-   attributes (595x842) for layout stability; those map to presentational
-   hints, and with BOTH dimensions resolved the `aspect-ratio: 3/4` on
-   .tile__cover / .book__cover is ignored — covers rendered 842px tall.
+   attributes (600x600) for layout stability; those map to presentational
+   hints, and with BOTH dimensions resolved the `aspect-ratio: 1` on
+   .tile__cover / .book__cover is ignored — covers rendered 600px tall.
    Letting height go auto hands control back to aspect-ratio. */
 img { max-width: 100%; height: auto; display: block; }
 
@@ -459,21 +459,13 @@ img { max-width: 100%; height: auto; display: block; }
   z-index: 1;
 }
 
+/* Covers are square thumbnails built by scripts/site-data.py: the art is
+   already fitted onto its own background there, so no cropping here. */
 .row__cover {
   width: 46px;
-  height: 62px;
-  object-fit: cover;
+  height: 46px;
   border: 1px solid var(--ink);
   box-shadow: 2px 2px 0 var(--teal);
-}
-
-.row__cover--empty {
-  background: var(--card);
-  color: var(--ink2);
-  font: 400 22px/1 var(--font-display);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .row__body {
@@ -657,19 +649,9 @@ img { max-width: 100%; height: auto; display: block; }
 
 .tile__cover {
   width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
+  aspect-ratio: 1;
   border: 1.5px solid var(--ink);
   box-shadow: 5px 5px 0 var(--teal);
-  background: var(--card);
-}
-
-.tile__cover--empty {
-  color: var(--ink2);
-  font: 400 clamp(2rem, 8vw, 3.5rem)/1 var(--font-display);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .tile__title {
@@ -784,8 +766,7 @@ img { max-width: 100%; height: auto; display: block; }
 
 .book__cover {
   width: 188px;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
+  aspect-ratio: 1;
   border: 1.5px solid var(--ink);
   box-shadow: 6px 6px 0 var(--teal);
 }

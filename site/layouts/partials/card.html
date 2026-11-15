@@ -19,12 +19,8 @@
 <div class="row{{ with $accent }} has-accent{{ end }}" data-title="{{ .Title }}" data-desc="{{ .Params.blurb }}" data-count="{{ $count }}" data-lang="{{ $lang }}"
   {{- with $accent }} style="--accent-raw: {{ . }};"{{ end }}>
   <a class="row__hit" href="{{ .RelPermalink }}" aria-label="{{ .Title }}"></a>
-  {{- if $thumb }}
   <img class="row__cover" src="{{ $thumb | relURL }}" alt="{{ i18n "cover_alt" .Title }}"
-       width="46" height="62" loading="lazy" decoding="async">
-  {{- else }}
-  <span class="row__cover row__cover--empty" aria-hidden="true">{{ substr .Title 0 1 | upper }}</span>
-  {{- end }}
+       width="600" height="600" loading="lazy" decoding="async">
   <span class="row__body">
     <span class="row__title">{{ .Title }}</span>
     {{- with .Params.blurb }}
