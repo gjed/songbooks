@@ -8,8 +8,8 @@ notation: common    # chord names used in the .cho files (C D E …)
 status: done        # site home section: done | wip | experimental
 
 blurb:
-  it: "Queen of Saba — Italian children's music"
-  en: "Queen of Saba — Italian children's music"
+  it: "Queen of Saba — Canzoni per bimbu"
+  en: "Queen of Saba — Canzoni per bimbu"
 
 description:
   it: >-
